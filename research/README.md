@@ -118,8 +118,12 @@ Read these before treating a filename date as fact.
 - **Two runs of `survey-06-lifecycle-operations`.** Both ran 2026-07-19, so the
   `a`/`b` suffixes are arbitrary disambiguators and carry no ranking. They
   differ in retrieval window — `a` states 2026-07-19; `b` states a
-  July 12–19 window — and in framing of versioning transport, which is worth
-  reconciling rather than picking between.
+  July 12–19 window — and in emphasis. **Checked 2026-07-25: they do not
+  contradict each other on versioning transport.** Both place Google and
+  Microsoft Graph on coarse major-version path tokens and Azure on a dated
+  query parameter; the runs foreground different vendors in their summaries,
+  which reads as disagreement until the bodies are compared. Two independent
+  runs agreeing is a confidence signal in its own right.
 - **Original filenames.** The ten `survey` reports arrived as
   `compass_artifact_wf-<uuid>_text_markdown.md`. That name carried no link to
   its prompt; the mapping in this document was recovered by reading each

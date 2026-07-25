@@ -215,7 +215,7 @@ controls: **W** = observable on the wire or required in public documentation ·
 | OP-012 | MUST | W | Document which failures are retryable. Require exponential backoff **with jitter**. Never advise retrying a non-idempotent request without an idempotency key. | T5 | `baseline-01`, `baseline-02` AC-016 | High |
 | OP-013 | MUST | W | Signal deprecation with the `Deprecation` header (RFC 9651 structured Date) and a `Sunset` header (HTTP-date) whose timestamp is not earlier. | T7 | [9745](https://datatracker.ietf.org/doc/rfc9745/), [8594](https://datatracker.ietf.org/doc/rfc8594/) | High |
 | OP-014 | MUST | W | Pair every deprecation with a `deprecation` Link relation to human-readable migration documentation, and never deprecate without a sunset date. | T7 | [9745](https://datatracker.ietf.org/doc/rfc9745/) | High |
-| OP-015 | MUST | W | Use one uniform version-marker placement across the API. | T7 | `survey-06` `[COMPARATIVE]` — **reconcile the two runs first** | Moderate |
+| OP-015 | MUST | W | Use one uniform version-marker placement across the API. | T7 | `survey-06` `[COMPARATIVE]`, both runs concurring | Moderate — placement *choice* remains `[POLICY]` |
 | OP-016 | MUST | W | Sign every outbound webhook. Prefer RFC 9421; otherwise HMAC-SHA256 over a base that includes delivery ID, timestamp, and raw body. | T6 | [9421](https://datatracker.ietf.org/doc/rfc9421/) | Moderate |
 | OP-017 | MUST | W | Verify the signature over the **raw body before parsing**, enforce a bounded timestamp window, and deduplicate by delivery ID. | T6 | `[INFERENCE]`; `survey-07` `[COMPARATIVE]` (300 s convergent) | High |
 | OP-018 | MUST | W | Return a correlation identifier on every response, including errors. | T8 | `[INFERENCE]` | High |
@@ -240,10 +240,14 @@ controls: **W** = observable on the wire or required in public documentation ·
 - **RateLimit draft trajectory.** Expires 2026-11-24. Whether it is renewed,
   advanced, or abandoned materially changes OP-010. This needs a calendar
   check, not a research thread.
-- **The `survey-06` divergence.** The two runs frame versioning transport
-  differently — one states Google and Microsoft "reject dated versions," the
-  other characterises Azure as query-parameter dated. OP-015 depends on this;
-  reconcile before ratifying.
+- ~~**The `survey-06` divergence.**~~ **Withdrawn 2026-07-25.** An earlier
+  draft of this report claimed the two `survey-06` runs disagreed on
+  versioning transport. Comparing the report bodies rather than their
+  summaries shows they agree: both place Google and Microsoft Graph on coarse
+  major-version path tokens and Azure on a dated query parameter. The runs
+  foreground different vendors in their TL;DRs, which reads as disagreement
+  until checked. OP-015 is **not** blocked, and agreement across two
+  independent runs raises its confidence rather than lowering it.
 
 ### 8.2 Risk-based conditional
 

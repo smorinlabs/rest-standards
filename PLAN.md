@@ -109,9 +109,11 @@ are named in the baseline reports' open-questions sections:
 - Classify every candidate rule as protocol requirement, evidence-backed
   default, project policy, exception, or unresolved question.
 - Record disagreements between sources rather than silently averaging them.
-- Resolve the known cross-run divergences before ratifying anything that
-  depends on them, in particular the two `survey-06-lifecycle-operations` runs'
-  differing framing of versioning transport.
+- Compare both runs of any twice-run prompt before ratifying a rule that
+  depends on it. For `survey-06-lifecycle-operations` this was checked on
+  2026-07-25: the two runs agree on versioning transport and differ only in
+  emphasis, so agreement across independent runs raises confidence there
+  rather than blocking.
 
 **Gate C:** Review and approve the policy decisions before drafting normative text.
 This is the point at which a proposed rule becomes project policy.
