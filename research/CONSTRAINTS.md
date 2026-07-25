@@ -22,11 +22,26 @@ framework, programming language, cloud, or vendor.
 
 ## Research shape
 
-- Default research budget: three independent landscape threads.
-- Current threads: HTTP semantics, API contracts, and operational practice.
-- Maximum decomposition depth: three levels below a landscape prompt.
+Research is organized into two series that differ in mode. They are not
+alternative decompositions of the same work, and neither supersedes the other.
+
+- **`survey` — descriptive.** Eight prompts comparing eight reference APIs and
+  the standards they implement. A survey report documents what the field does
+  and returns a contested-axes register. It makes no recommendations.
+- **`baseline` — prescriptive.** Three prompts covering HTTP semantics, API
+  contracts, and operational practice. A baseline report proposes a normative
+  principles table with `MUST`/`SHOULD`/`MAY` strength, stable provisional IDs,
+  evidence URLs, and per-rule confidence.
+
+Rules that govern both:
+
+- A baseline report *proposes* rules; it does not ratify them. Ratification is
+  Phase 2 and lands in `decisions/`.
+- Maximum decomposition depth: three levels below a series prompt.
 - A follow-up thread must answer a narrower unresolved question and add new
   decision value; synthesis alone is not a separate research thread.
+- Rerunning a prompt is legitimate when independent evidence is wanted. Keep
+  every run; divergence between runs is a confidence signal, not noise.
 - Do not draft the normative standard during research execution.
 
 ## Scope boundaries
