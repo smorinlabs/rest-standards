@@ -12,20 +12,34 @@ The repository will distinguish three kinds of material:
 2. recommended defaults selected from legitimate alternatives; and
 3. project policy that is intentionally stricter than the underlying standards.
 
-## Why three research prompts
+## Research organization
 
-Three prompts are the smallest set that gives each major evidence domain a
-coherent question without creating a fourth synthesis thread that merely repeats
-the work:
+All research lives flat under `research/`, split into `prompts/` and `reports/`,
+with `decisions/` added in Phase 2. Files pair by a shared filename stem rather
+than by directory. The full naming grammar and the current inventory are in
+[`research/README.md`](research/README.md); the rules for running new research
+are in [`research/CLAUDE.md`](research/CLAUDE.md).
 
-1. HTTP semantics and resource modeling;
-2. representations and API contracts; and
-3. security and operational practice.
+Two research series exist. They differ in mode, and the distinction is
+load-bearing for every gate below.
 
-Cross-cutting conflicts will be reconciled after all three reports exist. Each
-prompt has a neighboring `.framing.md` file that preserves its source lineage,
-constraints, and expected decision value. Those framing files are not extra
-research runs.
+| Series | Mode | Question | Output | Status |
+| --- | --- | --- | --- | --- |
+| `survey` | Descriptive | What do eight reference APIs and the standards actually do? | Comparison plus a contested-axes register. No recommendations. | 8 prompts, 10 runs, complete |
+| `baseline` | Prescriptive | What should this standard require? | Proposed normative-principles tables with `MUST`/`SHOULD`/`MAY`. | 3 prompts, not yet run |
+
+The original plan budgeted three descriptive threads. In practice the
+descriptive work was done by the eight-part `survey` series, and the three
+original prompts turned out to be prescriptive — each requires a proposed
+normative-principles table and declares itself complete only on recommending an
+actionable baseline. Both series are retained because they answer different
+questions; the `survey` series supplies the evidence the `baseline` series
+argues from.
+
+**A `baseline` report proposes rules; it does not ratify them.** Its principles
+tables are research output carrying provisional IDs and confidence levels.
+Nothing becomes project policy until it passes Gate C and is recorded in
+`research/decisions/`.
 
 ## Scope
 
@@ -48,36 +62,61 @@ and messaging are considered only when defining REST boundaries or interoperabil
 
 ## Delivery phases and gates
 
-### Phase 0: Reviewable bootstrap — current phase
+### Phase 0: Reviewable bootstrap — complete
 
-- Create this plan and the research lineage structure.
-- Create three standalone research prompts and three framing records.
-- Publish the repository publicly as `smorinlabs/rest-standards`.
-- Stop for review before running research.
+- Created this plan and the research lineage structure.
+- Created the three `baseline` prompts with neighbouring `.framing.md` records.
+- Published the repository publicly as `smorinlabs/rest-standards`.
 
-**Gate A:** Approve or revise this plan and the three prompt scopes.
+**Gate A — passed.** The plan and the three prompt scopes were approved.
 
-### Phase 1: Execute the three research threads
+### Phase 1: Research execution — complete, awaiting Gate B
 
-- Run each approved prompt as an independent deep-research task.
-- Save its report beside the prompt as `00-landscape.md`.
-- Preserve source URLs, publication dates, conflicts, assumptions, and confidence.
-- Reject claims that cannot be traced to an authoritative or clearly labeled
-  comparative source.
+**`survey` series — complete.** Eight prompts run across ten executions,
+covering foundations and spec mechanics, structure, representations and errors,
+collections, reliability, lifecycle and operations, and webhooks. Two prompts
+were run twice; both runs of each are retained because divergence between
+independent runs is a confidence signal for the decision phase.
 
-**Gate B:** Review the reports for coverage and decide whether any narrow follow-up
-thread adds genuinely new evidence. The default budget remains three threads.
+**`baseline` series — complete.** Three prescriptive threads run 2026-07-25
+with primary-source status verified live, producing 66 proposed principles:
+`HS-001`–`HS-020` (HTTP semantics), `AC-001`–`AC-021` (API contracts), and
+`OP-001`–`OP-025` (operational practice).
+
+The baseline series produced material currency corrections to the survey
+evidence, tabulated in [`research/README.md`](research/README.md). The
+load-bearing ones for Gate C: RFC 10008 (QUERY) exists and no survey report
+covers it; OpenAPI 3.2.0 supersedes the 3.1 baseline the survey assumed; the
+IETF Idempotency-Key draft **expired** on 2026-04-18, so no idempotency rule
+can claim standards conformance; and the entire security and observability
+standards layer — RFC 9421, RFC 9700, RFC 9325, W3C Trace Context, OWASP —
+appears in no survey report.
+
+**Gate B:** Review all reports for coverage and decide whether any narrow
+follow-up leaf adds genuinely new evidence. A follow-up must answer a narrower
+unresolved question; synthesis alone does not qualify. Three candidate leaves
+are named in the baseline reports' open-questions sections:
+`baseline-01b-query-deployment`, an OpenAPI 3.2 tooling-maturity check, and
+`baseline-03b-message-signatures-adoption`.
 
 ### Phase 2: Convert research into explicit decisions
 
-- Break broad reports into terminal question leaves where necessary.
-- Add a `DECISION.md` for each research topic.
-- Classify every candidate rule as protocol requirement, evidence-backed default,
-  project policy, exception, or unresolved question.
+- Merge the `survey` contested-axes registers into one master register.
+- Reconcile it against the `baseline` proposed-principles tables, which argue
+  from the same evidence toward specific rules.
+- Record the outcome in `research/decisions/`, one file per stem, following the
+  same naming convention as prompts and reports.
+- Classify every candidate rule as protocol requirement, evidence-backed
+  default, project policy, exception, or unresolved question.
 - Record disagreements between sources rather than silently averaging them.
-- Update `research/CLAUDE.md` so later work starts from existing evidence.
+- Compare both runs of any twice-run prompt before ratifying a rule that
+  depends on it. For `survey-06-lifecycle-operations` this was checked on
+  2026-07-25: the two runs agree on versioning transport and differ only in
+  emphasis, so agreement across independent runs raises confidence there
+  rather than blocking.
 
 **Gate C:** Review and approve the policy decisions before drafting normative text.
+This is the point at which a proposed rule becomes project policy.
 
 ### Phase 3: Draft the standard
 
@@ -129,16 +168,20 @@ undefined terms, and RFC-keyword consistency.
 
 ## Planned artifacts
 
-| Artifact | Purpose | Created in |
-| --- | --- | --- |
-| `PLAN.md` | Scope, sequence, gates, and definition of done | Phase 0 |
-| `research/CONSTRAINTS.md` | Shared research boundaries | Phase 0 |
-| Three `.framing.md` files | Prompt provenance and shaping record | Phase 0 |
-| Three `.prompt.md` files | Standalone runnable research tasks | Phase 0 |
-| Three `00-landscape.md` reports | Raw research evidence | Phase 1 |
-| Topic `DECISION.md` files | Accepted conclusions and consequences | Phase 2 |
-| Normative standard | Stable rules and rationale | Phase 3 |
-| Checklist and worked example | Conformance and integration proof | Phase 3–4 |
+| Artifact | Purpose | Created in | Status |
+| --- | --- | --- | --- |
+| `PLAN.md` | Scope, sequence, gates, and definition of done | Phase 0 | Done |
+| `research/README.md` | Naming convention and research inventory | Phase 0 | Done |
+| `research/CLAUDE.md` | Rules for running and filing research | Phase 0 | Done |
+| `research/CONSTRAINTS.md` | Shared research boundaries | Phase 0 | Done |
+| `research/prompts/baseline-*.framing.md` | Prompt provenance and shaping record | Phase 0 | Done |
+| `research/prompts/baseline-*.prompt.md` | Prescriptive research tasks | Phase 0 | Done |
+| `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
+| `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
+| `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
+| `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | Pending |
+| Normative standard | Stable rules and rationale | Phase 3 | Pending |
+| Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |
 
 ## Definition of done for version 1.0
 
