@@ -70,7 +70,7 @@ and messaging are considered only when defining REST boundaries or interoperabil
 
 **Gate A — passed.** The plan and the three prompt scopes were approved.
 
-### Phase 1: Research execution — in progress
+### Phase 1: Research execution — complete, awaiting Gate B
 
 **`survey` series — complete.** Eight prompts run across ten executions,
 covering foundations and spec mechanics, structure, representations and errors,
@@ -78,16 +78,26 @@ collections, reliability, lifecycle and operations, and webhooks. Two prompts
 were run twice; both runs of each are retained because divergence between
 independent runs is a confidence signal for the decision phase.
 
-**`baseline` series — pending.** Three prescriptive threads remain to be run:
-HTTP semantics, API contracts, and operational practice.
+**`baseline` series — complete.** Three prescriptive threads run 2026-07-25
+with primary-source status verified live, producing 66 proposed principles:
+`HS-001`–`HS-020` (HTTP semantics), `AC-001`–`AC-021` (API contracts), and
+`OP-001`–`OP-025` (operational practice).
 
-Across both series, preserve source URLs, publication dates, conflicts,
-assumptions, and confidence. Reject claims that cannot be traced to an
-authoritative or clearly labeled comparative source.
+The baseline series produced material currency corrections to the survey
+evidence, tabulated in [`research/README.md`](research/README.md). The
+load-bearing ones for Gate C: RFC 10008 (QUERY) exists and no survey report
+covers it; OpenAPI 3.2.0 supersedes the 3.1 baseline the survey assumed; the
+IETF Idempotency-Key draft **expired** on 2026-04-18, so no idempotency rule
+can claim standards conformance; and the entire security and observability
+standards layer — RFC 9421, RFC 9700, RFC 9325, W3C Trace Context, OWASP —
+appears in no survey report.
 
 **Gate B:** Review all reports for coverage and decide whether any narrow
 follow-up leaf adds genuinely new evidence. A follow-up must answer a narrower
-unresolved question; synthesis alone does not qualify.
+unresolved question; synthesis alone does not qualify. Three candidate leaves
+are named in the baseline reports' open-questions sections:
+`baseline-01b-query-deployment`, an OpenAPI 3.2 tooling-maturity check, and
+`baseline-03b-message-signatures-adoption`.
 
 ### Phase 2: Convert research into explicit decisions
 
@@ -166,7 +176,7 @@ undefined terms, and RFC-keyword consistency.
 | `research/prompts/baseline-*.prompt.md` | Prescriptive research tasks | Phase 0 | Done |
 | `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
-| `research/reports/baseline-*.report.*.md` | Proposed normative baselines | Phase 1 | Pending |
+| `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | Pending |
 | Normative standard | Stable rules and rationale | Phase 3 | Pending |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |

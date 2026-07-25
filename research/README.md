@@ -74,11 +74,34 @@ Series framing: [`prompts/survey-00-series.framing.md`](prompts/survey-00-series
 Three prompts derived from the original three-thread plan. Each carries a
 neighbouring `.framing.md` recording its provenance and shaping decisions.
 
-| Stem | Covers | Runs | Decision |
-| --- | --- | --- | --- |
-| `baseline-01-http-semantics` | REST constraints, resource identity, URI modeling, methods, status codes, conditional requests, caching | not yet run | — |
-| `baseline-02-api-contracts` | JSON representation, OpenAPI/JSON Schema contracts, Problem Details, collections, compatibility, idempotency contracts, bulk, async | not yet run | — |
-| `baseline-03-operational-practice` | Transport security, authn/authz, rate limits, retries, deprecation, observability, webhook delivery and signing | not yet run | — |
+| Stem | Covers | Runs | Principle IDs | Decision |
+| --- | --- | --- | --- | --- |
+| `baseline-01-http-semantics` | REST constraints, resource identity, URI modeling, methods, status codes, conditional requests, caching | `2026-07-25` | `HS-001`–`HS-020` | — |
+| `baseline-02-api-contracts` | JSON representation, OpenAPI/JSON Schema contracts, Problem Details, collections, compatibility, idempotency contracts, bulk, async | `2026-07-25` | `AC-001`–`AC-021` | — |
+| `baseline-03-operational-practice` | Transport security, authn/authz, rate limits, retries, deprecation, observability, webhook delivery and signing | `2026-07-25` | `OP-001`–`OP-025` | — |
+
+Sixty-six proposed principles in total. **All are proposals carrying research
+confidence, not ratified policy** — see the series table above.
+
+## Currency corrections — read before citing a `survey` report
+
+The `baseline` series verified primary-source status live on 2026-07-25 and
+found material that the `survey` series does not contain. Where the two differ,
+the baseline reports are current.
+
+| Finding | Consequence | Where |
+| --- | --- | --- |
+| **RFC 10008 — The HTTP QUERY Method**, Proposed Standard, June 2026. Safe, idempotent, cacheable, carries a request body. | Absent from all ten survey reports. Directly addresses the complex-query workarounds documented in `survey-04-collections`. | `baseline-01` |
+| **RFC 9205 (BCP 56)** and **RFC 8820 (BCP 190)** | Absent from all ten survey reports. Both are binding BCPs governing URI design and status-code use. | `baseline-01` |
+| **OpenAPI 3.2.0**, released 19 Sep 2025 | Survey series baselines on 3.1 throughout. | `baseline-02` |
+| **Idempotency-Key draft expired 2026-04-18**, intended RFC status "(None)" | The widely-copied `Idempotency-Key` header has no standards backing. Any rule is project policy. | `baseline-02` |
+| **RateLimit draft-11 is active**, expires 2026-11-24 | Different posture from the dead idempotency draft — adoptable as a forward bet. | `baseline-03` |
+| **RFC 8594 (Sunset) is Informational**, while RFC 9745 (Deprecation) is Standards Track; the two use deliberately different date formats | The pair is routinely described as equivalent. It is not. | `baseline-03` |
+| **RFC 9421, RFC 9700, RFC 9325, W3C Trace Context, and OWASP appear in no survey report** | The survey read vendor API documentation, where security and telemetry posture is largely not published. | `baseline-03` |
+
+`[Note]` These gaps reflect the survey's descriptive mandate rather than a
+defect in it: a comparison of what vendors shipped cannot surface a standard
+nobody has shipped yet, nor a BCP about how to design protocols.
 
 ## Provenance notes
 
