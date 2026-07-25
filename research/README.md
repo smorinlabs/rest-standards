@@ -124,6 +124,15 @@ Read these before treating a filename date as fact.
   query parameter; the runs foreground different vendors in their summaries,
   which reads as disagreement until the bodies are compared. Two independent
   runs agreeing is a confidence signal in its own right.
+- **One redaction, recorded.** `survey-06-lifecycle-operations.report.2026-07-19a.md`
+  line 168 originally quoted Stripe's public documentation example test-mode
+  key verbatim to illustrate secret-key-as-Basic-username auth. It is a
+  long-published example from Stripe's own docs and test-mode only, but it is
+  credential-shaped, this repository is public, and GitHub push protection
+  blocked it. The token was replaced with `sk_test_<redacted-see-README>`;
+  the finding it supports — secret key as Basic username with an empty
+  password, Bearer also accepted — is unchanged. **This is the only
+  modification made to any `survey` report's content.**
 - **Original filenames.** The ten `survey` reports arrived as
   `compass_artifact_wf-<uuid>_text_markdown.md`. That name carried no link to
   its prompt; the mapping in this document was recovered by reading each
