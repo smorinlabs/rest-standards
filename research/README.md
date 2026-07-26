@@ -83,6 +83,23 @@ neighbouring `.framing.md` recording its provenance and shaping decisions.
 Sixty-six proposed principles in total. **All are proposals carrying research
 confidence, not ratified policy** — see the series table above.
 
+### Gate B follow-up leaves
+
+Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
+principles. Each verified its claims against primary sources with a two-source
+minimum.
+
+| Stem | Question | Runs | Outcome |
+| --- | --- | --- | --- |
+| `baseline-01b-query-deployment` | Is RFC 10008 QUERY deployed enough to promote `HS-009`? | `2026-07-25` | **No.** `HS-009` stays `MAY` — no CDN does body-keyed caching |
+| `baseline-02b-openapi-tooling` | Is OpenAPI 3.2 tooling mature enough for `AC-001`? | `2026-07-25` | **No.** `AC-001` revised to accept 3.1 or 3.2; JSON Schema pin strengthened |
+| `baseline-02c-problem-details-adoption` | Does the inference behind `AC-003` hold? | `2026-07-25` | **Yes, strengthened.** Confidence raised |
+| `baseline-03b-signatures-and-ratelimit` | Do `OP-016` and `OP-010` survive contact with reality? | `2026-07-25` | **Split.** `OP-016` raised; `OP-010` lowered with an expiry contingency |
+
+**Dated re-check triggers:** 2026-11-24 (RateLimit draft expiry, `OP-010`) ·
+Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
+or openapi-generator #22728 closing (`AC-001`).
+
 ## Currency corrections — read before citing a `survey` report
 
 The `baseline` series verified primary-source status live on 2026-07-25 and

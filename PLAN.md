@@ -92,12 +92,21 @@ can claim standards conformance; and the entire security and observability
 standards layer — RFC 9421, RFC 9700, RFC 9325, W3C Trace Context, OWASP —
 appears in no survey report.
 
-**Gate B:** Review all reports for coverage and decide whether any narrow
-follow-up leaf adds genuinely new evidence. A follow-up must answer a narrower
-unresolved question; synthesis alone does not qualify. Three candidate leaves
-are named in the baseline reports' open-questions sections:
-`baseline-01b-query-deployment`, an OpenAPI 3.2 tooling-maturity check, and
-`baseline-03b-message-signatures-adoption`.
+**Gate B — passed 2026-07-25.** Four narrow leaves were identified and run,
+each testing a specific weak link rather than re-synthesizing existing
+evidence. All four changed something:
+
+| Leaf | Effect |
+| --- | --- |
+| `baseline-01b-query-deployment` | `HS-009` confirmed at `MAY` — no CDN implements body-keyed caching for QUERY |
+| `baseline-02b-openapi-tooling` | `AC-001` **revised** — the 3.2-only mandate was unsupportable; JSON Schema pin strengthened |
+| `baseline-02c-problem-details-adoption` | `AC-003` **strengthened** — framework defaults support the historical-inertia argument |
+| `baseline-03b-signatures-and-ratelimit` | `OP-016` raised; `OP-010` lowered with a dated expiry contingency |
+
+A fifth candidate — strong-validator generation cost — was dropped as
+implementation-dependent and not resolvable by research.
+
+Research is complete. Proceed to Gate C.
 
 ### Phase 2: Convert research into explicit decisions
 
