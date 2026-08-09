@@ -182,3 +182,40 @@ proposed); the concrete pick is policy, not evidence.
 
 **Evidence:** `survey-03` finding 1 and Table A · `survey-02` finding 4 ·
 `baseline-02` §7 (AC-007 row).
+
+---
+
+## AC-016 (completed) — Idempotency key travels as the `Idempotency-Key` header
+
+**Decision (2026-08-09): RATIFIED.** `AC-016` (accept an idempotency key on
+non-idempotent state-changing requests; fingerprint the payload; reject a
+reused key carrying a different payload — already proposed, `[POLICY]`) is
+completed with the placement: a **request header named `Idempotency-Key`**,
+Stripe-semantics. The convention MUST be labeled `[POLICY]` and never cited
+as a standard — the IETF draft that standardized this shape expired
+2026-04-18 with intended status "(None)".
+
+**Classification:** project policy `[POLICY]` throughout.
+
+**Justification:** the fork is really header vs **query parameter**
+(`baseline-02g` corrected the common "body field" framing: Google's
+AIP-155 `request_id` transcodes to the query string over REST). For the
+header: Stripe's installed convention and the expired draft's shape; UCP
+signs an `idempotency-key` header as a covered component of its RFC 9421
+profile (`baseline-03d`) — answering the headers-escape-signatures
+objection for the architecture ratified in `OP-016`; both OpenAI's and
+Anthropic's SDKs carry dormant Stainless machinery wired for exactly this
+header (`baseline-02g`); headers keep keys out of URLs, access logs, and
+proxy caches. Against the query model: AIP-155 defines no
+same-key-different-payload behavior, so it cannot satisfy `AC-016`'s
+fingerprinting requirement as specified. The three modern AI vendors ship
+no mechanism at all, so no counter-signal exists (`baseline-02g`).
+
+**Options declined:** query parameter (log/proxy leakage; no
+fingerprinting) · body field (schema pollution; no surveyed vendor ships
+it over REST).
+
+**Confidence: high-moderate.**
+
+**Evidence:** `baseline-02` §7 (AC-016 row) and §8.3 · `baseline-02g` ·
+`baseline-03d` (UCP covered components) · `survey-05` (Stripe mechanics).

@@ -205,3 +205,42 @@ with RFC 2026; mandates a two-emitter format; false-firing trigger) ·
 
 **Evidence:** `baseline-03` §7 (OP-010 row) · `baseline-03b` (as
 annotated) · `baseline-03e` · `baseline-03f`.
+
+---
+
+## OP-015 (completed) — Version marker: major version in path
+
+**Decision (2026-08-09): RATIFIED.** `OP-015` (one uniform version-marker
+placement — already proposed as MUST, both `survey-06` runs concurring) is
+completed with the concrete choice: **major version in the path** (`/v1`),
+AIP-style — never `/v1.0`; minor and patch versions never appear in URIs;
+evolution within a major is additive (compatible-evolution-first); a major
+bump is a rare last resort (AIP-181's "extreme course of action" posture).
+Deprecation and sunset signaling ride `OP-013`/`OP-014` (RFC 9745 /
+RFC 8594); window lengths remain a separate open item.
+
+**Classification:** project policy `[POLICY]` — the placement choice has no
+standards authority; `survey-06` documents four live models.
+
+**Justification:** `[COMPARATIVE]` path-major is the only model requiring
+zero client discipline and zero server pinning infrastructure, and it is
+where AIP, Twilio, Shopify, and the field majority landed. The
+dated-header model (GitHub `X-GitHub-Api-Version`; Stripe account-pinning
+with 72-hour rollback) is stronger engineering for continuous evolution
+but assumes infrastructure ordinary teams will not build. `[FACT]`
+Zalando's "MUST NOT use URI versioning" is noted as the principled
+counter-position; the BCP 190 concern is satisfied by the house-standard
+scope reading (a standard constraining its own URI space — position to be
+ratified as pile addition C).
+
+**Options declined:** dated request header (best-in-class but
+infrastructure-heavy) · required query parameter (Azure; uniformly noisy) ·
+media-type/none (Zalando purism; weakest tooling, hardest operations).
+
+**Confidence: moderate** — a genuine fork; the dated-header model is the
+strongest alternative and a team with Stripe-grade pinning infrastructure
+could reasonably invert this.
+
+**Evidence:** `survey-06` (both runs: versioning-transport table,
+Stripe/GitHub/AIP/Azure/Twilio/Shopify models) · `baseline-03` §7 (OP-015
+row).
