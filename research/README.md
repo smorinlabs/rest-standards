@@ -141,6 +141,9 @@ the quick-citation index; the files are authoritative.
 | BCP 190 posture | 2026-08-09 | **State the scope reading** — house standard constraining its own URI space is not BCP 190's harm | `decisions/baseline-01-http-semantics.decision.md` |
 | HATEOAS posture | 2026-08-09 | **Honest description** — resource-oriented HTTP, not Fielding-complete REST; divergence noted openly | `decisions/baseline-01-http-semantics.decision.md` |
 | Pagination links | 2026-08-09 | **Body envelope only**; no RFC 8288 `Link` headers for pagination | `decisions/baseline-02-api-contracts.decision.md` |
+| Caching posture | 2026-08-09 | **Three-tier explicit default** — never silent; authenticated → `private, no-cache` + ETag; `no-store` sensitive-only; `public` immutable-only | `decisions/baseline-01-http-semantics.decision.md` |
+| Field selection | 2026-08-09 | **MAY**; when offered, `fields` comma-list of snake_case names — no `$select`, no brackets | `decisions/baseline-02-api-contracts.decision.md` |
+| Filter grammar | 2026-08-09 | **Per-field + bracket ranges, AND-only** on lists; DSL only as a separate search endpoint | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

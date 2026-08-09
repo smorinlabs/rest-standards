@@ -289,3 +289,45 @@ GitHub's header-driven model is the counter-practice, declined.
 **Evidence:** `survey-03` (Zalando `Link`-header prohibition) · `survey-04`
 (pagination practice) · `baseline-02` §8.4 (listed as the open policy
 item).
+
+---
+
+## Field selection
+
+**Decision (2026-08-09): RATIFIED.** Field selection (sparse fieldsets) is
+**MAY** — fixed response shapes are a legitimate contract (the
+Stripe/GitHub/Twilio/AWS position). When an API offers it, the syntax is
+fixed: a `fields` query parameter taking a comma-separated list of
+snake_case field names. No OData `$select`, no JSON:API per-type brackets.
+Expansion/embedding is a separate mechanism, not settled here.
+
+**Classification:** project policy.
+**Declined:** MUST-on-collections (mandates burden the field majority
+declines) · forbidding it (blocks bandwidth optimization for large
+resources). **Confidence: moderate.**
+**Evidence:** `survey-04` finding 5 and field-selection table.
+
+---
+
+## Filter grammar (companion to AC-015)
+
+**Decision (2026-08-09): RATIFIED.** Collection list endpoints filter via
+**per-field equality parameters plus bracket range operators**
+(`field[gte]`, `field[gt]`, `field[lte]`, `field[lt]`), combined AND-only.
+A structured query DSL is permitted **only** as a separately-documented
+search endpoint, never mixed into collection listing. `AC-015`'s ban on
+exposing storage-engine syntax stands beneath both surfaces.
+
+**Classification:** project policy.
+**Justification:** `[COMPARATIVE]` the two families split the field
+(per-field: Stripe lists, Shopify, Twilio, AWS · DSL: OData `$filter`,
+AIP-160, GitHub `q=`); Zalando: "Simple query languages are generally
+preferred over complex ones." The strongest datapoint is Stripe's own
+architecture: simple params on lists, the DSL quarantined in a separate
+rate-limited, eventually-consistent Search endpoint — the families were
+never mixed on one surface.
+**Declined:** DSL-on-lists (parser/injection surface, Zalando-warned
+complexity) · equality-only (forces a search endpoint for date ranges, the
+most common filter). **Confidence: moderate-high.**
+**Evidence:** `survey-04` finding 4, Stripe section (list params vs Search
+API) · `baseline-02` §8.4.

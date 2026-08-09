@@ -202,3 +202,26 @@ and describe the field." **Declined:** mandating HATEOAS (no field
 practice, no client tooling) · claiming REST-in-Fielding's-sense anyway
 (knowingly falsifiable). **Confidence: high.**
 **Evidence:** `baseline-01` §8.2.
+
+---
+
+## Caching posture for mutable data
+
+**Decision (2026-08-09): RATIFIED — three-tier explicit default.** Every
+response carries explicit `Cache-Control` (silence is forbidden — it
+delegates to heuristic caching). Authenticated or mutable resources
+default to `private, no-cache`, revalidating via the strong `ETag`
+machinery `HS-014` mandates (cheap 304s, zero staleness). `no-store` is
+reserved for genuinely sensitive payloads. `public` with `max-age` is
+permitted only for resources documented as immutable or deliberately
+stale-tolerant.
+
+**Classification:** the leak mechanism is a protocol requirement
+(RFC 9111 §3, §5.2.2.7 — authenticated responses in shared caches are a
+cross-user leak); the tier boundaries are project policy.
+**Declined:** blanket `no-store` (named anti-pattern — discards the
+largest performance lever) · mechanism-only with no posture (leaves every
+API to re-derive the tiers). **Confidence: moderate-high.**
+**Evidence:** `baseline-01` threat table (cache rows), §6 "Caching
+authenticated / mutable resources" (SETTLED mechanism / POLICY
+aggression), HS-014.
