@@ -407,6 +407,59 @@ moderate-high (the three namings — conventions with clear field anchors).
 
 ---
 
+## Addendum A1 — PATCH body format (completes HS-008; companion to AC-011)
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED.** PATCH request bodies
+**MUST be JSON Merge Patch (RFC 7396)** sent with
+`Content-Type: application/merge-patch+json`; servers MUST reject other
+media types with `415 Unsupported Media Type` and advertise supported
+formats in `Accept-Patch` (RFC 5789's negotiation surface). **Companion
+rule (load-bearing):** resource representations MUST give `null` and an
+absent property the same meaning — Merge Patch delete semantics are the
+sole exception, and a `null` targeting a non-deletable field MUST return
+`400`. An API whose resources genuinely require value-null distinct from
+absent, per-element array edits, or test-conditioned updates **MAY**
+additionally accept **JSON Patch (RFC 6902)** at
+`application/json-patch+json` on the same resource and MUST document which
+format applies where. RFC 5789's atomicity requirement and its
+conditional-request guidance (pairing with the ratified
+`HS-014`/`HS-015`) apply regardless of format.
+
+**Consequence accepted at ratification:** the null-equivalence rule
+forbids tri-state fields (unset / null / value) across the standard;
+resources needing that distinction model it another way or use the JSON
+Patch path.
+
+**Classification:** evidence-backed default (both formats are Standards
+Track RFCs; RFC 5789 sanctions Content-Type negotiation); the
+null-equivalence companion rule is project policy shared with Azure and
+Zalando, the only surveyed authorities that rule on the question.
+
+**Justification:** Merge Patch is the only standardized format
+implementing `AC-011`'s omission-vs-presence distinction at the wire
+level; both mandating authorities ship the same companion rule; the
+plain-JSON field plurality (GitHub, Graph, Shopify; Stripe/Anthropic via
+POST) defines its semantics only in per-API prose. Matches the project's
+`AC-003` posture — standards alignment over incumbent plurality, and
+Merge Patch polls strictly better than RFC 9457 did.
+
+**Declined:** plain partial JSON with per-field null docs (the Graph
+model — the ecosystem-weighted alternative) · AIP-134 field masks (wins
+only if tri-state fields are genuinely needed) · JSON Patch as MUST
+(verbosity no surveyed vendor imposes).
+
+**Confidence: moderate-high** (format) · **high** (companion rule —
+load-bearing regardless of format). Genuine fork, recorded as such.
+
+**Flip triggers:** tri-state resource-model requirement → field masks or
+JSON-Patch-MUST · array-element mutation becoming common → the MAY
+becomes MUST.
+
+**Evidence:** `baseline-02h` throughout (raw-RFC-verified) · `HS-008` ·
+`AC-011`.
+
+---
+
 ## Batch ratification — the fifteen remaining AC principles
 
 **Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`
