@@ -150,6 +150,10 @@ the quick-citation index; the files are authoritative.
 | Webhook dead-letter | 2026-08-09 | **≥72h** exponential retries, then **≥30d** dead-letter store + redelivery API | `decisions/baseline-03-operational-practice.decision.md` |
 | Support tiers | 2026-08-09 | **AIP-style path tiers** — `/v1alpha…`/`/v1beta…`/`/v1`; GA-only deprecation guarantees | `decisions/baseline-03-operational-practice.decision.md` |
 | Auth per client class | 2026-08-09 | **OAuth REQUIRED for delegated authority; API keys acceptable server-to-server single-trust**; BCP 240 wherever OAuth | `decisions/baseline-03-operational-practice.decision.md` |
+| Five-axes profile | 2026-08-09 | **Deployment profile ratified** — bearer+rotation, opaque-on-wire, tiered rate posture, 300s/60s replay + dedup, centralized-decision/in-handler authz; each with flip triggers | `decisions/baseline-03-operational-practice.decision.md` |
+| HS batch (20) | 2026-08-09 | `HS-001`–`HS-020` ratified en bloc as proposed | `decisions/baseline-01-http-semantics.decision.md` |
+| AC batch (15) | 2026-08-09 | Remaining AC principles ratified en bloc as proposed | `decisions/baseline-02-api-contracts.decision.md` |
+| OP batch (22) | 2026-08-09 | Remaining OP principles ratified en bloc as proposed — **Gate C pile complete** | `decisions/baseline-03-operational-practice.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

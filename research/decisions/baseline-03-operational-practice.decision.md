@@ -375,3 +375,34 @@ any MCP proof-of-possession extension · OpenFGA CNCF graduation ·
 FAPI 2.0 adoption outside finance.
 
 **Evidence:** `baseline-03g` throughout · `baseline-03` §8.2.
+
+---
+
+## Batch ratification — the 22 remaining OP principles
+
+**Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-03`
+§7, per the Gate C batch-confirm procedure. No principle was pulled out.
+This closes the last open item in the Gate C pile.
+
+Covers: transport & credentials (OP-001 TLS 1.2+/prefer 1.3 · OP-002 no
+tokens in query strings · OP-003/004 BCP 240 OAuth rules) · authorization
+(OP-005 object-level on every request — the five-axes profile's in-handler
+enforcement rides on it · OP-006 unguessability is not access control ·
+OP-007 per-caller property authorization · OP-008 writable-field
+allow-lists) · capacity & retries (OP-009 published page/expansion/bulk
+maxima · OP-011 429-quota vs 503-overload with `Retry-After` — the
+ratified OP-010 cross-references it · OP-012 documented retryability,
+backoff with jitter, idempotency key before retrying non-idempotent
+requests) · deprecation signaling (OP-013/014 `Deprecation` + `Sunset` +
+migration link — the 12-month window decision rides on them) · webhook
+consumer obligations (OP-017 raw-body-before-parse verification, bounded
+window, dedupe — invariants I1–I3 · OP-021 at-least-once/no-ordering +
+monotonic version · OP-022 ack-before-processing with published timeout ·
+OP-024 overlapping signing secrets — invariant I6) · observability &
+hygiene (OP-018 correlation ID on every response · OP-019 W3C
+`traceparent`/capped `tracestate` · OP-020 no internal detail in
+responses · OP-023 SSRF guard on caller-supplied URLs · OP-025 scoped
+expiring credentials, SHOULD).
+
+**Classification:** per each row's evidence class in `baseline-03` §7.
+**Evidence:** `baseline-03` §7 (per-row citations).
