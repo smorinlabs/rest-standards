@@ -110,9 +110,12 @@ against primary sources with a two-source minimum.
 change — watch draft PR #166 / issue #158; withdraw only on 18-month
 abandonment; 2026-11-24 is only a check for whether a draft-12 appeared) ·
 Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
-or openapi-generator #22728 closing (`AC-001`) · AdCP 4.0 release and Standard
-Webhooks issue #34 (`OP-016`) · 2026-11-15, `draft-knauer-secure-webhook-token`
-expiry (`OP-016`).
+or openapi-generator #22728 closing (`AC-001`) · AdCP 4.0 release, Standard
+Webhooks issue #34, and any UCP revision after 2026-04-08 (`OP-016`) ·
+2026-11-15, `draft-knauer-secure-webhook-token` expiry (`OP-016`) ·
+five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
+would weaken the bearer default), any MCP proof-of-possession extension,
+OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
 
 ## Decision index — `decisions/` (Gate C, in progress)
 
