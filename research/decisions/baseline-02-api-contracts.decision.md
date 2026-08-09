@@ -219,3 +219,55 @@ it over REST).
 
 **Evidence:** `baseline-02` §7 (AC-016 row) and §8.3 · `baseline-02g` ·
 `baseline-03d` (UCP covered components) · `survey-05` (Stripe mechanics).
+
+---
+
+## Money representation (companion to AC-010)
+
+**Decision (2026-08-09): RATIFIED.** Monetary amounts are encoded as
+**minor-unit integers** with a separate ISO 4217 `currency` field —
+Stripe's model: `"amount": 1099` with `"currency": "usd"` meaning $10.99,
+the amount expressed in the currency's smallest unit. `AC-010`'s float ban
+stands unchanged beneath this.
+
+**Classification:** project policy `[POLICY]` — all three candidate
+encodings are float-safe; the choice is preference among safe options.
+
+**Owner decision note:** the walkthrough recommended decimal string
+(Shopify model) for parser-safety-without-currency-tables; **the owner
+chose minor-unit integer**, weighting the battle-tested payments-domain
+practice. Consequence to carry into Phase 3 drafting: clients need the
+ISO 4217 exponent to render amounts (JPY exponent 0, BHD exponent 3), so
+the standard must require the `currency` field alongside every amount and
+should point at the exponent table.
+
+**Declined:** decimal string (recommended; explicit parsing, no exponent
+table) · decimal number with `format: decimal` (plain `JSON.parse` lands
+in a float — the corruption AC-010 bans).
+
+**Confidence: moderate** — a genuine fork among safe encodings.
+
+**Evidence:** `survey-03` TL;DR axis 3 and money rows (Stripe minor-unit
+integer; Shopify decimal string; Zalando decimal number; no reputable
+reference uses floats).
+
+---
+
+## AC-001 (completed) — OpenAPI version pin: 3.1 floor, 3.2 gated on toolchain
+
+**Decision (2026-08-09): RATIFIED.** `AC-001`'s "3.1 or 3.2" fork closes
+as: **MUST publish OpenAPI 3.1**; OpenAPI 3.2 **MAY** be used only where
+the team's full toolchain — parser, linter, generator, docs renderer — is
+verified against it. The JSON Schema 2020-12 dialect pin stands
+(strengthened by `baseline-02b`). The recorded re-check triggers
+(swagger-parser #2248, openapi-generator #22728) flip the default when
+they close.
+
+**Classification:** evidence-backed default.
+**Justification:** `[FACT]` (`baseline-02b`) swagger-parser, Redoc, and
+openapi-generator carry open unaddressed 3.2 issues; **Spectral silently
+ignores 3.2 constructs** — a lint pass that validates nothing; only
+Redocly CLI has full support. **Declined:** flat 3.1 (blocks verified 3.2
+toolchains) · free choice (invites the silent-lint failure).
+**Confidence:** high (floor) · moderate (conditional clause).
+**Evidence:** `baseline-02` §7 (AC-001 row) · `baseline-02b`.

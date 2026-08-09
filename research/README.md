@@ -135,6 +135,9 @@ the quick-citation index; the files are authoritative.
 | Trailing slash | 2026-08-09 | **None canonical**; trailing-slash request SHOULD 308 to canonical; never semantic | `decisions/baseline-01-http-semantics.decision.md` |
 | Action syntax | 2026-08-09 | **Sub-path verb** `POST /{collection}/{id}/{action}` + reserved-word rule; `:verb` declined | `decisions/baseline-01-http-semantics.decision.md` |
 | Path casing (rider) | 2026-08-09 | **kebab-case** segments (`^[a-z][a-z\-0-9]*$`) | `decisions/baseline-01-http-semantics.decision.md` |
+| DELETE response | 2026-08-09 | **204 No Content**; soft-delete exception returns 200 + tombstone | `decisions/baseline-01-http-semantics.decision.md` |
+| Money encoding | 2026-08-09 | **Minor-unit integer + ISO 4217 `currency`** (owner choice over recommended decimal string; exponent-table consequence noted) | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-001` (completed) | 2026-08-09 | **OpenAPI 3.1 floor**; 3.2 gated on verified toolchain; JSON Schema 2020-12 pin stands | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

@@ -149,3 +149,21 @@ paths (coin-flip; underscores vanish under link underlines) · leaving it
 undecided. **Confidence: moderate — a genuine coin-flip against
 snake_case, decided for enforceability.**
 **Evidence:** `survey-02` findings 3 and Zalando naming rules.
+
+---
+
+## DELETE response
+
+**Decision (2026-08-09): RATIFIED.** A successful DELETE returns **204 No
+Content** with an empty body. **Named exception:** an API that soft-deletes
+(marks deleted but keeps the resource readable) returns **200 OK** with the
+tombstoned representation, because a representation still exists.
+
+**Classification:** evidence-backed default.
+**Justification:** `[COMPARATIVE]` AIP, Azure, Zalando, and GitHub all
+return 204; Stripe's `200` + `{deleted: true, id}` receipt is the one
+documented outlier, imitated because Stripe is imitated, endorsed by no
+guideline. **Declined:** the Stripe receipt pattern (requires a per-resource
+confirmation schema; diverges from every surveyed guideline).
+**Confidence: moderate-high.**
+**Evidence:** `survey-02` finding 5 · `baseline-01` §8.3.
