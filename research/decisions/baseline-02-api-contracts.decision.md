@@ -331,3 +331,20 @@ complexity) · equality-only (forces a search endpoint for date ranges, the
 most common filter). **Confidence: moderate-high.**
 **Evidence:** `survey-04` finding 4, Stripe section (list params vs Search
 API) · `baseline-02` §8.4.
+
+---
+
+## AC-017 (completed) — Idempotency-key retention: ≥24 hours
+
+**Decision (2026-08-09): RATIFIED.** The stated retention window `AC-017`
+requires is set at **≥24 hours**, a floor. Fingerprint semantics per the
+ratified `AC-016`.
+
+**Classification:** project policy, on a strongly converged comparative
+base.
+**Justification:** `[COMPARATIVE]` Stripe ≥24h (prunable), Shopify 24h,
+Zalando's guideline example 24h, AWS ≥24h; Google Cloud Deploy's 60
+minutes is the short outlier (`baseline-02g`). **Declined:** ≥7 days (no
+vendor commits to it) · ≥1 hour (loses overnight-backoff protection).
+**Confidence: high — the field's number.**
+**Evidence:** `survey-05` idempotency table · `baseline-02g`.

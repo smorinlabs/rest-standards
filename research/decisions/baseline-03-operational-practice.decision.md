@@ -244,3 +244,45 @@ could reasonably invert this.
 **Evidence:** `survey-06` (both runs: versioning-transport table,
 Stripe/GitHub/AIP/Azure/Twilio/Shopify models) · `baseline-03` §7 (OP-015
 row).
+
+---
+
+## Deprecation window and version overlap
+
+**Decision (2026-08-09): RATIFIED.** A deprecated **major** version
+remains fully supported for **≥12 months** after its successor ships, and
+the sunset date is announced the day deprecation starts. Signaling
+mechanics per the already-proposed `OP-013`/`OP-014` (`Deprecation` +
+`Sunset` headers, RFC 9745/8594; migration-doc link; never deprecate
+without a sunset date).
+
+**Classification:** project policy.
+**Justification:** `[COMPARATIVE]` GitHub commits ≥24 months; Shopify runs
+≥12 months per version with ≥9 months overlap — the tightest surveyed for
+a whole major; Stripe's honor-everything-forever depends on
+account-pinning infrastructure this standard does not assume. The floor
+permits APIs to promise more (GitHub's 24). **Declined:** ≥24 months as
+the floor (doubles double-run burden for every break) · ≥6 months (no
+surveyed vendor runs a major that short). **Confidence: moderate.**
+**Evidence:** `survey-06` (support windows) · `baseline-03` §8.3.
+
+---
+
+## Webhook retry and dead-letter policy
+
+**Decision (2026-08-09): RATIFIED.** Failed webhook deliveries are retried
+with exponential backoff for **≥72 hours**; after retries exhaust, the
+delivery is held in a **dead-letter store for ≥30 days** with a
+self-service **redelivery API**.
+
+**Classification:** project policy.
+**Justification:** `[COMPARATIVE]` Stripe retries ~3 days and separately
+retains 30 days of events for reconciliation — the only surveyed model
+giving consumers self-service recovery; Shopify retries 8 times over 4
+hours then deletes the subscription (aggressive outlier); GitHub never
+auto-retries (manual redelivery ≤3 days). **Declined:** short-retry +
+ledger (drops day-long-outage consumers to manual recovery) · retries-only
+(an outage longer than the window loses data permanently).
+**Confidence: moderate.**
+**Evidence:** `survey-07` (retry policies) · `survey-05` · `baseline-03`
+§8.3 (dead-letter retention listed as org policy).

@@ -144,6 +144,9 @@ the quick-citation index; the files are authoritative.
 | Caching posture | 2026-08-09 | **Three-tier explicit default** — never silent; authenticated → `private, no-cache` + ETag; `no-store` sensitive-only; `public` immutable-only | `decisions/baseline-01-http-semantics.decision.md` |
 | Field selection | 2026-08-09 | **MAY**; when offered, `fields` comma-list of snake_case names — no `$select`, no brackets | `decisions/baseline-02-api-contracts.decision.md` |
 | Filter grammar | 2026-08-09 | **Per-field + bracket ranges, AND-only** on lists; DSL only as a separate search endpoint | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-017` (completed) | 2026-08-09 | Idempotency-key retention **≥24h** floor | `decisions/baseline-02-api-contracts.decision.md` |
+| Deprecation window | 2026-08-09 | Deprecated major supported **≥12 months** after successor; sunset announced at deprecation | `decisions/baseline-03-operational-practice.decision.md` |
+| Webhook dead-letter | 2026-08-09 | **≥72h** exponential retries, then **≥30d** dead-letter store + redelivery API | `decisions/baseline-03-operational-practice.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 
