@@ -100,6 +100,7 @@ against primary sources with a two-source minimum.
 | `baseline-03b-signatures-and-ratelimit` | Do `OP-016` and `OP-010` survive contact with reality? | `2026-07-25` | **Split.** `OP-016` raised; `OP-010` lowered with an expiry contingency |
 | `baseline-03c-webhook-threat-model` | What is webhook signing for, and how do vendor schemes fare against it? | `2026-08-09` | **Purpose confirmed (security).** 13 invariants derived; all documented failures are receiver-side; RFC 9421 alone does not sign the body — needs RFC 9530 pairing |
 | `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
+| `baseline-03e-ratelimit-field-survey` | What does the industry actually emit for rate limits? | `2026-08-09` | **No convergence.** X-trio is a plurality (11/31), not a majority; 11/31 publish no quota state; exactly one draft-11-shaped emitter (Cloudflare, uncited); every IETF citation in the wild is draft-06 or earlier — the superseded trio shape |
 
 **Dated re-check triggers:** 2026-11-24 (RateLimit draft expiry, `OP-010`) ·
 Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
@@ -119,6 +120,8 @@ the quick-citation index; the files are authoritative.
 | `AC-003` | 2026-08-09 | RFC 9457 `problem+json` ratified **MUST** — "capable of returning" wording, infrastructure carve-out, nothing premised on the IANA registry; re-argued as "no credible alternative" | `decisions/baseline-02-api-contracts.decision.md` |
 | `AC-004` (amended) | 2026-08-09 | `type` = stable https URI 1:1 with `code` via standard-fixed template; dereference optional; docs in separate `documentation` member; `about:blank` banned | `decisions/baseline-02-api-contracts.decision.md` |
 | `OP-016` | 2026-08-09 | Webhook signing **MUST**, scheme by trust topology — Standard Webhooks for shared-secret; RFC 9421 + RFC 9530 for cross-org; SHA-1 banned; 13 invariants | `decisions/baseline-03-operational-practice.decision.md` |
+| Resource orientation | 2026-08-09 | **MUST** be resource-oriented — nouns + standard verbs; non-CRUD ops as POST action sub-resource (syntax deferred to the action-syntax item); no RPC carve-out | `decisions/baseline-01-http-semantics.decision.md` |
+| Pluralization | 2026-08-09 | **MUST** plural collections; singleton/config exception (`/user`, `me` pattern); irregulars: one form, consistent | `decisions/baseline-01-http-semantics.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 
