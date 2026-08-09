@@ -86,19 +86,77 @@ confidence, not ratified policy** — see the series table above.
 ### Gate B follow-up leaves
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles. Each verified its claims against primary sources with a two-source
-minimum.
+principles, plus one run 2026-08-09 during Gate C. Each verified its claims
+against primary sources with a two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |
 | `baseline-01b-query-deployment` | Is RFC 10008 QUERY deployed enough to promote `HS-009`? | `2026-07-25` | **No.** `HS-009` stays `MAY` — no CDN does body-keyed caching |
 | `baseline-02b-openapi-tooling` | Is OpenAPI 3.2 tooling mature enough for `AC-001`? | `2026-07-25` | **No.** `AC-001` revised to accept 3.1 or 3.2; JSON Schema pin strengthened |
-| `baseline-02c-problem-details-adoption` | Does the inference behind `AC-003` hold? | `2026-07-25` | **Yes, strengthened.** Confidence raised |
+| `baseline-02c-problem-details-adoption` | Does the inference behind `AC-003` hold? | `2026-07-25` | **Yes, strengthened.** Confidence raised — *partially superseded by `baseline-02d`* |
+| `baseline-02d-greenfield-adoption` | Do new (2023+) APIs adopt RFC 9457, and does the standard survive its critics? | `2026-08-09` | **Mixed.** CAMARA rejection falsifies `02c`'s absence claim; no credible alternative exists; keep `MUST`, confidence back to moderate, re-argue |
+| `baseline-02e-cloudflare-implementation` | What exactly did Cloudflare ship on 2026-03-11, live-verified? | `2026-08-09` | **Strong precedent for the shape, weak for the obligation.** Supports "capable of returning" wording + carve-out; `type` is a docs affordance, not the identity — stability lives in extension members |
+| `baseline-02f-problem-type-semantics` | What should a greenfield standard mandate for RFC 9457 `type`? | `2026-08-09` | **Split identity from documentation.** Stable `https` `type` 1:1 with `code`, dereference optional, docs in a separate member; `about:blank` ban proposed; IETF back-compat rationale now primary-sourced |
+| `baseline-02g-idempotency-key-practice` | What do OpenAI, Anthropic, and Google do for idempotency keys? | `2026-08-09` | **None of the three AI vendors ships one.** Google's AIP-155 `request_id` is a query param over REST, no fingerprinting; both AI vendors' SDKs carry dormant header-shaped Stainless machinery, switched off |
 | `baseline-03b-signatures-and-ratelimit` | Do `OP-016` and `OP-010` survive contact with reality? | `2026-07-25` | **Split.** `OP-016` raised; `OP-010` lowered with an expiry contingency |
+| `baseline-03c-webhook-threat-model` | What is webhook signing for, and how do vendor schemes fare against it? | `2026-08-09` | **Purpose confirmed (security).** 13 invariants derived; all documented failures are receiver-side; RFC 9421 alone does not sign the body — needs RFC 9530 pairing |
+| `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
+| `baseline-03e-ratelimit-field-survey` | What does the industry actually emit for rate limits? | `2026-08-09` | **No convergence.** X-prefixed family is a plurality (10/31, corrected), not a majority; 11/31 publish no quota state; exactly one draft-11-shaped emitter (Cloudflare, uncited); every IETF citation in the wild is draft-06 or earlier — the superseded trio shape |
+| `baseline-03f-ratelimit-draft-trajectory` | Does the RateLimit draft have a path to RFC, and what is normatively available instead? | `2026-08-09` | **MUST rejected on RFC 2026 grounds.** Draft expired+revived 3×, no AD/WGLC/milestone, wire format still moving (PR #166 renames parameters); falsifies `03b`'s "editorial → stable" inference; recommends MUST 429+`Retry-After` (published standards) + SHOULD pinned draft-11 fields, contingency re-keyed off expiry |
+| `baseline-03g-risk-axes` | Defaults + flip triggers for the five threat-model-conditional security axes? | `2026-08-09` | **Deployment-profile skeleton produced.** Bearer+TTL/rotation default (BCP 240's MUST satisfiable by rotation; Entra ships neither DPoP nor mTLS; MCP mandates plain Bearer) · opaque-on-the-wire default · multi-dimensional tiered rate posture · 300s/60s asymmetric replay window + dedup · centralize authz decision, enforce in-handler |
 
-**Dated re-check triggers:** 2026-11-24 (RateLimit draft expiry, `OP-010`) ·
+**Dated re-check triggers:** `OP-010` semi-annual review, next **2027-02-09**
+(upgrade if `RateLimit` lands in the IANA field registry; re-pin on syntax
+change — watch draft PR #166 / issue #158; withdraw only on 18-month
+abandonment; 2026-11-24 is only a check for whether a draft-12 appeared) ·
 Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
-or openapi-generator #22728 closing (`AC-001`).
+or openapi-generator #22728 closing (`AC-001`) · AdCP 4.0 release, Standard
+Webhooks issue #34, and any UCP revision after 2026-04-08 (`OP-016`) ·
+2026-11-15, `draft-knauer-secure-webhook-token` expiry (`OP-016`) ·
+five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
+would weaken the bearer default), any MCP proof-of-possession extension,
+OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
+
+## Decision index — `decisions/` (Gate C, complete 2026-08-09)
+
+The ADR layer. One file per stem, paired with its prompt and reports by the
+naming convention; each entry records the ratified rule, its Phase 2
+classification, the evidence chain, and the options declined. This table is
+the quick-citation index; the files are authoritative.
+
+| ID | Decided | Outcome (one line) | File |
+| --- | --- | --- | --- |
+| `AC-003` | 2026-08-09 | RFC 9457 `problem+json` ratified **MUST** — "capable of returning" wording, infrastructure carve-out, nothing premised on the IANA registry; re-argued as "no credible alternative" | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-004` (amended) | 2026-08-09 | `type` = stable https URI 1:1 with `code` via standard-fixed template; dereference optional; docs in separate `documentation` member; `about:blank` banned | `decisions/baseline-02-api-contracts.decision.md` |
+| `OP-016` | 2026-08-09 | Webhook signing **MUST**, scheme by trust topology — Standard Webhooks for shared-secret; RFC 9421 + RFC 9530 for cross-org; SHA-1 banned; 13 invariants | `decisions/baseline-03-operational-practice.decision.md` |
+| Resource orientation | 2026-08-09 | **MUST** be resource-oriented — nouns + standard verbs; non-CRUD ops as POST action sub-resource (syntax deferred to the action-syntax item); no RPC carve-out | `decisions/baseline-01-http-semantics.decision.md` |
+| Pluralization | 2026-08-09 | **MUST** plural collections; singleton/config exception (`/user`, `me` pattern); irregulars: one form, consistent | `decisions/baseline-01-http-semantics.decision.md` |
+| `OP-010` (+ item 22) | 2026-08-09 | **MUST** 429 + `Retry-After` (published standards); **SHOULD** draft-11 `RateLimit` fields as `[POLICY]`; proprietary headers documented incl. epoch-vs-delta; contingency re-keyed off expiry (IANA upgrade / re-pin / 18-mo withdraw) | `decisions/baseline-03-operational-practice.decision.md` |
+| `AC-007` (completed) | 2026-08-09 | **snake_case** for bodies and query params, regex-enforced (`^[a-z_][a-z_0-9]*$`) | `decisions/baseline-02-api-contracts.decision.md` |
+| `OP-015` (completed) | 2026-08-09 | **Major version in path** (`/v1`), compatible-evolution-first; majors rare; minor/patch never in URIs | `decisions/baseline-03-operational-practice.decision.md` |
+| `AC-016` (completed) | 2026-08-09 | **`Idempotency-Key` header**, Stripe semantics (fingerprint + reject reuse-with-different-payload), `[POLICY]` — draft expired, never cite as standard | `decisions/baseline-02-api-contracts.decision.md` |
+| Path depth | 2026-08-09 | Nest 1 level as the norm, **ceiling 3 resources/path**, prefer flat + query filters | `decisions/baseline-01-http-semantics.decision.md` |
+| Trailing slash | 2026-08-09 | **None canonical**; trailing-slash request SHOULD 308 to canonical; never semantic | `decisions/baseline-01-http-semantics.decision.md` |
+| Action syntax | 2026-08-09 | **Sub-path verb** `POST /{collection}/{id}/{action}` + reserved-word rule; `:verb` declined | `decisions/baseline-01-http-semantics.decision.md` |
+| Path casing (rider) | 2026-08-09 | **kebab-case** segments (`^[a-z][a-z\-0-9]*$`) | `decisions/baseline-01-http-semantics.decision.md` |
+| DELETE response | 2026-08-09 | **204 No Content**; soft-delete exception returns 200 + tombstone | `decisions/baseline-01-http-semantics.decision.md` |
+| Money encoding | 2026-08-09 | **Minor-unit integer + ISO 4217 `currency`** (owner choice over recommended decimal string; exponent-table consequence noted) | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-001` (completed) | 2026-08-09 | **OpenAPI 3.1 floor**; 3.2 gated on verified toolchain; JSON Schema 2020-12 pin stands | `decisions/baseline-02-api-contracts.decision.md` |
+| BCP 190 posture | 2026-08-09 | **State the scope reading** — house standard constraining its own URI space is not BCP 190's harm | `decisions/baseline-01-http-semantics.decision.md` |
+| HATEOAS posture | 2026-08-09 | **Honest description** — resource-oriented HTTP, not Fielding-complete REST; divergence noted openly | `decisions/baseline-01-http-semantics.decision.md` |
+| Pagination links | 2026-08-09 | **Body envelope only**; no RFC 8288 `Link` headers for pagination | `decisions/baseline-02-api-contracts.decision.md` |
+| Caching posture | 2026-08-09 | **Three-tier explicit default** — never silent; authenticated → `private, no-cache` + ETag; `no-store` sensitive-only; `public` immutable-only | `decisions/baseline-01-http-semantics.decision.md` |
+| Field selection | 2026-08-09 | **MAY**; when offered, `fields` comma-list of snake_case names — no `$select`, no brackets | `decisions/baseline-02-api-contracts.decision.md` |
+| Filter grammar | 2026-08-09 | **Per-field + bracket ranges, AND-only** on lists; DSL only as a separate search endpoint | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-017` (completed) | 2026-08-09 | Idempotency-key retention **≥24h** floor | `decisions/baseline-02-api-contracts.decision.md` |
+| Deprecation window | 2026-08-09 | Deprecated major supported **≥12 months** after successor; sunset announced at deprecation | `decisions/baseline-03-operational-practice.decision.md` |
+| Webhook dead-letter | 2026-08-09 | **≥72h** exponential retries, then **≥30d** dead-letter store + redelivery API | `decisions/baseline-03-operational-practice.decision.md` |
+| Support tiers | 2026-08-09 | **AIP-style path tiers** — `/v1alpha…`/`/v1beta…`/`/v1`; GA-only deprecation guarantees | `decisions/baseline-03-operational-practice.decision.md` |
+| Auth per client class | 2026-08-09 | **OAuth REQUIRED for delegated authority; API keys acceptable server-to-server single-trust**; BCP 240 wherever OAuth | `decisions/baseline-03-operational-practice.decision.md` |
+| Five-axes profile | 2026-08-09 | **Deployment profile ratified** — bearer+rotation, opaque-on-wire, tiered rate posture, 300s/60s replay + dedup, centralized-decision/in-handler authz; each with flip triggers | `decisions/baseline-03-operational-practice.decision.md` |
+| HS batch (20) | 2026-08-09 | `HS-001`–`HS-020` ratified en bloc as proposed | `decisions/baseline-01-http-semantics.decision.md` |
+| AC batch (15) | 2026-08-09 | Remaining AC principles ratified en bloc as proposed | `decisions/baseline-02-api-contracts.decision.md` |
+| OP batch (22) | 2026-08-09 | Remaining OP principles ratified en bloc as proposed — **Gate C pile complete** | `decisions/baseline-03-operational-practice.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

@@ -30,6 +30,15 @@ header pointing at the bot's key directory, and a well-known URL convention at
 `[FACT]` Cloudflare, Amazon, Akamai, and OpenAI back Web Bot Auth, with an IETF
 working group chartered in 2026.
 
+> **Scope capped 2026-08-09 by `baseline-03d-webhook-signing-adoption`.** The
+> IETF webbotauth WG charter explicitly excludes *"authenticating access to
+> content not intended for human consumption (e.g., HTTP APIs, agent-to-agent
+> interfaces)"* — so Web Bot Auth will not grow into a webhook profile, and
+> this deployment must not be read as a leading indicator for webhook
+> signing. It remains valid evidence that RFC 9421 is implementable at scale,
+> and nothing more. Direct webhook deployments of RFC 9421 now exist instead
+> (UCP, AdCP, Qerko) — see `baseline-03d`.
+
 ### The distinction that governs `OP-016`
 
 `[INFERENCE]` This is strong evidence for one claim and no evidence for
@@ -82,12 +91,21 @@ Critically, he also wrote that **"the technical design presented seems sound"**
 and that the appendix B examples *"suggest several aspects have been
 thoughtfully considered."*
 
-`[INFERENCE]` **This is an editorial objection, not a design objection**, and
+> **Falsified 2026-08-09 by `baseline-03f-ratelimit-draft-trajectory`.** The
+> inference below does not survive the editors' own response to the review:
+> Pardue's largest concern was parameter extensibility (not editorial), and
+> the editors' answering PR #166 **renames the wire parameters** (`r`→`a`,
+> `t`→`w`) and adds five IANA registries. The wire format is a moving
+> target, not "probably stable." The expiry-based re-check trigger below is
+> also superseded — the draft has expired and revived three times, so
+> expiry is procedural noise; see `baseline-03f` for the re-keyed triggers.
+
+~~`[INFERENCE]` **This is an editorial objection, not a design objection**, and
 the two have opposite implications for adoption. A design objection would mean
 the wire format may change and adopting it is risky. An editorial objection
 means the specification is hard to read but what it specifies is probably
 stable. draft-11 landed four months after the review, consistent with the
-editorial pass Pardue asked for.
+editorial pass Pardue asked for.~~
 
 A summary of the draft history characterized this as *"substantive challenges"*
 with *"no clear resolution pathway."* Reading the review itself does not support
@@ -101,11 +119,20 @@ The risk is **not** that the header format is wrong. The risk is that the draft
 document — exactly the failure `baseline-02` documented for the Idempotency-Key
 draft.
 
-`OP-010` should therefore carry an explicit contingency: if the draft expires
-without renewal or advancement, fall back to a documented proprietary scheme
-and stop citing the draft. **This is a calendar item, not a research item.**
+> **Superseded 2026-08-09 by `baseline-03f` and the ratified `OP-010`
+> decision.** The expiry-keyed contingency below was re-keyed: the draft has
+> expired and revived three times (RFC 2026 §2.2 restarts the clock on any
+> revision), so expiry alone must not trigger withdrawal. The ratified
+> triggers are IANA registration (upgrade), wire-syntax change (re-pin), and
+> 18-month sustained abandonment (withdraw), reviewed semi-annually — next
+> 2027-02-09. 2026-11-24 remains only a check for whether a draft-12
+> appeared.
 
-**Re-check trigger: 2026-11-24.**
+~~`OP-010` should therefore carry an explicit contingency: if the draft expires
+without renewal or advancement, fall back to a documented proprietary scheme
+and stop citing the draft. **This is a calendar item, not a research item.**~~
+
+~~**Re-check trigger: 2026-11-24.**~~
 
 ---
 

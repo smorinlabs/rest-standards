@@ -26,7 +26,7 @@ load-bearing for every gate below.
 | Series | Mode | Question | Output | Status |
 | --- | --- | --- | --- | --- |
 | `survey` | Descriptive | What do eight reference APIs and the standards actually do? | Comparison plus a contested-axes register. No recommendations. | 8 prompts, 10 runs, complete |
-| `baseline` | Prescriptive | What should this standard require? | Proposed normative-principles tables with `MUST`/`SHOULD`/`MAY`. | 3 prompts, not yet run |
+| `baseline` | Prescriptive | What should this standard require? | Proposed normative-principles tables with `MUST`/`SHOULD`/`MAY`. | 3 prompts run 2026-07-25 + 9 follow-up leaves (4 Gate B, 5 Gate C); complete |
 
 The original plan budgeted three descriptive threads. In practice the
 descriptive work was done by the eight-part `survey` series, and the three
@@ -188,7 +188,7 @@ undefined terms, and RFC-keyword consistency.
 | `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
-| `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | Pending |
+| `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches); index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 | Pending |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |
 
