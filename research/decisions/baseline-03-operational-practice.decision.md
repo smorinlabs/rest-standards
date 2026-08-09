@@ -336,3 +336,42 @@ paths) · leave-per-API (someone ships a key where user authority is
 exercised). **Confidence: high.**
 **Evidence:** `baseline-03` settled-axes row "OAuth/OIDC vs API keys",
 OP-003/OP-004 rows · RFC 9700.
+
+---
+
+## Deployment profile — the five risk-based security axes
+
+**Decision (2026-08-09): RATIFIED — defaults plus flip triggers, as
+recommended by `baseline-03g`.** The owner elected to research and decide
+these now (rather than defer), housed as a deployment profile: each axis
+carries a ratified **default** and the named **threat-model triggers**
+that flip it. The full trigger tables and evidence live in `baseline-03g`;
+the skeleton:
+
+| Axis | Default | Flip triggers (headline) |
+| --- | --- | --- |
+| Sender-constrained tokens | **Bearer over TLS** + short TTL + audience restriction + refresh-token rotation for public clients; validation SHOULD NOT hard-code the `Bearer` scheme | FAPI 2.0 / open banking → DPoP or mTLS required; tokens visible to logging intermediaries; public clients in hostile environments (DPoP); existing PKI server-to-server (mTLS); per-operation value → RFC 9470 step-up, not a global flip |
+| Token format | **Opaque on the public wire**; phantom-token where a gateway exists (integration work — only Kong documents it natively); a client-issued JWT MUST be RFC 9068-conformant + paired with a revocation-propagation plan | Measured introspection bottleneck / AS-outage tolerance / third-party resource servers → JWT; instant-revocation SLA or claims carrying PII → stay opaque |
+| Rate-limit aggressiveness | **Multi-dimensional tiered posture, published**: per-principal sustained + token-bucket burst (start ≈100 rps/account, 25 rps/endpoint, `[POLICY]` numbers); unauthenticated per-IP an order of magnitude lower; auth endpoints strictly stricter (start ≤5/min per IP+account); failed-auth budget; concurrency separate | >10× per-request cost variance → cost/token accounting; metered third-party spend → spend caps; credential-stuffing exposure → lockout tier; multi-tenant → fair-share; free-tier abuse → spend/tenure gating |
+| Replay window | **300 s past / 60 s future, asymmetric** + mandatory dedup cache (`jti`/nonce/message-ID) held ≥ the past window; NTP required; the window alone is never sufficient. Does not reopen the ratified webhook 5-min convention | Interactive high-value signing → 30–60 s; server-provided nonces remove skew entirely; unmanaged clocks / store-and-forward → up to 15 min, never without dedup; signature omits body → add RFC 9530 binding |
+| Object-level authorization | **Centralize the decision, enforce in the handler** — one shared component invoked at every call site resolving a client-supplied ID; deny-by-default; **never gateway-enforced**; authz tests block deployment | Relationship-derived permissions / list-visibility at scale / cross-tenant sharing → Zanzibar-style ReBAC; regulated audit or polyglot fleet → policy language (Cedar/Rego); single service + ownership column → stay embedded |
+
+**Classification:** project policy throughout, grounded in published
+standards (BCP 240, RFC 9449/8705/9068/7009, FAPI 2.0, OWASP API Top 10
+2023) and verified vendor practice including the three AI platforms.
+
+**Key evidence lines (full detail in `baseline-03g`):** BCP 240's
+access-token sender-constraining is SHOULD with a deployment escape hatch,
+and its only MUST is satisfiable by rotation; Microsoft Entra ships
+neither DPoP nor RFC 8705 today and the MCP spec mandates plain `Bearer`;
+Cognito documents that revoked JWTs still verify; Entra CAE documents
+≤15-min revocation lag; OWASP API1:2023 requires the check "in every
+function" and never says "centralized"; FAPI 2.0 supplies the reasoned
++10 s/+60 s future-skew bounds.
+
+**Dated re-check triggers (added to the register):** Entra shipping mTLS
+PoP ("Future APIs will rely on PoP via mTLS") — highest-value watch item ·
+any MCP proof-of-possession extension · OpenFGA CNCF graduation ·
+FAPI 2.0 adoption outside finance.
+
+**Evidence:** `baseline-03g` throughout · `baseline-03` §8.2.

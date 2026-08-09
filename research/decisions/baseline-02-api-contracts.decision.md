@@ -348,3 +348,29 @@ minutes is the short outlier (`baseline-02g`). **Declined:** ≥7 days (no
 vendor commits to it) · ≥1 hour (loses overnight-backoff protection).
 **Confidence: high — the field's number.**
 **Evidence:** `survey-05` idempotency table · `baseline-02g`.
+
+---
+
+## Batch ratification — the fifteen remaining AC principles
+
+**Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`
+§7, per the Gate C batch-confirm procedure. No principle was pulled out.
+
+Covers: AC-002 (description document authoritative; changes gated on an
+automated compatibility check) · AC-005 (never cite RFC 7807 — corroborated
+as a live hygiene problem by `baseline-02c`/`02d` findings of stale
+citations at Microsoft and Italy's AgID) · AC-006 (top-level JSON object,
+never a bare array) · AC-008 (IDs as strings) · AC-009 (RFC 3339
+timestamps with explicit offset) · AC-010 (no floating-point money — the
+ratified minor-unit-integer encoding rides on it) · AC-011 (null vs
+omission explicit in PATCH) · AC-012 (tolerant enum readers; additions
+non-breaking) · AC-013 (opaque non-constructable cursors, SHOULD) ·
+AC-014 (collection envelope — the ratified body-only pagination rides on
+it) · AC-015 (no storage syntax in filters — the ratified filter grammar
+rides on it) · AC-018 (bulk atomic-vs-partial explicit, per-item outcomes)
+· AC-019 (202 returns an addressable operation resource with terminal
+states, expiry, failure representation) · AC-020 (RFC 7240 `Prefer`, MAY)
+· AC-021 (RFC 6570 URI Templates, SHOULD).
+
+**Classification:** per each row's evidence class in `baseline-02` §7.
+**Evidence:** `baseline-02` §7 (per-row citations).
