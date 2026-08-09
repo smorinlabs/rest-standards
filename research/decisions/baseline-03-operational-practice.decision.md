@@ -125,3 +125,83 @@ asymmetric hazard).
 
 **Evidence:** `baseline-03` §7 (OP-016 row) · `baseline-03b` (as annotated) ·
 `baseline-03c` · `baseline-03d` · `survey-07` (as corrected).
+
+---
+
+## OP-010 — Rate limits: MUST published mechanism; SHOULD pinned draft fields
+
+**Decision (2026-08-09): RATIFIED as re-framed — the original MUST on the
+draft fields is replaced by rule shape (b).** Decided after two
+commissioned leaves (`baseline-03e` field survey, `baseline-03f` draft
+trajectory) when the owner asked for industry-adoption research including
+OpenAI, Anthropic, and Gemini. **Absorbs pile item 22** (proprietary
+headers alongside IETF fields).
+
+**Classification:** protocol requirement (429 per RFC 6585 + `Retry-After`
+per RFC 9110, with our MUST a deliberate tightening of RFC 6585 §4's MAY —
+house policy over a *published* standard); project policy `[POLICY]` (the
+SHOULD on unpublished draft fields).
+
+### The ratified rule
+
+1. **MUST** apply rate limits and communicate exhaustion via the published
+   HTTP mechanism: return `429` with `Retry-After` (cross-reference
+   `OP-011`; do not restate it).
+2. **SHOULD** additionally advertise quota state using `RateLimit` and
+   `RateLimit-Policy` **in the syntax of
+   `draft-ietf-httpapi-ratelimit-headers-11`**. `[POLICY]` These are an
+   unpublished Internet-Draft, not a standard; they MUST NOT be described
+   as standards-compliant, and the pinned revision MUST be cited wherever
+   referenced.
+3. **MUST** document any proprietary quota headers explicitly, including —
+   for any reset field — whether the value is an **absolute epoch
+   timestamp or a delta in seconds** (the one documented ambiguity that
+   breaks real clients: GitHub and Zalando define the same header name
+   with opposite meanings). This clause absorbs item 22: proprietary and
+   draft fields MAY coexist; whatever is emitted is documented.
+
+### Why the original MUST fell
+
+Four independent grounds (`baseline-03f`), any one sufficient: RFC 2026
+§2.2 prohibits claiming compliance with an Internet-Draft; the wire format
+is moving (editors' open PR #166 renames `r`→`a`, `t`→`w`); the draft
+itself only says MAY emit; neither field is IANA-registered even
+provisionally. Ecosystem measurement (`baseline-03e`/`03f`): three
+incompatible wire formats shipped across the draft's life; every wild IETF
+citation implements the superseded trio (draft-06 or earlier); the current
+format has exactly two emitters (one off-by-default library option, one
+0-star crate); the reference parser from the same team cannot parse it;
+Atlassian ships it behind a non-conforming `Beta-` prefix.
+
+### Contingency — re-keyed off expiry
+
+The draft has expired and revived **three times** (max dormancy ~15.5
+months); RFC 2026 §2.2 restarts the clock on any revision, so the previous
+2026-11-24 expiry trigger would false-fire. Replaced by three triggers:
+
+| Trigger | Condition | Action |
+|---|---|---|
+| **Upgrade** | `RateLimit` appears in the IANA HTTP Field Name Registry as `permanent` (`curl -s https://www.iana.org/assignments/http-fields/field-names.csv \| grep -i ratelimit`) | SHOULD → MUST; drop `[POLICY]` |
+| **Re-pin** | A new revision changes wire syntax (watch PR #166, issue #158) | Update the pin; drop to MAY if the format churns again pre-publication |
+| **Withdraw** | 18 months with no revision and no WGLC, or the draft leaves the WG's active list unrevived, or the WG concludes | Drop the SHOULD; keep 429 + `Retry-After` + documented-proprietary |
+
+Review cadence semi-annual; next **2027-02-09**. 2026-11-24 is only a
+check for whether a draft-12 appeared.
+
+**Confidence:** moderate-high (mandate clause) · moderate (SHOULD clause).
+
+**Options declined:** original MUST-with-expiry-contingency (conflicts
+with RFC 2026; mandates a two-emitter format; false-firing trigger) ·
+`Retry-After`-only (forfeits the self-upgrading path).
+
+### Corrections to prior repo positions (annotated in place)
+
+- `baseline-03b`'s "editorial objection → format probably stable"
+  inference falsified by the editors' own review response; struck through
+  with a dated note.
+- `baseline-03e`'s closing endorsement of the 2026-11-24 trigger is
+  overridden by `baseline-03f`'s revival-mechanics finding (conflict
+  surfaced in `03f`, not averaged).
+
+**Evidence:** `baseline-03` §7 (OP-010 row) · `baseline-03b` (as
+annotated) · `baseline-03e` · `baseline-03f`.

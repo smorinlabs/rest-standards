@@ -150,3 +150,35 @@ primary-sourced); ASP.NET Core .NET 7→8 `type` identity break;
 `httpstatuses.com` domain repurposing; Belgif's live `href`-churn warning;
 Cloudflare's stability promises living on extension members
 (`baseline-02e`).
+
+---
+
+## AC-007 (completed) — Field casing: snake_case, bodies and query parameters
+
+**Decision (2026-08-09): RATIFIED.** `AC-007` (one casing convention across
+bodies and query parameters — already proposed as MUST) is completed with
+the concrete choice: **`snake_case`**, enforced by the Zalando-style
+pattern `^[a-z_][a-z_0-9]*$` for body properties and `^[a-z][_a-z0-9]*$`
+for query parameters.
+
+**Classification:** project policy `[POLICY]` — the survey establishes that
+no evidence can settle the choice itself; the value is uniformity.
+
+**Justification:** `[COMPARATIVE]` the field splits two ways — snake_case
+(Stripe, GitHub, Twilio bodies, Shopify; Zalando mandates it) vs camelCase
+(Microsoft Graph; Google's JSON, which is machine-derived from snake_case
+protos via the proto3 JSON mapping). Zalando is the only surveyed guideline
+mandating body+query consistency, which `AC-007` requires; Twilio's
+snake-bodies/PascalCase-params split is the documented anti-pattern.
+snake_case also matches the conventions this standard has already aligned
+with (Standard Webhooks headers/secrets, Cloudflare's extension members).
+
+**Options declined:** camelCase (JS idiom; rarer for query params among
+surveyed vendors) · deferral (costs a structural lock that field-selection
+and filter-grammar items want settled).
+
+**Confidence:** high that one convention is required (`AC-007` as
+proposed); the concrete pick is policy, not evidence.
+
+**Evidence:** `survey-03` finding 1 and Table A · `survey-02` finding 4 ·
+`baseline-02` §7 (AC-007 row).

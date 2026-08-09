@@ -91,12 +91,21 @@ Critically, he also wrote that **"the technical design presented seems sound"**
 and that the appendix B examples *"suggest several aspects have been
 thoughtfully considered."*
 
-`[INFERENCE]` **This is an editorial objection, not a design objection**, and
+> **Falsified 2026-08-09 by `baseline-03f-ratelimit-draft-trajectory`.** The
+> inference below does not survive the editors' own response to the review:
+> Pardue's largest concern was parameter extensibility (not editorial), and
+> the editors' answering PR #166 **renames the wire parameters** (`r`→`a`,
+> `t`→`w`) and adds five IANA registries. The wire format is a moving
+> target, not "probably stable." The expiry-based re-check trigger below is
+> also superseded — the draft has expired and revived three times, so
+> expiry is procedural noise; see `baseline-03f` for the re-keyed triggers.
+
+~~`[INFERENCE]` **This is an editorial objection, not a design objection**, and
 the two have opposite implications for adoption. A design objection would mean
 the wire format may change and adopting it is risky. An editorial objection
 means the specification is hard to read but what it specifies is probably
 stable. draft-11 landed four months after the review, consistent with the
-editorial pass Pardue asked for.
+editorial pass Pardue asked for.~~
 
 A summary of the draft history characterized this as *"substantive challenges"*
 with *"no clear resolution pathway."* Reading the review itself does not support

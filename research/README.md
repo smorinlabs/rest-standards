@@ -101,8 +101,12 @@ against primary sources with a two-source minimum.
 | `baseline-03c-webhook-threat-model` | What is webhook signing for, and how do vendor schemes fare against it? | `2026-08-09` | **Purpose confirmed (security).** 13 invariants derived; all documented failures are receiver-side; RFC 9421 alone does not sign the body — needs RFC 9530 pairing |
 | `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
 | `baseline-03e-ratelimit-field-survey` | What does the industry actually emit for rate limits? | `2026-08-09` | **No convergence.** X-trio is a plurality (11/31), not a majority; 11/31 publish no quota state; exactly one draft-11-shaped emitter (Cloudflare, uncited); every IETF citation in the wild is draft-06 or earlier — the superseded trio shape |
+| `baseline-03f-ratelimit-draft-trajectory` | Does the RateLimit draft have a path to RFC, and what is normatively available instead? | `2026-08-09` | **MUST rejected on RFC 2026 grounds.** Draft expired+revived 3×, no AD/WGLC/milestone, wire format still moving (PR #166 renames parameters); falsifies `03b`'s "editorial → stable" inference; recommends MUST 429+`Retry-After` (published standards) + SHOULD pinned draft-11 fields, contingency re-keyed off expiry |
 
-**Dated re-check triggers:** 2026-11-24 (RateLimit draft expiry, `OP-010`) ·
+**Dated re-check triggers:** `OP-010` semi-annual review, next **2027-02-09**
+(upgrade if `RateLimit` lands in the IANA field registry; re-pin on syntax
+change — watch draft PR #166 / issue #158; withdraw only on 18-month
+abandonment; 2026-11-24 is only a check for whether a draft-12 appeared) ·
 Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
 or openapi-generator #22728 closing (`AC-001`) · AdCP 4.0 release and Standard
 Webhooks issue #34 (`OP-016`) · 2026-11-15, `draft-knauer-secure-webhook-token`
@@ -122,6 +126,8 @@ the quick-citation index; the files are authoritative.
 | `OP-016` | 2026-08-09 | Webhook signing **MUST**, scheme by trust topology — Standard Webhooks for shared-secret; RFC 9421 + RFC 9530 for cross-org; SHA-1 banned; 13 invariants | `decisions/baseline-03-operational-practice.decision.md` |
 | Resource orientation | 2026-08-09 | **MUST** be resource-oriented — nouns + standard verbs; non-CRUD ops as POST action sub-resource (syntax deferred to the action-syntax item); no RPC carve-out | `decisions/baseline-01-http-semantics.decision.md` |
 | Pluralization | 2026-08-09 | **MUST** plural collections; singleton/config exception (`/user`, `me` pattern); irregulars: one form, consistent | `decisions/baseline-01-http-semantics.decision.md` |
+| `OP-010` (+ item 22) | 2026-08-09 | **MUST** 429 + `Retry-After` (published standards); **SHOULD** draft-11 `RateLimit` fields as `[POLICY]`; proprietary headers documented incl. epoch-vs-delta; contingency re-keyed off expiry (IANA upgrade / re-pin / 18-mo withdraw) | `decisions/baseline-03-operational-practice.decision.md` |
+| `AC-007` (completed) | 2026-08-09 | **snake_case** for bodies and query params, regex-enforced (`^[a-z_][a-z_0-9]*$`) | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 
