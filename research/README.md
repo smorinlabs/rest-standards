@@ -86,19 +86,39 @@ confidence, not ratified policy** — see the series table above.
 ### Gate B follow-up leaves
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles. Each verified its claims against primary sources with a two-source
-minimum.
+principles, plus one run 2026-08-09 during Gate C. Each verified its claims
+against primary sources with a two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |
 | `baseline-01b-query-deployment` | Is RFC 10008 QUERY deployed enough to promote `HS-009`? | `2026-07-25` | **No.** `HS-009` stays `MAY` — no CDN does body-keyed caching |
 | `baseline-02b-openapi-tooling` | Is OpenAPI 3.2 tooling mature enough for `AC-001`? | `2026-07-25` | **No.** `AC-001` revised to accept 3.1 or 3.2; JSON Schema pin strengthened |
-| `baseline-02c-problem-details-adoption` | Does the inference behind `AC-003` hold? | `2026-07-25` | **Yes, strengthened.** Confidence raised |
+| `baseline-02c-problem-details-adoption` | Does the inference behind `AC-003` hold? | `2026-07-25` | **Yes, strengthened.** Confidence raised — *partially superseded by `baseline-02d`* |
+| `baseline-02d-greenfield-adoption` | Do new (2023+) APIs adopt RFC 9457, and does the standard survive its critics? | `2026-08-09` | **Mixed.** CAMARA rejection falsifies `02c`'s absence claim; no credible alternative exists; keep `MUST`, confidence back to moderate, re-argue |
+| `baseline-02e-cloudflare-implementation` | What exactly did Cloudflare ship on 2026-03-11, live-verified? | `2026-08-09` | **Strong precedent for the shape, weak for the obligation.** Supports "capable of returning" wording + carve-out; `type` is a docs affordance, not the identity — stability lives in extension members |
+| `baseline-02f-problem-type-semantics` | What should a greenfield standard mandate for RFC 9457 `type`? | `2026-08-09` | **Split identity from documentation.** Stable `https` `type` 1:1 with `code`, dereference optional, docs in a separate member; `about:blank` ban proposed; IETF back-compat rationale now primary-sourced |
 | `baseline-03b-signatures-and-ratelimit` | Do `OP-016` and `OP-010` survive contact with reality? | `2026-07-25` | **Split.** `OP-016` raised; `OP-010` lowered with an expiry contingency |
+| `baseline-03c-webhook-threat-model` | What is webhook signing for, and how do vendor schemes fare against it? | `2026-08-09` | **Purpose confirmed (security).** 13 invariants derived; all documented failures are receiver-side; RFC 9421 alone does not sign the body — needs RFC 9530 pairing |
+| `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
 
 **Dated re-check triggers:** 2026-11-24 (RateLimit draft expiry, `OP-010`) ·
 Spring Framework 7.1, targeted November 2026 (`HS-009`) · swagger-parser #2248
-or openapi-generator #22728 closing (`AC-001`).
+or openapi-generator #22728 closing (`AC-001`) · AdCP 4.0 release and Standard
+Webhooks issue #34 (`OP-016`) · 2026-11-15, `draft-knauer-secure-webhook-token`
+expiry (`OP-016`).
+
+## Decision index — `decisions/` (Gate C, in progress)
+
+The ADR layer. One file per stem, paired with its prompt and reports by the
+naming convention; each entry records the ratified rule, its Phase 2
+classification, the evidence chain, and the options declined. This table is
+the quick-citation index; the files are authoritative.
+
+| ID | Decided | Outcome (one line) | File |
+| --- | --- | --- | --- |
+| `AC-003` | 2026-08-09 | RFC 9457 `problem+json` ratified **MUST** — "capable of returning" wording, infrastructure carve-out, nothing premised on the IANA registry; re-argued as "no credible alternative" | `decisions/baseline-02-api-contracts.decision.md` |
+| `AC-004` (amended) | 2026-08-09 | `type` = stable https URI 1:1 with `code` via standard-fixed template; dereference optional; docs in separate `documentation` member; `about:blank` banned | `decisions/baseline-02-api-contracts.decision.md` |
+| `OP-016` | 2026-08-09 | Webhook signing **MUST**, scheme by trust topology — Standard Webhooks for shared-secret; RFC 9421 + RFC 9530 for cross-org; SHA-1 banned; 13 invariants | `decisions/baseline-03-operational-practice.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

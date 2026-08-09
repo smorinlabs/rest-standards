@@ -71,8 +71,16 @@ documentation on both sides.
 
 ## Disconfirming evidence — sought, not found
 
-`[FACT — absence]` No documented case was located of a greenfield API
-evaluating RFC 9457 and choosing a proprietary shape on the merits.
+> **Superseded 2026-08-09 by `baseline-02d-greenfield-adoption`.** The absence
+> claim below is falsified: CAMARA (Linux Foundation) evaluated RFC 9457 in
+> minuted issues #133/#157 and its TSC decided "not to be implemented"
+> (2024-04-04/15). Two of its three rejection arguments are the incumbency
+> mechanism this report identified; one (`type` semantics) is a genuine merits
+> objection. The confidence raise this section supported is withdrawn — see
+> `baseline-02d` for the re-argued case.
+
+~~`[FACT — absence]` No documented case was located of a greenfield API
+evaluating RFC 9457 and choosing a proprietary shape on the merits.~~
 
 `[INFERENCE]` This absence is **weak** evidence and must be labeled as such.
 Design rationales for rejecting a standard are rarely published; absence of a

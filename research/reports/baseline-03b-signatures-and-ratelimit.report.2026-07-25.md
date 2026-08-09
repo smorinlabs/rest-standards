@@ -30,6 +30,15 @@ header pointing at the bot's key directory, and a well-known URL convention at
 `[FACT]` Cloudflare, Amazon, Akamai, and OpenAI back Web Bot Auth, with an IETF
 working group chartered in 2026.
 
+> **Scope capped 2026-08-09 by `baseline-03d-webhook-signing-adoption`.** The
+> IETF webbotauth WG charter explicitly excludes *"authenticating access to
+> content not intended for human consumption (e.g., HTTP APIs, agent-to-agent
+> interfaces)"* — so Web Bot Auth will not grow into a webhook profile, and
+> this deployment must not be read as a leading indicator for webhook
+> signing. It remains valid evidence that RFC 9421 is implementable at scale,
+> and nothing more. Direct webhook deployments of RFC 9421 now exist instead
+> (UCP, AdCP, Qerko) — see `baseline-03d`.
+
 ### The distinction that governs `OP-016`
 
 `[INFERENCE]` This is strong evidence for one claim and no evidence for
