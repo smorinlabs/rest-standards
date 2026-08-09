@@ -117,7 +117,7 @@ five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
 would weaken the bearer default), any MCP proof-of-possession extension,
 OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
 
-## Decision index — `decisions/` (Gate C, in progress)
+## Decision index — `decisions/` (Gate C, complete 2026-08-09)
 
 The ADR layer. One file per stem, paired with its prompt and reports by the
 naming convention; each entry records the ratified rule, its Phase 2

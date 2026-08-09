@@ -263,7 +263,8 @@ downloads/week — but **opt-in and off by default**), and
 downloads, 0 GitHub stars**.
 
 `[FACT]` **2. `standardHeaders: true` resolves to Generation A.** Verbatim
-from `source/rate-limit.ts` lines 197–201:
+from `source/rate-limit.ts` lines 197–201 — typos and the unbalanced
+backtick are preserved from the upstream source comment:
 
 ```ts
 // The default value for the `standardHeaders` option is `false`. If set to

@@ -38,7 +38,7 @@ mandate it and neither uses Standard Webhooks for the signature.
 | Repo | `standard-webhooks/standard-webhooks`, created 2023-08-27, not archived |
 | License | Apache-2.0 |
 | Spec version | **1.0.0** — the string `Version: 1.0.0` in `spec/standard-webhooks.md` |
-| Spec last substantively edited | **2025-02-16** (`Add timetamps formating details ISO_8601 (#237)`); previous edit 2024-04-12 |
+| Spec last substantively edited | **2025-02-16** (`Add timetamps formating details ISO_8601 (#237)` — typos in original commit title); previous edit 2024-04-12 |
 | Repo activity | Active: last push 2026-08-05; 1,722 stars, 66 forks, 57 open issues |
 | Tags/releases | `v1.0.0` 2025-12-31, `v1.0.1`+`v1.0.2` 2026-02-18 |
 | Standards body | **None.** A Technical Steering Committee of eight individuals |
