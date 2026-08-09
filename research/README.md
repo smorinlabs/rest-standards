@@ -138,6 +138,9 @@ the quick-citation index; the files are authoritative.
 | DELETE response | 2026-08-09 | **204 No Content**; soft-delete exception returns 200 + tombstone | `decisions/baseline-01-http-semantics.decision.md` |
 | Money encoding | 2026-08-09 | **Minor-unit integer + ISO 4217 `currency`** (owner choice over recommended decimal string; exponent-table consequence noted) | `decisions/baseline-02-api-contracts.decision.md` |
 | `AC-001` (completed) | 2026-08-09 | **OpenAPI 3.1 floor**; 3.2 gated on verified toolchain; JSON Schema 2020-12 pin stands | `decisions/baseline-02-api-contracts.decision.md` |
+| BCP 190 posture | 2026-08-09 | **State the scope reading** — house standard constraining its own URI space is not BCP 190's harm | `decisions/baseline-01-http-semantics.decision.md` |
+| HATEOAS posture | 2026-08-09 | **Honest description** — resource-oriented HTTP, not Fielding-complete REST; divergence noted openly | `decisions/baseline-01-http-semantics.decision.md` |
+| Pagination links | 2026-08-09 | **Body envelope only**; no RFC 8288 `Link` headers for pagination | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

@@ -271,3 +271,21 @@ Redocly CLI has full support. **Declined:** flat 3.1 (blocks verified 3.2
 toolchains) · free choice (invites the silent-lint failure).
 **Confidence:** high (floor) · moderate (conditional clause).
 **Evidence:** `baseline-02` §7 (AC-001 row) · `baseline-02b`.
+
+---
+
+## Pagination links (companion to AC-013/AC-014) — body envelope only
+
+**Decision (2026-08-09): RATIFIED.** Pagination state lives **only** in the
+ratified `AC-014` body envelope (items + continuation state). The standard
+does **not** emit RFC 8288 `Link` headers for pagination.
+
+**Classification:** project policy.
+**Justification:** one source of truth — dual emission creates two places a
+cursor can live, which drift under maintenance. `[COMPARATIVE]` Zalando
+forbids the `Link` header with JSON media types (links in the payload);
+GitHub's header-driven model is the counter-practice, declined.
+**Confidence: moderate-high.**
+**Evidence:** `survey-03` (Zalando `Link`-header prohibition) · `survey-04`
+(pagination practice) · `baseline-02` §8.4 (listed as the open policy
+item).

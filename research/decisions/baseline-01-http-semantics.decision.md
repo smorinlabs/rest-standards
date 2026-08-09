@@ -167,3 +167,38 @@ guideline. **Declined:** the Stripe receipt pattern (requires a per-resource
 confirmation schema; diverges from every surveyed guideline).
 **Confidence: moderate-high.**
 **Evidence:** `survey-02` finding 5 · `baseline-01` §8.3.
+
+---
+
+## Standards posture — BCP 190 scope reading
+
+**Decision (2026-08-09): RATIFIED.** The standard **states explicitly** the
+scope reading of BCP 190 (RFC 8820, URI Design and Ownership): BCP 190
+restrains interoperability standards from constraining *other parties'* URI
+spaces; a house standard constraining **its own organization's
+deployments** is not the harm the BCP addresses. This position licenses the
+ratified URI rules (path versioning, kebab-case segments, plural
+collections, action sub-paths).
+
+**Classification:** project policy — an interpretation, stated as such.
+**Declined:** silence (invites the objection ad hoc from every reviewer who
+knows the BCP). **Confidence: high.**
+**Evidence:** `baseline-01` §8.2 (which instructs stating the reading
+explicitly).
+
+---
+
+## Standards posture — HATEOAS
+
+**Decision (2026-08-09): RATIFIED.** The standard **describes itself
+honestly**: resource-oriented HTTP, not Fielding-complete REST. It does not
+require hypermedia controls, does not claim Fielding conformance, and
+notes the divergence openly.
+
+**Classification:** project policy.
+**Justification:** `[COMPARATIVE]` every surveyed API declines HATEOAS;
+`baseline-01` §8.2: "The standard cannot both claim Fielding conformance
+and describe the field." **Declined:** mandating HATEOAS (no field
+practice, no client tooling) · claiming REST-in-Fielding's-sense anyway
+(knowingly falsifiable). **Confidence: high.**
+**Evidence:** `baseline-01` §8.2.
