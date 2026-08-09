@@ -251,3 +251,46 @@ trailing slash, HS-014 in caching posture, HS-016/017 as caching tier
 zero). Nothing in the twenty conflicts with any walked decision.
 
 **Evidence:** `baseline-01` §7 (the principles table, per-row citations).
+
+---
+
+## Addendum A3 — Status-code contested rows (+ drafting rows en bloc)
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, three contested rows
+plus five drafting rows.** Raised by the gap review's closed
+status-code-table finding; the full "which codes, when" table is Phase 3
+drafting, anchored by these rulings.
+
+1. **Create responses:** every create returns **`201 Created` with a
+   `Location` header** to the new resource — via POST or
+   PUT-with-client-supplied-ID alike (RFC 9110 semantics); updates return
+   `200` with the representation. Stripe's flat-200 declined as the
+   documented outlier. Confidence high.
+2. **Partial-bulk status (completes `AC-018`):** **`200` with the
+   per-item outcome envelope**; `207 Multi-Status` declined — WebDAV
+   (RFC 4918) baggage, poor generator support, Zalando's
+   only-with-WebDAV-body rule, and the envelope is authoritative (the
+   same one-source-of-truth logic as the pagination-links decision).
+   Confidence moderate-high.
+3. **Existence masking:** object-level authorization denials default to
+   **`404 Not Found`** so existence does not leak across tenants (pairs
+   with `OP-006` — unguessability is not access control — and the
+   in-handler object-authorization decision; the GitHub private-repo
+   model). `403 Forbidden` is permitted only where existence is already
+   public, or the caller is authenticated within the resource's tenant
+   and merely lacks a role. Confidence moderate-high.
+
+**Drafting rows ratified en bloc:** `405` with a mandatory `Allow`
+header · `415` for unsupported media types (load-bearing in A1's PATCH
+rule) · `428 Precondition Required` where `HS-015` demands `If-Match`
+and it is absent · `401`-vs-`403` discipline (401 = unauthenticated,
+403 = unauthorized) · empty collection = `200` with an empty array,
+never `404`.
+
+**Classification:** protocol requirements where RFC 9110/9457 semantics
+decide (create/201, 405+Allow, 415, 428, 401/403); project policy for the
+existence-masking default and the 207 declination.
+
+**Evidence:** `survey-02` finding 5 (Stripe 200-on-create outlier) ·
+RFC 9110 §15.3 · RFC 4918 (207's WebDAV definition) · Zalando 207 rule ·
+`OP-006` and the five-axes authorization decision · the gap review.
