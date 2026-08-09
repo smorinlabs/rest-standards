@@ -372,6 +372,41 @@ vendor commits to it) · ≥1 hour (loses overnight-backoff protection).
 
 ---
 
+## Addendum A2 — Sorting, ordering determinism, pagination request names
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, four parts.** Raised by
+the CLI-standards gap review (`docs/reviews/2026-08-09-cli-standards-gap-review.md`);
+sorting was the only `PLAN.md`-scoped topic with no Gate C entry.
+
+1. **Ordering determinism (MUST):** every collection documents a total,
+   stable default order, ties broken by an immutable key (`id`). Required
+   for `AC-013` cursor soundness — a cursor over nondeterministic order
+   silently skips or duplicates rows.
+2. **Sort syntax (MAY offer; fixed when offered):** `sort` query parameter,
+   comma-separated snake_case field names, `-` prefix descending, bare name
+   ascending, multi-key in listed order, restricted to an enumerated
+   sortable-field set (bounded-work per `OP-009`). JSON:API/Zalando
+   convergence; GitHub's two-param form (no multi-key) and AIP's `order_by`
+   mini-DSL declined.
+3. **Pagination request parameters:** **`cursor`** and **`limit`** (with
+   documented default and maximum). Completes `AC-013`/`AC-014`, which
+   fixed only the response envelope. AIP `page_token`/`page_size` and
+   Stripe `starting_after` declined (Stripe's self-documenting object-ID
+   name doesn't transfer to opaque tokens).
+4. **Correlation-ID header (completes `OP-018`):** **`request-id`**,
+   emitted on every response including errors. Stripe's and Anthropic's
+   name; RFC 6648 deprecates new `X-` prefixed fields, ruling out
+   `X-Request-Id` for a greenfield standard; `traceparent`-only declined
+   (ties support lookup to trace infrastructure).
+
+**Classification:** project policy throughout.
+**Confidence:** high (determinism — a soundness requirement) ·
+moderate-high (the three namings — conventions with clear field anchors).
+**Evidence:** `survey-04` (sort syntax table, Zalando reserved names) ·
+`baseline-03e` (request-id practice) · the gap review.
+
+---
+
 ## Batch ratification — the fifteen remaining AC principles
 
 **Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`
