@@ -147,6 +147,8 @@ the quick-citation index; the files are authoritative.
 | `AC-017` (completed) | 2026-08-09 | Idempotency-key retention **≥24h** floor | `decisions/baseline-02-api-contracts.decision.md` |
 | Deprecation window | 2026-08-09 | Deprecated major supported **≥12 months** after successor; sunset announced at deprecation | `decisions/baseline-03-operational-practice.decision.md` |
 | Webhook dead-letter | 2026-08-09 | **≥72h** exponential retries, then **≥30d** dead-letter store + redelivery API | `decisions/baseline-03-operational-practice.decision.md` |
+| Support tiers | 2026-08-09 | **AIP-style path tiers** — `/v1alpha…`/`/v1beta…`/`/v1`; GA-only deprecation guarantees | `decisions/baseline-03-operational-practice.decision.md` |
+| Auth per client class | 2026-08-09 | **OAuth REQUIRED for delegated authority; API keys acceptable server-to-server single-trust**; BCP 240 wherever OAuth | `decisions/baseline-03-operational-practice.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

@@ -286,3 +286,53 @@ ledger (drops day-long-outage consumers to manual recovery) · retries-only
 **Confidence: moderate.**
 **Evidence:** `survey-07` (retry policies) · `survey-05` · `baseline-03`
 §8.3 (dead-letter retention listed as org policy).
+
+---
+
+## Support tiers
+
+**Decision (2026-08-09): RATIFIED — AIP-style, explicit in the path.**
+Three stability tiers, marked **inside the version path segment**:
+`/v1alpha…` (experimental — no stability promise, may change or vanish
+without notice, excluded from the deprecation policy, MAY be
+access-gated), `/v1beta…` (preview — best-effort stability, breaking
+changes with notice, outside the 12-month floor), `/v1` (GA — the full
+ratified deprecation policy applies). Graduation from a pre-GA tier to GA
+is an explicit client migration, deliberately: the stability contract
+changed.
+
+**Classification:** project policy, on AIP-185's channel convention.
+**Justification:** the tier marker reuses the already-ratified
+major-version path segment — one mechanism, visible at every call site,
+log line, and code review; a docs-only tier is invisible exactly where the
+risk is taken. **Declined:** docs-only tiers · header-carried tiers.
+**Confidence: moderate-high.**
+**Evidence:** `survey-06` (AIP-185 channels, Google section) ·
+`baseline-03` §8.3.
+
+---
+
+## Auth mechanism per client class
+
+**Decision (2026-08-09): RATIFIED — conditional by client class; the
+boundary is authority, not preference.** Both mechanisms are supported:
+**OAuth/OIDC is REQUIRED** wherever a user delegates authority or a third
+party acts on a user's behalf (an API key cannot carry scoped, revocable,
+per-user consent — it authenticates a caller, not a delegation). **API
+keys are acceptable** for server-to-server traffic with a single trust
+relationship. Wherever OAuth is used, the BCP 240 rules already proposed
+as `OP-003`/`OP-004` apply (no password grant, PKCE for public clients,
+exact redirect-URI matching, no implicit grant).
+
+**Classification:** evidence-backed default (the OAuth-side rules are
+BCP 240, a published Best Current Practice); project policy (the
+client-class boundary itself).
+**Justification:** `[FACT]` RFC 9700 governs OAuth and is silent on API
+keys; `[COMPARATIVE]` seven of eight surveyed vendors ship key-based auth —
+keys are a legitimate mechanism, not a legacy one; neither mechanism is
+universally correct (`baseline-03` settled-axes table, High confidence).
+**Declined:** OAuth-everywhere (ceremony without security in single-trust
+paths) · leave-per-API (someone ships a key where user authority is
+exercised). **Confidence: high.**
+**Evidence:** `baseline-03` settled-axes row "OAuth/OIDC vs API keys",
+OP-003/OP-004 rows · RFC 9700.
