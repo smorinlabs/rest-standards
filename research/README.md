@@ -131,6 +131,10 @@ the quick-citation index; the files are authoritative.
 | `AC-007` (completed) | 2026-08-09 | **snake_case** for bodies and query params, regex-enforced (`^[a-z_][a-z_0-9]*$`) | `decisions/baseline-02-api-contracts.decision.md` |
 | `OP-015` (completed) | 2026-08-09 | **Major version in path** (`/v1`), compatible-evolution-first; majors rare; minor/patch never in URIs | `decisions/baseline-03-operational-practice.decision.md` |
 | `AC-016` (completed) | 2026-08-09 | **`Idempotency-Key` header**, Stripe semantics (fingerprint + reject reuse-with-different-payload), `[POLICY]` — draft expired, never cite as standard | `decisions/baseline-02-api-contracts.decision.md` |
+| Path depth | 2026-08-09 | Nest 1 level as the norm, **ceiling 3 resources/path**, prefer flat + query filters | `decisions/baseline-01-http-semantics.decision.md` |
+| Trailing slash | 2026-08-09 | **None canonical**; trailing-slash request SHOULD 308 to canonical; never semantic | `decisions/baseline-01-http-semantics.decision.md` |
+| Action syntax | 2026-08-09 | **Sub-path verb** `POST /{collection}/{id}/{action}` + reserved-word rule; `:verb` declined | `decisions/baseline-01-http-semantics.decision.md` |
+| Path casing (rider) | 2026-08-09 | **kebab-case** segments (`^[a-z][a-z\-0-9]*$`) | `decisions/baseline-01-http-semantics.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

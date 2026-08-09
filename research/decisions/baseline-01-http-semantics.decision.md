@@ -75,3 +75,77 @@ MUST-singular (no surveyed vendor or guideline mandates it).
 
 **Evidence:** `survey-02` finding 2 and orientation table · `baseline-01`
 §8.3 (listed as organization policy for Gate C).
+
+---
+
+## Structural lock — Path depth
+
+**Decision (2026-08-09): RATIFIED.** Nest a sub-resource only where the
+child cannot exist outside the parent; **one sub-resource level is the
+norm; hard ceiling of three resources per path**; beyond that, flatten and
+relate with query filters (the Stripe `?customer=` pattern).
+
+**Classification:** project policy, grounded in comparative practice.
+**Justification:** `[COMPARATIVE]` practice is shallow — Stripe flat +
+filters (max ~2 with action), Shopify one level with flat twins, Zalando
+caps at 3, AIP discourages depth; GitHub's routine 4+ is the outlier.
+**Declined:** strict-flat ceiling of 2 (forbids natural children like
+`/orders/{id}/line-items`) · guidance-only (no enforceable line).
+**Confidence: moderate-high.**
+**Evidence:** `survey-02` finding 8, Table C.
+
+---
+
+## Structural lock — Trailing slash
+
+**Decision (2026-08-09): RATIFIED.** Canonical URIs have **no trailing
+slash**; a trailing slash MUST NOT carry semantics or identify a different
+resource; a trailing-slash request SHOULD receive **308 Permanent
+Redirect** to the canonical form (308 preserves method and body per the
+already-settled redirect defaults in `baseline-01`).
+
+**Classification:** project policy; near-unanimous convention.
+**Justification:** `[COMPARATIVE]` Zalando: "MUST Avoid Trailing Slashes";
+no surveyed vendor uses them. **Declined:** hard 404 (punishes a harmless
+slip). **Confidence: high — near-false fork.**
+**Evidence:** `survey-02` Zalando rules and Table (trailing-slash column).
+
+---
+
+## Structural lock — Custom-action syntax
+
+**Decision (2026-08-09): RATIFIED.** Non-CRUD operations use the
+**sub-path verb** form: `POST /{collection}/{id}/{action}` (e.g.
+`POST /payment_intents/{id}/capture`), completing the ratified
+POST-action-sub-resource default. **Reserved-word rule:** an action
+segment is a documented verb and can never be used as a collection name
+under the same parent.
+
+**Classification:** project policy.
+**Justification:** `[COMPARATIVE]` sub-path is the majority practice
+(Stripe, GitHub, Shopify); `:verb` (AIP-136) is collision-proof but
+carries colon-handling variance across routers/tooling, pairs with
+camelCase verbs (clashing with the ratified casing), and is a
+Google-ecosystem signature. Body-flag dispatch was already excluded by
+`HS-007`. **Confidence: moderate.**
+**Evidence:** `survey-02` orientation table (actions column) ·
+`baseline-01` "Actions that resist CRUD" default.
+
+---
+
+## Structural lock — Path-segment casing (rider, added at ratification)
+
+**Decision (2026-08-09): RATIFIED.** Path segments use **kebab-case**
+(`/sales-order-items`), pattern `^[a-z][a-z\-0-9]*$`. Added to the pile as
+a rider with owner consent — the body/query snake_case lock (`AC-007`) did
+not cover paths.
+
+**Classification:** project policy `[POLICY]` — `survey-02` finding 3:
+"genuinely contested — four house styles", no cross-field winner.
+**Justification:** kebab-case is the only style with a published
+enforceable rule (Zalando), is visually distinct from snake_case
+parameters, and produces shift-key-free URLs. **Declined:** snake_case
+paths (coin-flip; underscores vanish under link underlines) · leaving it
+undecided. **Confidence: moderate — a genuine coin-flip against
+snake_case, decided for enforceability.**
+**Evidence:** `survey-02` findings 3 and Zalando naming rules.
