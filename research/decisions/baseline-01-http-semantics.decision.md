@@ -225,3 +225,29 @@ API to re-derive the tiers). **Confidence: moderate-high.**
 **Evidence:** `baseline-01` threat table (cache rows), §6 "Caching
 authenticated / mutable resources" (SETTLED mechanism / POLICY
 aggression), HS-014.
+
+---
+
+## Batch ratification — HS-001 through HS-020
+
+**Decision (2026-08-09): RATIFIED en bloc, as proposed** in
+`baseline-01` §7, per the Gate C batch-confirm procedure the owner
+selected at intake (one batch per report for uncontested principles) and
+confirmed for this report. No principle was pulled out.
+
+Covers: protocol hygiene (HS-001–003) · URI discipline (HS-004–005) ·
+method semantics (HS-006–009; `HS-009` QUERY stays MAY with the Spring
+7.1 / Nov 2026 promotion trigger) · status codes (HS-010–013) ·
+conditional requests (HS-014–015) · caching mechanism (HS-016–018) ·
+extension hygiene (HS-019–020).
+
+**Classification:** per each row's evidence class in `baseline-01` §7 —
+predominantly protocol requirements grounded in RFC 9110/9111, with
+HS-009's MAY and HS-019/020's SHOULDs as evidence-backed defaults.
+
+**Notes:** four principles were already load-bearing inside individually
+ratified decisions before this batch (HS-007 in action syntax, HS-013 in
+trailing slash, HS-014 in caching posture, HS-016/017 as caching tier
+zero). Nothing in the twenty conflicts with any walked decision.
+
+**Evidence:** `baseline-01` §7 (the principles table, per-row citations).
