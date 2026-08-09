@@ -90,7 +90,14 @@ signatures does not negate the need for TLS… Message signatures provide
 message integrity over the covered message components but do not provide any
 confidentiality."*
 
-### Documented incidents and CVEs (all primary-verified)
+### Documented incidents and CVEs
+
+*(Sourcing note, corrected 2026-08-09: four of six rest on primary records —
+GHSA advisories, the Jenkins security advisory, the researcher's own
+disclosure. Two rest on secondary writeups of real CVE IDs: CVE-2026-4986 on
+a researcher blog and CVE-2026-56357 on a VulnCheck advisory. The
+receiver-side-failure conclusion already carries moderate-high, not high,
+confidence partly for this reason.)*
 
 | Ref | What | Threat |
 |---|---|---|

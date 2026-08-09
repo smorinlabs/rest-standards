@@ -22,9 +22,11 @@ Treat any summarizer-mediated normative quote in this project as untrusted.
 
 ## Verdict first
 
-**The evidence supports rule shape (b) — MUST `Retry-After` on 429 per
-published standards, SHOULD the pinned draft fields — with the contingency
-re-keyed off expiry entirely.**
+**The evidence supports rule shape (b) — MUST `Retry-After` on 429 **as
+project policy grounded in published HTTP semantics** (RFC 6585 §4 itself
+says only MAY; the MUST is a deliberate house tightening — see Q4), SHOULD
+the pinned draft fields — with the contingency re-keyed off expiry
+entirely.**
 
 Rule shape (a) — MUST emit the IETF fields now — is **rejected by the
 evidence**, on four independent grounds, any one sufficient:
@@ -256,7 +258,11 @@ triple; **B7** = draft-07 dictionary; **C** = Gen C item-list (draft-08–11);
 
 ### The three sharpest measurements
 
-`[FACT]` **1. Exactly two Generation C emitters exist anywhere.**
+`[FACT]` **1. Exactly two revision-identifiable Generation C
+implementations exist anywhere** (Cloudflare's own API additionally emits
+draft-11-*shaped* fields — documented but revision-uncited and not
+wire-verified, per `baseline-03e` — so it is excluded from this stricter
+count).
 `express-rate-limit` at `standardHeaders: 'draft-8'` (58.2M npm
 downloads/week — but **opt-in and off by default**), and
 `trillium-ratelimit` v**0.0.2**, published 2026-07-15, **2,178 all-time

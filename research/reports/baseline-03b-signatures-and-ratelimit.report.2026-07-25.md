@@ -119,11 +119,20 @@ The risk is **not** that the header format is wrong. The risk is that the draft
 document — exactly the failure `baseline-02` documented for the Idempotency-Key
 draft.
 
-`OP-010` should therefore carry an explicit contingency: if the draft expires
-without renewal or advancement, fall back to a documented proprietary scheme
-and stop citing the draft. **This is a calendar item, not a research item.**
+> **Superseded 2026-08-09 by `baseline-03f` and the ratified `OP-010`
+> decision.** The expiry-keyed contingency below was re-keyed: the draft has
+> expired and revived three times (RFC 2026 §2.2 restarts the clock on any
+> revision), so expiry alone must not trigger withdrawal. The ratified
+> triggers are IANA registration (upgrade), wire-syntax change (re-pin), and
+> 18-month sustained abandonment (withdraw), reviewed semi-annually — next
+> 2027-02-09. 2026-11-24 remains only a check for whether a draft-12
+> appeared.
 
-**Re-check trigger: 2026-11-24.**
+~~`OP-010` should therefore carry an explicit contingency: if the draft expires
+without renewal or advancement, fall back to a documented proprietary scheme
+and stop citing the draft. **This is a calendar item, not a research item.**~~
+
+~~**Re-check trigger: 2026-11-24.**~~
 
 ---
 

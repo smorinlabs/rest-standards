@@ -425,8 +425,9 @@ Changed by commit `77c461e9` (#43232, 2022-08-26); more types added by
 
 `[INFERENCE]` Under §3.1.1's `MUST`, a conforming client dispatching on
 `type` saw **every problem type identity in the platform change** when a
-service upgraded .NET 7 → .NET 8. The most widely deployed Problem Details
-implementation shipped exactly the breaking change the RFC warns about, as a
+service upgraded .NET 7 → .NET 8. The framework that ships Problem Details
+as its out-of-the-box default (the only surveyed one to do so) shipped
+exactly the breaking change the RFC warns about, as a
 routine framework upgrade, with no deprecation path — and it did so because
 the identifier tracked *a third party renumbering its own documents* (RFC
 7231/7235 → RFC 9110). That is the single best-evidenced argument against
@@ -674,7 +675,7 @@ normative URI form.**
 
 **Why not (i).** `[INFERENCE]` (i) is the RFC's preference and is defensible,
 but it requires a multi-decade promise about a documentation URL, and the
-corpus contains a case where the most-deployed implementation in the world
+corpus contains a case where the default-emitting framework implementation
 broke every type identity as a routine upgrade, plus a case where a shipped
 `type` URL now serves unrelated content. A standard should not require a
 guarantee its own reference implementations demonstrably fail to keep. (v)

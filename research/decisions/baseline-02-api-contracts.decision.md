@@ -56,14 +56,17 @@ The original argument ("the field is converging on RFC 9457") is
 current guide still ships a proprietary `ErrorInfo`). The mandate stands on
 the replacement argument, which is better evidenced:
 
-1. **No credible alternative exists.** JSON:API errors and `google.rpc.Status`
-   are primary-verified as non-competitors (neither references RFC 9457;
+1. **No credible alternative exists** — `[INFERENCE]`, per `baseline-02d`,
+   supported by primary-verified comparisons: JSON:API errors and
+   `google.rpc.Status` are non-competitors (neither references RFC 9457;
    neither is a cross-vendor movement; JSON:API shares the all-optional
    weakness). What rejectors produce in practice is *n* mutually incompatible
    bespoke envelopes (CAMARA, Australia api.gov.au, US 18F, Anthropic — each
    different).
-2. **Adoption trend among standards-setting bodies is toward it**, with dated
-   currency: Zalando MUST; Netherlands tightening from linter-warning
+2. **Standards-setting bodies that adopt it are tightening, and the pattern
+   is regional rather than chronological** (`baseline-02d`: continental-EU
+   guidelines converge on it; Anglosphere guidelines are silent or custom).
+   Dated currency: Zalando MUST; Netherlands tightening from linter-warning
    (published 2025-08-27) to MUST (2026-07-09 draft); Belgium SHOULD;
    ACME/RFC 8555 at internet scale since 2019; Cloudflare network-wide
    2026-03-11 with a measured 55–64× payload/token reduction for agent
@@ -119,6 +122,9 @@ machine-readable `code` extension), with these amendments:
    standard mandates: `<https base>/<code, underscores to hyphens>` — e.g.
    `code: "out_of_credit"` ⇒ `type: "https://problems.example.com/out-of-credit"`.
    **The standard fixes the template shape; each API declares its base URI.**
+   The `code` grammar is snake_case only — `^[a-z][a-z0-9_]*$`, hyphens
+   excluded — so the underscore-to-hyphen mapping is injective and two codes
+   can never collide on one `type`.
 2. **Neither `type` nor `code` may change once published.** A change of
    meaning is a new problem type with a new pair.
 3. **Dereferencing `type` is a courtesy, never a contract.** A provider MAY
@@ -135,6 +141,11 @@ machine-readable `code` extension), with these amendments:
    rather than managing a two-mode rule.
 6. A `urn:` `type` is permitted for providers operating an IANA-registered
    URN namespace identifier (keeps Belgif-/ACME-style APIs conformant).
+   This is an **explicit exception to point 1's https requirement**: the
+   normative rule reads "an absolute URI under a domain the provider
+   controls — or, for providers operating an IANA-registered URN namespace
+   identifier, a URN in that namespace"; the 1:1 `code` binding and
+   immutability rules apply identically to both forms.
 
 ### Deliberate deviations from RFC 9457 — all permitted by it, all `[POLICY]`
 
@@ -205,9 +216,12 @@ signs an `idempotency-key` header as a covered component of its RFC 9421
 profile (`baseline-03d`) — answering the headers-escape-signatures
 objection for the architecture ratified in `OP-016`; both OpenAI's and
 Anthropic's SDKs carry dormant Stainless machinery wired for exactly this
-header (`baseline-02g`); headers keep keys out of URLs, access logs, and
-proxy caches. Against the query model: AIP-155 defines no
-same-key-different-payload behavior, so it cannot satisfy `AC-016`'s
+header (`baseline-02g`); headers keep keys **out of query strings**, which
+land in access logs, referrers, and URL-keyed caches by default — a header
+can still be logged by proxies and applications, so deployments that need
+the stronger guarantee MUST add explicit header-redaction and
+cache-key-exclusion configuration. Against the query model: AIP-155 defines
+no same-key-different-payload behavior, so it cannot satisfy `AC-016`'s
 fingerprinting requirement as specified. The three modern AI vendors ship
 no mechanism at all, so no counter-signal exists (`baseline-02g`).
 
@@ -256,9 +270,10 @@ reference uses floats).
 ## AC-001 (completed) — OpenAPI version pin: 3.1 floor, 3.2 gated on toolchain
 
 **Decision (2026-08-09): RATIFIED.** `AC-001`'s "3.1 or 3.2" fork closes
-as: **MUST publish OpenAPI 3.1**; OpenAPI 3.2 **MAY** be used only where
-the team's full toolchain — parser, linter, generator, docs renderer — is
-verified against it. The JSON Schema 2020-12 dialect pin stands
+as: **MUST publish an OpenAPI document, version 3.1 or — only where the
+team's full toolchain (parser, linter, generator, docs renderer) is
+verified against it — 3.2.** 3.1 is the unconditional default; a verified
+3.2 toolchain makes a 3.2 document fully compliant, not an exception. The JSON Schema 2020-12 dialect pin stands
 (strengthened by `baseline-02b`). The recorded re-check triggers
 (swagger-parser #2248, openapi-generator #22728) flip the default when
 they close.
@@ -317,6 +332,12 @@ resources). **Confidence: moderate.**
 A structured query DSL is permitted **only** as a separately-documented
 search endpoint, never mixed into collection listing. `AC-015`'s ban on
 exposing storage-engine syntax stands beneath both surfaces.
+
+**Grammar note (reconciles with `AC-007`):** the bracketed operator form is
+an explicit, enumerated extension of the ratified query-parameter grammar —
+the base name matches `^[a-z][_a-z0-9]*$`, and the suffix is restricted to
+exactly `[gte]`, `[gt]`, `[lte]`, `[lt]`. No other bracketed forms are
+permitted; `AC-007`'s pattern governs everywhere else.
 
 **Classification:** project policy.
 **Justification:** `[COMPARATIVE]` the two families split the field

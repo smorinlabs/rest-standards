@@ -314,7 +314,7 @@ gateways and libraries):
 
 | Category | Count | Members |
 |---|---:|---|
-| `X-RateLimit-{Limit,Remaining,Reset}` trio | 7 | GitHub, Discord, Vercel, Supabase Mgmt, Atlassian Jira, Zalando (prescription), + Tyk among gateways |
+| `X-RateLimit-{Limit,Remaining,Reset}` trio | 6 | GitHub, Discord, Vercel, Supabase Mgmt, Atlassian Jira, Zalando (prescription) — Tyk also emits it but is a gateway, outside this 31-surface count |
 | X-prefixed dimension-suffixed variants | 4 | OpenAI, Groq, Linear, Together AI |
 | Vendor-proprietary namespace | 5 | Anthropic, Stripe, Twilio, Shopify REST, MS Graph identity |
 | **Unprefixed IETF trio (draft-06 or earlier)** | **3** | MS SharePoint (draft-03, cited), Resend (draft-06, cited), GitLab (names only) |
@@ -322,7 +322,8 @@ gateways and libraries):
 | `Retry-After` only | 4 | Slack, Notion, Polar, MS Graph general |
 | No headers at all | 7 | Gemini, xAI, Mistral, Cohere, Supabase Auth, Google APIs/AIP, Shopify GraphQL |
 
-`[COMPARATIVE]` **The X-prefixed family is the plurality — 11 of 31 — but
+`[COMPARATIVE]` **The X-prefixed family is the plurality — 10 of 31
+(6 trio + 4 variants; corrected 2026-08-09, Tyk removed as a gateway) — but
 not a majority, and not stable.** The larger finding: **11 of 31 surfaces
 publish no quota state at all** (7 no headers + 4 `Retry-After` only).
 `[INFERENCE]` The field has not converged on a rate-limit header convention;
@@ -414,10 +415,13 @@ and a verbatim header line before it means anything.
 - **The most-deployed IETF-capable implementation ships the de-facto
   convention on and the standard fields off** (express-rate-limit's
   defaults) — a concrete measure of the migration cost.
-- **The expiry contingency (re-check 2026-11-24) remains the right
-  instrument, and this survey narrows what to watch for**: not another trio
-  adopter — it is a second `RateLimit-Policy` emitter, or Cloudflare stating
-  publicly which revision it tracks.
+- ~~**The expiry contingency (re-check 2026-11-24) remains the right
+  instrument**~~ *(overridden 2026-08-09 by `baseline-03f`, which had the
+  draft's three expiry-revival cycles in view — the ratified triggers are
+  IANA registration / wire-syntax re-pin / 18-month abandonment, reviewed
+  semi-annually)* — **this survey still narrows what to watch for**: not
+  another trio adopter — it is a second `RateLimit-Policy` emitter, or
+  Cloudflare stating publicly which revision it tracks.
 
 ### 3.6 Known weaknesses in this survey
 

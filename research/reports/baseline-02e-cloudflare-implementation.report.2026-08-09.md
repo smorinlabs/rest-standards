@@ -658,9 +658,9 @@ abstract identifier, nor why the IANA registry was skipped.
 ## Implications for the `AC-003` amendments
 
 Cloudflare is a **strong precedent for the shape and a weak precedent for the
-obligation** — they shipped the most-deployed RFC 9457 implementation on the
-internet while quietly declining the parts of the RFC that a naive mandate
-would enforce hardest.
+obligation** — they shipped the largest-scale RFC 9457 deployment documented
+in this corpus (network-wide, every plan) while quietly declining the parts
+of the RFC that a naive mandate would enforce hardest.
 
 ### (a) "Must be capable of returning" problem+json, with an infrastructure-error carve-out
 

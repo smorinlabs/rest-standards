@@ -35,8 +35,13 @@ expected to act on**. The scheme is selected by trust topology:
   **RFC 9421 HTTP Message Signatures with RFC 9530 `Content-Digest` as a
   covered component** and keys published at a discoverable key set,
   retaining `webhook-id`/`webhook-timestamp` as the delivery envelope.
-- Bespoke per-vendor HMAC schemes are **dropped from the rule** — every
-  property they offer, the Standard Webhooks scheme offers with interop.
+- Bespoke per-vendor HMAC schemes are **not a sanctioned default** — for
+  the shared-secret topology their only differentiating property over the
+  Standard Webhooks scheme is incumbent familiarity. (Narrow claim,
+  deliberately: individual vendor schemes do carry properties the SW scheme
+  lacks — Twilio's destination binding, for one — but those map to the
+  RFC 9421 branch's covered components, not to a reason to keep bespoke
+  HMAC; see `baseline-03c` §5.)
 - **SHA-1 is prohibited** — rationale: NIST retires SHA-1 for all
   applications by 2030-12-31 and SHA-256 costs nothing more. (Explicitly
   *not* "collisions break HMAC-SHA1" — RFC 6194 §3.3: they do not.)
@@ -57,8 +62,11 @@ expected to act on**. The scheme is selected by trust topology:
 
 I1 raw-byte base · I2 signed timestamp with enforced non-zero tolerance ·
 I3 signed unique delivery ID + dedupe · I4 sign everything the consumer acts
-on · I5 constant-time compare · I6 per-endpoint secrets ≥256 bits with
-overlap rotation · I7 fail closed on empty secret · I8 SHA-1 prohibited ·
+on · I5 constant-time compare · I6 per-endpoint secrets **≥256 bits
+`[POLICY]`** — deliberately stricter than the Standard Webhooks spec's
+24-byte (192-bit) floor; implementations under this standard reject
+shorter secrets even though the SW spec permits them — with overlap
+rotation · I7 fail closed on empty secret · I8 SHA-1 prohibited ·
 I9 reject unknown/legacy schemes · I10 verification as the default path
 (SDK helper, test vectors, negative vectors) · I11 RFC 9421 ⇒ RFC 9530
 covered component · I12 state the boundaries (authn, not authz; not a TLS
@@ -84,7 +92,8 @@ substitute) · I13 HTTPS-only delivery.
 
 **Confidence:** high (signing MUST + signed base) · moderate-high (Standard
 Webhooks as shared-secret default — discounted for frozen spec, vendor TSC,
-six of twelve README adopters failing verification, Svix's branded default
+four of the twelve named README adopters failing verification (three more
+deliver only via Svix — corrected count, `baseline-03d` §D), Svix's branded default
 headers) · moderate (9421 cross-org branch — two protocols and one fintech,
 all under ~12 months old).
 
@@ -169,7 +178,9 @@ itself only says MAY emit; neither field is IANA-registered even
 provisionally. Ecosystem measurement (`baseline-03e`/`03f`): three
 incompatible wire formats shipped across the draft's life; every wild IETF
 citation implements the superseded trio (draft-06 or earlier); the current
-format has exactly two emitters (one off-by-default library option, one
+format has exactly two revision-identifiable implementations — Cloudflare's
+documented-but-uncited draft-11-shaped emission sits outside that stricter
+count (`baseline-03e`/`03f`) — (one off-by-default library option, one
 0-star crate); the reference parser from the same team cannot parse it;
 Atlassian ships it behind a non-conforming `Beta-` prefix.
 

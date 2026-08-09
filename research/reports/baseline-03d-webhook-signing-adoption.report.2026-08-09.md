@@ -148,10 +148,19 @@ why the README list needs the checking it gets here.
 | **Zapier** | No native outbound signature verification; Zapier community confirms the Webhooks trigger does not support it. |
 | **Drata** | No locatable Drata-authored webhook-signature documentation. Unverifiable. |
 
-`[INFERENCE]` Six of twelve named adopters do not verify as emitters of the spec. That
-attrition is itself a governance finding: the specification's own adoption claim does not
-survive primary-source checking, and downstream documents that cite the README inherit
-the error.
+`[INFERENCE]` *(Count corrected 2026-08-09 during Gate C review.)* Of the
+**twelve named** README adopters: **five** verify as independent full-spec
+emitters (OpenAI, Google Gemini, Supabase, Etsy; Anthropic implements the
+exact shape unnamed); **three** are the platform or deliver via it (Svix
+itself; Vanta and TaskRabbit via Svix — platform delivery, not an
+independent implementation choice); and **four fail verification as
+emitters** (Kong — inbound-validation tooling only; PagerDuty and Twilio —
+bespoke schemes; Drata — strictly unverifiable, no locatable docs). ngrok
+and Zapier also fail but are TSC-member companies, **not** on the named
+list, and must not be counted against it. The attrition remains a
+governance finding: the specification's own adoption claim does not survive
+primary-source checking without reclassification, and downstream documents
+that cite the README inherit the imprecision.
 
 #### E. New adopters found beyond the README
 
@@ -445,7 +454,7 @@ else; every property it offers, the Standard Webhooks scheme offers with interop
 | Claim in the rule | Confidence | Basis |
 |---|---|---|
 | Signing is `MUST`; base binds ID + timestamp + raw body | **High** | Unchanged; universal across both camps |
-| Standard Webhooks scheme as the shared-secret default | **Moderate-high** | Many verified independent implementations and every recent AI-provider launch, discounted for: frozen spec, no standards body, six of twelve README adopters failing verification, Svix's non-conformant default headers |
+| Standard Webhooks scheme as the shared-secret default | **Moderate-high** | Many verified independent implementations and every recent AI-provider launch, discounted for: frozen spec, no standards body, four of the twelve named README adopters failing verification (three more deliver only via Svix), Svix's non-conformant default headers |
 | RFC 9421 for cross-organization/asymmetric delivery | **Moderate** | Two protocols and one fintech, all within ~12 months; no IETF webhook profile; no webhook-specific consumer tooling; UCP and AdCP already differ on algorithm and covered components |
 | `v1a,`/ed25519 needs per-endpoint keys and is not a general asymmetric answer | **High** | The spec's own lead author documents the cross-tenant forgery and calls the per-endpoint requirement "unclear"; issue open since 2023-12-10 |
 | Web Bot Auth does **not** extend to webhooks | **High** | Charter's explicit out-of-scope clause |
@@ -460,8 +469,9 @@ else; every property it offers, the Standard Webhooks scheme offers with interop
 2. `baseline-03` recorded "no surveyed API has adopted [RFC 9421]" for webhooks. That was
    true of the eight legacy references and is **no longer true of the field**: as of 2026
    at least two multi-party protocols mandate it for webhook delivery.
-3. `survey-07` repeated the Standard Webhooks README adopter list verbatim. Six of the
-   twelve names do not verify as emitters. Any downstream text should cite the verified
+3. `survey-07` repeated the Standard Webhooks README adopter list verbatim. Four of the
+   twelve names fail verification as emitters and three more deliver only via Svix (see
+   the corrected count in §D). Any downstream text should cite the verified
    table above, not the README.
 
 ### Dated re-check triggers

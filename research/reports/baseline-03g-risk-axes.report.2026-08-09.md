@@ -448,7 +448,7 @@ arguments:
 
 | Trigger | Flip to | Evidence |
 | --- | --- | --- |
-| Contractual or regulatory **instant-revocation** requirement (offboarding SLA, incident response, "revoke within N seconds") | Stay **opaque**, or cap JWT TTL at ≤ the required SLA | RFC 7009 §3 `[FACT]`; Entra's measured ≤15-min CAE propagation `[FACT]` |
+| Contractual or regulatory **instant-revocation** requirement (offboarding SLA, incident response, "revoke within N seconds") | Stay **opaque** (introspection revokes at the event), or add an explicit revocation-propagation mechanism. A short JWT TTL is only a **bounded-exposure fallback** — it bounds worst-case validity *after* a revocation event at the full TTL, it does not revoke; genuinely "instant" requirements cannot be met by TTL alone | RFC 7009 §3 `[FACT]`; Entra's measured ≤15-min CAE propagation `[FACT]` |
 | Many services validating at high volume, **measured** introspection latency/availability is the bottleneck, and services span administrative domains so a shared session store is unavailable | **JWT (RFC 9068)** with short TTL | RFC 9068 §2.2.3 `[FACT]` |
 | Validation must survive an authorization-server outage, or run at the edge / partitioned | **JWT** | `[INFERENCE]` from RFC 9068's no-round-trip property |
 | Resource servers operated by third parties you cannot issue introspection credentials to | **JWT** + RFC 9728 protected-resource metadata | RFC 9728 `[FACT]` |

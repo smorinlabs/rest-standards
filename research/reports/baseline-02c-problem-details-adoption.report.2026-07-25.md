@@ -5,6 +5,13 @@ inference behind `AC-003`.*
 
 ## Verdict
 
+> **Verdict partially superseded 2026-08-09 by `baseline-02d`** (see the
+> annotated "Disconfirming evidence" section below): the absence claim this
+> verdict leaned on is falsified, and the confidence raise it recommended
+> was withdrawn at Gate C (confidence returned to moderate; the mandate was
+> re-argued on different grounds). The framework-default findings below
+> stand unchanged.
+
 **The `AC-003` inference holds, and is strengthened materially.**
 
 `baseline-02` §8.1 asserted that the eight surveyed vendors diverge from RFC
