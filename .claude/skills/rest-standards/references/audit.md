@@ -11,7 +11,7 @@ Findings use review mode's table: `Rule | Level | Where | Finding | Fix`.
 
 | Plane | Input | Checker |
 |---|---|---|
-| **contract** | OpenAPI or JSON Schema document | `conformance/spectral.yaml` |
+| **contract** | Any documented interface contract — OpenAPI or JSON Schema, else reference docs or worked request/response exchanges | `conformance/spectral.yaml`, or direct reading (below) |
 | **source** | Routes, handlers, middleware | Read / Grep / ast-grep |
 | **runtime** | A deployed base URL | Appendix G probes — gated, see below |
 
@@ -29,6 +29,15 @@ The ruleset's rules are conservative heuristics; each description states its
 known false-positive and false-negative limits. Warn-severity findings exist
 to be reviewed, not blindly enforced. Read Appendix G for what the ruleset
 does and does not traverse before treating a clean run as conformance.
+
+**When there is no machine-readable document.** Reference documentation and
+worked request/response exchanges are still contract evidence — a contract is
+what the provider has documented, not the file format it is documented in.
+Spectral cannot run, so say so in the scope record and read the contract
+directly instead; the plane is available, only its automated checker is not.
+Never downgrade to source-only on this basis, and never treat the missing
+Spectral run as a clean one. A published contract that R4.1 requires to be an
+OpenAPI document, and isn't, is itself an R4.1 finding.
 
 ## 2. Source plane
 
@@ -82,6 +91,25 @@ Findings table (blockers first), then:
 - Standard version.
 - A conformance summary line: `<N> applicable MUSTs: <P> pass, <F> fail,
   <U> unverified`.
+
+**Counting `N`, so two audits of one API agree.** An *applicable MUST* is a
+Part I rule that (a) carries at least one capitalized MUST / MUST NOT /
+REQUIRED / SHALL clause per R1.1, (b) binds the audited API — its provider
+behavior, or a §12 client obligation the provider must surface — rather than
+binding this standard's own drafting, and (c) is not scoped to a switch
+declared off. Show the subtraction from the live rule count; do not restate a
+remembered `N`. Rules whose only keywords are SHOULD or MAY are reported in
+the findings table but never counted here.
+
+**One verdict per rule, and a rule is not its strongest clause.** Most rules
+carry several clauses. Score `fail` if any clause is demonstrably violated;
+`pass` only if the evidence settles *every* MUST clause the rule carries;
+otherwise `unverified`, naming which clause went unreached. A rule whose
+clauses split — R3.7's media type demonstrated but its `Accept-Patch`
+advertisement never shown — is `unverified`, not `pass`: scoring it `pass`
+is exactly the inferred pass the plane discipline forbids. Expect `U` to
+dominate on excerpt-shaped evidence; a large `U` is the method reporting its
+own reach, not a defect in the API.
 
 ## 5. Artifacts (offer, don't assume)
 

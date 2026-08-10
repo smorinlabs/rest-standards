@@ -34,7 +34,7 @@ Ask what exists. This is a factual question, not a judgment:
 
 | Plane | Present when | Unlocks |
 |---|---|---|
-| contract | An OpenAPI or JSON Schema document exists | `conformance/spectral.yaml` |
+| contract | A documented interface contract exists — an OpenAPI or JSON Schema document, or, failing that, reference documentation or worked request/response exchanges | `conformance/spectral.yaml` on a machine-readable document; otherwise read the contract directly |
 | source | The implementation is readable | Rules with no contract expression |
 | runtime | A deployment exists **and** the user opts in (`references/audit.md` § gate) | Appendix G probes |
 
