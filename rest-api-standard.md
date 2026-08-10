@@ -1496,8 +1496,9 @@ unordered delivery (R10.5).
 This log is the two-way mapping between the decision layer and the drafted
 rules. The decision records in [`research/decisions/`](research/decisions/)
 remain authoritative for rationale, evidence, declined options, and
-confidence; each Part I rule's provenance line points here-compatible keys,
-and this log points back. Record files are abbreviated:
+confidence; each Part I rule's provenance line carries its decision-layer
+key, and this log maps each key back to its rules. Record files are
+abbreviated:
 **B1** = `research/decisions/baseline-01-http-semantics.decision.md` ·
 **B2** = `research/decisions/baseline-02-api-contracts.decision.md` ·
 **B3** = `research/decisions/baseline-03-operational-practice.decision.md`.
@@ -1785,9 +1786,9 @@ An API that cannot meet a rule follows these steps, in order:
 2. **Write the rationale.** Rule ID, rule strength, what differs, why,
    the evidence, and the blast radius (who is affected and how).
 3. **Obtain approval.** The API's governance owner approves deviations
-   from `SHOULD`-strength rules; deviations from `MUST`-strength rules
-   go to the standard's owner, because they render the API nonconformant
-   unless recorded (R1.7).
+   from recommendation-strength rules; deviations from
+   requirement-strength rules go to the standard's owner, because they
+   render the API nonconformant unless recorded (R1.7).
 4. **Record it.** The approved exception lands in the API's conformance
    note (§1.9 template — this appendix does not restate it): rule ID,
    strength, difference, reason, approver, date.
@@ -1898,7 +1899,7 @@ N/A declarations: none beyond the switch reasons above.
 
 ### E.2 Create an order — idempotent create, 201 + Location
 
-Exercises R5.6, R3.9, R4.4–R4.7, R7.1/R7.3, R11.7, R3.10.
+Exercises R5.6, R3.9, R4.4–R4.7, R7.1/R7.3, R8.1/R8.3, R11.7, R3.10.
 
 ```http
 POST /v1/orders HTTP/1.1
@@ -1941,7 +1942,10 @@ The reading: `id` is a string (R4.5); `amount` 4599 with `"usd"` is
 $45.99 in minor units (R4.7); `deliver_on` is a date-only field (R4.6
 exception); `created_at` carries an explicit offset (R4.6); the body is
 snake_case (R4.4); the response is explicitly non-cacheable-shared
-(R7.2/R7.3) and carries the correlation ID (R11.7). Replaying the same
+(R7.2/R7.3) and carries the correlation ID (R11.7). The request
+authenticates with a bearer token over TLS — Bloom's server-to-server
+integrations use scoped API keys, while third-party access on a user's
+behalf goes through OAuth (R8.1, R8.3). Replaying the same
 `Idempotency-Key` with this payload returns this stored response;
 replaying it with a different payload is rejected (R3.9).
 
