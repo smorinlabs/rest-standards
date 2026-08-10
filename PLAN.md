@@ -294,8 +294,8 @@ Step sequence and status:
 | 1b | Prescriptive leaf `baseline-04-streaming` | **Done 2026-08-10** — 898-line report, 20 proposed `ST-*` principles, six conflicts with ratified 1.0 rules raised |
 | 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
 | 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | **Done 2026-08-10** — 12 new rules (`R13.1`–`R13.11`, `R12.10`); standard at **139 rules, checklist 139/139, fixture 14/14** |
-| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | In progress — three internal lenses run and dispositioned; Tier A/B/C ruled by the owner 2026-08-10; Codex second lens and fixture additions outstanding |
-| 5 | Release v1.1.0 | Pending |
+| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | **Done 2026-08-10** — three internal lenses (consistency, ambiguity, missing-and-conflicting) dispositioned; Tier A/B/C ruled by the owner; Codex second lens on the corrected text found a release-blocking §6 gap plus five factual corrections, all fixed; raw-source verification of every new normative citation; fixtures extended to 14/14 |
+| 5 | Release v1.1.0 | In progress — changelog written; PR, bot cycle, and tag outstanding |
 
 Drafting in Step 3 must also amend §1.5's "the `R<section>` prefix space is
 fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
