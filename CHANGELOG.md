@@ -98,6 +98,11 @@ per-type URL returns `404` against a `text/html` control returning `200`.
 requires every adopting API to disclose the gap. A dated re-check is
 registered for **2027-02-10**.
 
+Reviewed in four waves — three internal lenses (consistency, ambiguity,
+missing-and-conflicting) and a Codex second lens from a different model
+family on the corrected text — then released via PR #8, with `v1.1.0` tagged
+on its merge commit.
+
 ## 1.0.0 — 2026-08-10
 
 First release. 127 rules across twelve normative sections, each carrying
