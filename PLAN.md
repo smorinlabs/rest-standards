@@ -196,8 +196,9 @@ Phase 4 systematic review. Rulings recorded at the gate:
 
 ### Phase 4: Decision-focused review
 
-**In progress 2026-08-09.** The internal three-agent pass (consistency /
-ambiguity / domain-gap) is complete — 22 findings, recorded in
+**Complete 2026-08-10** (started 2026-08-09). The internal three-agent
+pass (consistency / ambiguity / domain-gap) ran first — 22 findings,
+recorded in
 [`docs/reviews/2026-08-09-phase-4-internal-review-findings.md`](docs/reviews/2026-08-09-phase-4-internal-review-findings.md);
 fixes landed on the Phase 4 branch. The Codex second lens ran 2026-08-10
 against the corrected text (10 findings, all dispositioned — same review
@@ -206,8 +207,9 @@ protocol-requirement label. The owner walk ruled all four
 decision-touching items 2026-08-10 (switches pruned; `cancel` broadened;
 R4.16 path placeholders; R10.9 operation discovery, backed by the
 `baseline-02i` research leaf and a filed decision record), and the
-closing structural pass ran clean (126 rules, checklist 126/126,
-fixture 12/12). **Phase 4 is complete; Gate E is the next action.**
+closing structural pass ran clean. **Phase 4 completed 2026-08-10 and
+Gate E passed the same day (recorded below); the standard stands at 127
+rules, checklist 127/127, fixture 12/12.**
 
 Run the recovered `cli-standards` review pattern:
 
@@ -269,7 +271,7 @@ destabilizing 1.0. Scope when opened:
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | **Complete 2026-08-09 — Gate D passed same day** — `rest-api-standard.md`: §1–§12 (127 rules after the Phase 4 walk, the `baseline-02i` ruling, and the Gate E CORS ruling; each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register; the 18 apparatus provisions ratified en bloc at Gate D, marked in place), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-09 against `conformance/fixture-violations.yaml`) |
+| Normative standard | Stable rules and rationale | Phase 3 | **Complete 2026-08-09 — Gate D passed same day** — `rest-api-standard.md`: §1–§12 (127 rules after the Phase 4 walk, the `baseline-02i` ruling, and the Gate E CORS ruling; each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register; the 18 apparatus provisions ratified en bloc at Gate D, marked in place), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
 
 ## Definition of done for version 1.0

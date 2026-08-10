@@ -405,7 +405,11 @@ must list them using the `Access-Control-Expose-Headers` header." — followed b
 the same seven-name list. **[INFERENCE]** A browser client
 calling a cross-origin API therefore cannot read `Location` on a `202` unless
 the server opts in with a header this standard never mentions — a grep of
-`rest-api-standard.md` for "CORS" and "Access-Control" returns nothing. This is
+`rest-api-standard.md` for "CORS" and "Access-Control" returns nothing
+*(annotation 2026-08-10, post-Gate E: true when this leaf was written; the
+owner subsequently ruled option (a) at Gate E, and R4.17 now mandates
+`Access-Control-Expose-Headers` coverage — this sentence describes the
+pre-Gate E state)*. This is
 the single strongest argument against `MUST Location` as the *sole* mechanism,
 and it is a latent gap in the standard regardless of how this leaf lands: the
 same reasoning applies to `ETag`, `request-id`, `Retry-After`, and `RateLimit`,

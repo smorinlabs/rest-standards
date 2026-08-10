@@ -108,10 +108,10 @@ throughout this document and remain the keys into
 minted in those series: a drafted rule that had no proposed principle would
 otherwise acquire fabricated research lineage. The full two-way mapping
 between rule IDs and provenance IDs is maintained in Part II (Decision
-Log). Provenance lines citing the CLI-standards gap review prefix that
-document's own rule numbering with `CLI-` (for example `CLI-R4.3`); those
-identifiers belong to the CLI Design Standard's coverage table, never to
-this document's rule-ID namespace.
+Log). Where a provenance line cites the CLI-standards gap review, the
+gap review's own rule numbers carry a `CLI-` prefix (for example
+`CLI-R4.3`); those identifiers belong to the CLI Design Standard's
+coverage table, never to this document's rule-ID namespace.
 
 **Section namespace.** The `R<section>` prefix space is fixed at twelve
 normative sections, in this order: 1 purpose/conformance · 2 resources and
@@ -268,7 +268,7 @@ ratification.)
 | `Idempotency-Key` | Request | Idempotency key on non-idempotent state-changing requests; Stripe semantics — payload fingerprint, reuse with a different payload rejected; retained ≥ 24 h. `[POLICY]` — the IETF draft that standardized this shape expired 2026-04-18; never cite it as a standard | `AC-016`/`AC-017` (completed) |
 | `request-id` | Response | Correlation ID, emitted on every response including errors. Lowercase name; RFC 6648 deprecates new `X-` prefixed fields, ruling out `X-Request-Id` | Addendum A2.4, completing `OP-018` `[POLICY]` |
 | `ETag` / `If-Match` / `If-None-Match` | Response / request | Strong validators and conditional requests | `HS-014`/`HS-015` · protocol requirement (RFC 9110) |
-| `Location` | Response | Bound on every single-resource create (`201 Created`, R5.6) and, at SHOULD strength, on `202` operation responses — denoting the operation, never the result (R10.9); 3xx targets unrestricted (RFC 9110) | Addendum A3.1 · `baseline-02i` + Phase 4 owner walk |
+| `Location` | Response | Bound on every single-resource create (`201 Created`, R5.6) and, at SHOULD strength, on `202` operation responses — denoting the operation, never the result (R10.9); its RFC 9110 §10.2.2 redirect meaning on 3xx is untouched | Addendum A3.1 · `baseline-02i` + Phase 4 owner walk |
 | `Allow` | Response | Mandatory on every `405 Method Not Allowed` | Addendum A3 · protocol requirement (RFC 9110) |
 | `Retry-After` | Response | Mandatory on `429` and on `503` (R11.5); recommended polling hint on `202` (R10.2) | `OP-010`/`OP-011` · protocol requirement (RFC 9110, RFC 6585) |
 | `RateLimit` / `RateLimit-Policy` | Response | SHOULD advertise quota state **in the syntax of `draft-ietf-httpapi-ratelimit-headers-11`**. `[POLICY]` — an unpublished Internet-Draft; MUST NOT be described as standards-compliant; the pinned revision is cited wherever referenced | `OP-010` |
