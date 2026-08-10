@@ -83,11 +83,12 @@ neighbouring `.framing.md` recording its provenance and shaping decisions.
 Sixty-six proposed principles in total. **All are proposals carrying research
 confidence, not ratified policy** — see the series table above.
 
-### Gate B follow-up leaves
+### Follow-up leaves (Gate B and Gate C)
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles, plus one run 2026-08-09 during Gate C. Each verified its claims
-against primary sources with a two-source minimum.
+principles (Gate B), plus ten run 2026-08-09 during Gate C and its addendum
+(`02d`–`02h`, `03c`–`03g`). Each verified its claims against primary sources
+with a two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |

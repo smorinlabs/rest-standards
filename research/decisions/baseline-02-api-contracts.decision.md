@@ -482,6 +482,15 @@ the would-be representation with the real status semantics (A3's
 pipeline vs schema-only), so a passing rehearsal is not over-trusted; and
 MUST NOT consume an `Idempotency-Key`.
 
+**Reservation guard (completed 2026-08-09, same session):** `dry_run` is a
+**reserved parameter standard-wide**, and a mutating request carrying it
+to an endpoint that does not implement dry-run **MUST be rejected with
+`400`** — never silently ignored. Without this, the chosen transport
+carries the same silent-real-execution hazard that disqualified
+`Prefer: validate-only`; the guard is what makes the safety argument
+sound. `dry_run` joins the reserved query-parameter inventory (Phase 3
+cheat sheet) alongside `sort`, `fields`, `cursor`, and `limit`.
+
 **Classification:** project policy; the transport-failure analysis is
 evidence-backed (RFC 7240's advisory semantics).
 **Confidence:** moderate-high (transport) · moderate (contract details,
