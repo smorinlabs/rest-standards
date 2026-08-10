@@ -92,9 +92,9 @@ rules:
       functionOptions:
         notMatch: "^(text/event-stream|application/(x-ndjson|jsonl|json-seq))$"
   rs-r13-2-stream-negotiation-vary:
-    description: "R13.2 / R4.11 - a response offering both a JSON and a stream representation selects between them on Accept, and so declares Vary naming Accept. Applies to any status code, since R4.11 binds every header-selected response. Known limits, each deliberate: only the PRESENCE of a Vary header is checked, not that its value names Accept, because a contract that declares Vary without an enum gives nothing to match against and a value check would false-pass silently - the Appendix G live probe covers the value; the header key is matched case-sensitively as 'Vary'; only the three stream media types named in the given are recognised, so a vendor stream type will false-pass; and a $ref'd Response Object will warn spuriously - suppress per instance with a Spectral override"
+    description: "R13.2 / R4.11 - a response offering both a JSON and a stream representation selects between them on Accept, and so declares Vary naming Accept. Applies to any status code, since R4.11 binds every header-selected response. Known limits, each deliberate: only the PRESENCE of a Vary header is checked, not that its value names Accept, because a contract that declares Vary without an enum gives nothing to match against and a value check would false-pass silently - the Appendix G live probe covers the value; the header key is matched case-sensitively as 'Vary'; only the four stream media types named in the given are recognised - text/event-stream, application/x-ndjson, application/jsonl, application/json-seq, matching the set rs-r13-1 checks - so a vendor stream type will false-pass; and a $ref'd Response Object will warn spuriously - suppress per instance with a Spectral override"
     severity: warn
-    given: "$.paths[*][*].responses[?(@.content && @.content['application/json'] && (@.content['text/event-stream'] || @.content['application/x-ndjson'] || @.content['application/json-seq']))]"
+    given: "$.paths[*][*].responses[?(@.content && @.content['application/json'] && (@.content['text/event-stream'] || @.content['application/x-ndjson'] || @.content['application/jsonl'] || @.content['application/json-seq']))]"
     then:
       field: "headers.Vary"
       function: truthy

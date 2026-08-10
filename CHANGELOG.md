@@ -51,7 +51,11 @@ satisfy, because a committed `200` leaves no status code available:
   generated*; a post-commit stream failure reports under `R13.7`.
 - **`R5.12`** — a second named carve-out, for post-commit stream errors.
 - **`R5.13`** — the required member set is scoped to response-carried problem
-  documents, so an in-band object omits `status`, as RFC 9457 §3.1 requires.
+  documents, so an in-band object omits `status`. RFC 9457 §3.1 permits either
+  omitting `status` or setting it to the status actually sent, and forbids
+  only a `status` that disagrees; omission is this standard's policy choice,
+  because `status: 200` on a document describing a failure is accurate about
+  the response and misleading about the outcome.
 - **`R11.2`, `R11.5`** — the `429` + `Retry-After` obligation binds while a
   status can still be generated; mid-stream quota exhaustion reports under
   `R13.7` with a `retry_after` member.

@@ -2894,7 +2894,14 @@ data: {"stream_position":2,"rows":500,"part_url":"https://files.example.com/exp_
 
 event: export.completed
 data: {"stream_position":3,"operation_state":"succeeded","rows_total":4820,"next_cursor":null}
+
 ```
+
+Every record above ends with a blank line, including the last. That is not
+formatting: SSE dispatches a record only when the blank line arrives, so a
+terminal frame written without one is a frame the client never receives —
+and under R12.10 the client would then correctly report truncation on a
+successful export.
 
 The failure case, on a stream that had already committed `200`:
 
@@ -2906,6 +2913,7 @@ data:  "code":"export_source_unavailable",
 data:  "operation_id":"op_000example",
 data:  "operation_state":"failed",
 data:  "stream_position":47}
+
 ```
 
 The reading. The response is `200` with `text/event-stream`, an accurate

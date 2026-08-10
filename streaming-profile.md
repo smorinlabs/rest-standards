@@ -120,12 +120,23 @@ working design for no benefit.
 ## 3. Newline-delimited JSON and the registered alternative
 
 For record streams and bulk result sets, one JSON document per line, no
-framing beyond the newline:
+framing beyond the newline. NDJSON has no `event:` field, so `R13.5`'s frame
+type travels in the payload — and `R13.6`'s terminal record is what tells the
+client the set is complete rather than cut short:
 
 ```
-{"id":"ord_1","total":4599}
-{"id":"ord_2","total":1250}
+{"type":"order","id":"ord_1","total":4599}
+{"type":"order","id":"ord_2","total":1250}
+{"type":"result.completed","operation_state":"succeeded","rows_total":2,"next_cursor":null}
 ```
+
+Both requirements are easy to lose here precisely because the format has no
+ceremony. A bare sequence of records with no type member and no terminal
+record is the common shape in the wild, and a client consuming it cannot tell
+a finished set from a dropped connection — which is exactly what `R12.10`
+requires it to treat as truncation. An unbounded record stream (a tail, a
+watch) is the documented exception under `R13.6`, and the API says so
+explicitly rather than leaving the client to infer it.
 
 Served as `application/x-ndjson` (`ST-013`). Two cautions belong in the API's
 own documentation:
