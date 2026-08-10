@@ -10,7 +10,7 @@ and the worked example.
 ## 1.1.0 — 2026-08-10
 
 Adds **§13, streaming responses** — Server-Sent Events, long-polling, and
-streaming HTTP bodies. A MINOR bump: rules are added and three existing rules
+streaming HTTP bodies. A MINOR bump: rules are added and nine existing rules
 are scoped, none strengthened, removed, or re-meant. The standard now carries
 **139 rules** (from 127); checklist 139/139; conformance fixtures 14/14.
 
@@ -32,7 +32,8 @@ machinery reaches it. §1.2 now says so with its reason.
 - **§1.10 reserved names** — `stream` and `stream_position` request
   modifiers; `text/event-stream` as the table's first unregistered media type,
   with the registration gap disclosed in the row; a new **reserved stream
-  members** category (`operation_id`, `operation_url`, `retry_after`); and a
+  members** category (`operation_id`, `operation_url`, `operation_state`,
+  `retry_after`); and a
   new **reserved stream frame types** category, first entry `error`.
 - **[`streaming-profile.md`](streaming-profile.md)** — an informative
   companion carrying the explanatory body, so §13 itself stays short for the
@@ -58,6 +59,11 @@ satisfy, because a committed `200` leaves no status code available:
   and `200` plus a stream media type where it does.
 - **`R6.1`** — a streamed collection carries continuation state on its
   terminal frame in place of the envelope.
+- **`R6.2`** — an empty streamed collection is zero item frames followed by
+  the terminal frame, since there is no items array to be empty.
+- **`R6.4`** — pagination state lives in the body *representation* — the
+  envelope, or the terminal frame when streamed. The `Link`-header
+  prohibition binds streamed collections identically.
 
 Also: §1.5's namespace extended from twelve normative sections to thirteen;
 `R1.3`'s frozen-series list gains `ST-001`–`ST-020`; §1.9's conformance-note
