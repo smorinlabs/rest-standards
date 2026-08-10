@@ -2225,8 +2225,8 @@ description. It is execution-verified: run 2026-08-09 with
 `@stoplight/spectral-cli` 6.16.3 against
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
-header directions, and a `$ref`-only envelope schema that correctly
-passes), all nine expected findings fired.
+header directions, POST and PUT creates, and a `$ref`-only envelope
+schema that correctly passes), all ten expected findings fired.
 
 Live probes — each row is one request against a deployed API and the
 response that conformance predicts:

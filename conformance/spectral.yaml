@@ -3,8 +3,8 @@
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
 # in each description cite the standard.
 # Status: execution-verified 2026-08-09 with @stoplight/spectral-cli 6.16.3
-# against fixture-violations.yaml in this directory — all nine expected
-# findings fired (6 errors, 3 warnings) and the $ref-only envelope schema
+# against fixture-violations.yaml in this directory — all ten expected
+# findings fired (6 errors, 4 warnings) and the $ref-only envelope schema
 # correctly passed. Command:
 #   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
 #     conformance/fixture-violations.yaml
@@ -46,9 +46,11 @@ rules:
       functionOptions:
         notMatch: "^[Xx]-"
   rs-r5-6-create-returns-location:
-    description: "R5.6 - POST 201 responses declare a Location header"
+    description: "R5.6 - 201 responses declare a Location header (POST creates and PUT creates with client-supplied IDs alike)"
     severity: warn
-    given: "$.paths[*].post.responses['201']"
+    given:
+      - "$.paths[*].post.responses['201']"
+      - "$.paths[*].put.responses['201']"
     then:
       field: "headers.Location"
       function: truthy
