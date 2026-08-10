@@ -54,7 +54,7 @@ Phase 2 (Gate C) and lands in `decisions/`.
 
 ## Inventory — `survey` series
 
-Nine prompts, ten runs. The first eight are a descriptive comparison across
+Nine prompts, eleven runs. The first eight are a descriptive comparison across
 Stripe, GitHub, Google/AIP, Microsoft, Twilio, Shopify, Zalando, and
 AWS-as-contrast. Series framing:
 [`prompts/survey-00-series.framing.md`](prompts/survey-00-series.framing.md).
@@ -72,7 +72,7 @@ in [`prompts/survey-08-streaming.framing.md`](prompts/survey-08-streaming.framin
 | `survey-05-reliability` | Idempotency, concurrency/ETags, async operations, bulk | `2026-07-19` | — |
 | `survey-06-lifecycle-operations` | Versioning, deprecation, rate limits, caching, auth surface, docs | `2026-07-19a`, `2026-07-19b` | — |
 | `survey-07-webhooks` | Envelopes, signatures, delivery/retries, verification, thin-vs-fat | `2026-07-19` | — |
-| `survey-08-streaming` | SSE, long-polling, streaming HTTP bodies (NDJSON/JSON Lines): negotiation, framing, termination, post-commit errors, resumption, browser/CORS constraints. WebSockets excluded by owner ruling | **unrun** (Phase 6) | — |
+| `survey-08-streaming` | SSE, long-polling, streaming HTTP bodies (NDJSON/JSON Lines): negotiation, framing, termination, post-commit errors, resumption, browser/CORS constraints. WebSockets excluded by owner ruling | `2026-08-10` | — |
 
 ## Inventory — `baseline` series
 
@@ -228,6 +228,17 @@ Read these before treating a filename date as fact.
   the finding it supports — secret key as Basic username with an empty
   password, Bearer also accepted — is unchanged. **This is the only
   modification made to any `survey` report's content.**
+- **One correction annotation, recorded.**
+  `survey-08-streaming.report.2026-08-10.md` carries a dated annotation at
+  **§3.0a** and a resolution note at §11.1.9. The run filed two Internet-Draft
+  rows unverified and said so; the datatracker sweep afterwards found both
+  wrong. The load-bearing one: `draft-ietf-alto-incr-update-sse` was published
+  as **RFC 8895** (Standards Track, November 2020), so an IETF Standards Track
+  RFC is built on SSE and uses `Accept: text/event-stream` — while
+  `text/event-stream` still has no IANA registration, which the RFC's §12
+  assumes it has. The registry governs; the conflict is surfaced in §3.0a
+  rather than averaged. The original rows are superseded in place, not
+  silently edited.
 - **Original filenames.** The ten `survey` reports arrived as
   `compass_artifact_wf-<uuid>_text_markdown.md`. That name carried no link to
   its prompt; the mapping in this document was recovered by reading each
