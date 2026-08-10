@@ -1,0 +1,95 @@
+# audit mode — conformance sweep of an existing API
+
+Gap-analyze a real API against the standard: brownfield APIs never built to
+it, and pre-release conformance gates. Depth scales with the evidence
+available, not with tier — §1.7 tiers name an audience, and every rule applies
+at every tier.
+
+Findings use review mode's table: `Rule | Level | Where | Finding | Fix`.
+
+## The three evidence planes
+
+| Plane | Input | Checker |
+|---|---|---|
+| **contract** | OpenAPI or JSON Schema document | `conformance/spectral.yaml` |
+| **source** | Routes, handlers, middleware | Read / Grep / ast-grep |
+| **runtime** | A deployed base URL | Appendix G probes — gated, see below |
+
+Every finding names the plane that produced it. Planes overlap: where two
+reach the same rule, report both. Agreement is a stronger result than either
+alone; **disagreement is itself a finding** — the deployment and the source
+have diverged.
+
+## 1. Contract plane
+
+    npx @stoplight/spectral-cli lint \
+      --ruleset <standard-repo>/conformance/spectral.yaml <contract-document>
+
+The ruleset's rules are conservative heuristics; each description states its
+known false-positive and false-negative limits. Warn-severity findings exist
+to be reviewed, not blindly enforced. Read Appendix G for what the ruleset
+does and does not traverse before treating a clean run as conformance.
+
+## 2. Source plane
+
+Read the routes, handlers, and middleware for what the contract cannot
+express: authorization checks and existence masking, idempotency-key storage
+and retention, redaction in error paths, the documented default sort order
+behind cursor pagination, and rate-limit enforcement points. Grep for reserved
+names (§1.10) used with a non-registered meaning.
+
+## 3. Runtime plane — gated
+
+Appendix G probes hit a real deployment. Three of them are destructive
+*precisely when the API fails the check*: an unguarded DELETE succeeds, an
+unimplemented method turns out to be implemented, a `dry_run` parameter
+executes for real. The gate is not optional.
+
+1. **Default: issue no HTTP requests.** Contract and source planes only.
+2. **The user must ask.** Then require: a base URL, an explicit statement that
+   the deployment is non-production (local, sandbox, or staging), and which
+   resources are disposable.
+3. **Read-only probes first** — trailing slash (R2.6), credential split
+   (R5.9), existence masking (R5.10), empty collection (R6.2), correlation ID
+   (R11.7), cache posture (§7), error negotiation (§5) against a naturally
+   failing request.
+4. **Mutating or disruptive probes need a second confirmation** naming the
+   disposable fixture: DELETE without `If-Match` (R7.4), the `dry_run` guard
+   (R1.9), PATCH media-type rejection (R3.7), the unknown-method probe
+   (R5.11 — an "unimplemented" method that turns out to be implemented is a
+   real mutation), and 202 discovery (R10.9 — it starts real work). The quota
+   probe (R11.2) additionally warns, before running, that it degrades service
+   for every other client of that deployment.
+5. **Never** against production, against an API the user does not own, or with
+   credentials the user has not deliberately provided for this purpose.
+   Reviewing a third party's *published contract* on the contract plane
+   remains available and needs no gate.
+6. **Anything not run is reported unverified with the exact `curl`** for the
+   user to run by hand. This is also the retreat path when a probe turns out
+   to be riskier than it looked.
+
+Read Appendix G for the live probe table; do not work from the list above,
+which names the gate tiers rather than the probes.
+
+## 4. Report
+
+Findings table (blockers first), then:
+
+- N/A switches with their reasons (R1.6).
+- Unverified rules, each with the plane that was missing and, for runtime
+  rules, the `curl` that would settle it.
+- The evidence planes actually used.
+- Standard version.
+- A conformance summary line: `<N> applicable MUSTs: <P> pass, <F> fail,
+  <U> unverified`.
+
+## 5. Artifacts (offer, don't assume)
+
+1. **Conformance note** — render the §1.9 template (read live) or update the
+   existing one: tier, switches with reasons, deviations, N/A declarations.
+2. **CI wiring** — add the Spectral ruleset to the target repo's CI so the
+   contract plane is checked on every change, not once.
+3. **Fix plan** — hand ordered blockers to the normal planning flow
+   (writing-plans) if the user wants them fixed now.
+4. **Amendments** — deviations that beat the rule go upstream as Part II
+   Decision Log proposals (SKILL.md workflow step 6).
