@@ -36,7 +36,7 @@ rules:
       functionOptions:
         match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
   rs-r10-9-202-operation-location:
-    description: "R10.9 - 202 responses declare a Location header for the operation resource (SHOULD-strength; the body-identity MUST is not statically lintable). Heuristic at warn severity; $ref'd Response Objects may warn spuriously"
+    description: "R10.9 - 202 responses declare a Location header for the operation resource (SHOULD-strength). Documented false negatives: the body-identity MUST, the absolute-URI form, and header/body agreement are not statically checked here - the Appendix G live-probe table covers them. $ref'd Response Objects may warn spuriously"
     severity: warn
     given: "$.paths[*][*].responses['202']"
     then:

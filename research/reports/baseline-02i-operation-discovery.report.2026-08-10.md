@@ -63,7 +63,10 @@ is half-applied):
 2. **Appendix F/OpenAPI row**: `202` responses declare a `Location` header
    object plus the operation schema's identity member — both are lintable, in
    the same way `R5.6`'s `201` + `Location` header object already is
-   (rest-api-standard.md:1942).
+   (rest-api-standard.md:1942) *(annotation 2026-08-10: lintable in
+   principle; the shipped ruleset checks the header's presence only and
+   records the identity-member and agreement clauses as documented false
+   negatives covered by the live-probe table)*.
 
 **Open `[POLICY]` sub-question the owner must settle:** whether the body member
 is a bare `id` (OpenAI / Gemini / Stripe / Shopify pattern) or an absolute
@@ -74,7 +77,11 @@ hypermedia controls. My reading: a plain absolute `url` scalar is not a
 hypermedia control (no link-relation graph, no runtime-discovered state
 machine), so it is compatible; if the project disagrees, `id` + a documented
 template is sufficient and is what the majority of surveyed vendors do. If `url`
-is chosen, `R1.8` reservation discipline requires registering the name.
+is chosen, `R1.8` reservation discipline requires registering the name
+*(annotation 2026-08-10: imprecise — §1.10 registers query parameters, headers,
+media types, and action verbs, not body members; the drafted R10.9 fixes the
+member names in its own rule text, which satisfies the same-name discipline
+without a registry entry)*.
 
 ---
 
@@ -90,7 +97,7 @@ https://www.rfc-editor.org/rfc/rfc9110.txt, downloaded and read 2026-08-10.
 > specific resource in relation to the response.  The type of
 > relationship is defined by the combination of request method and
 > status code semantics.
-
+>
 > For 201 (Created) responses, the Location value refers to the primary
 > resource created by the request.  For 3xx (Redirection) responses,
 > the Location value refers to the preferred target resource for
@@ -144,7 +151,11 @@ discovery it must be `Location`. Adopting Azure's `operation-location` would
 mean this standard mandating an unregistered vendor field — the same defect the
 project already flagged for `Idempotency-Key` and `RateLimit`, and it is
 additionally discouraged by RFC 6648, which the project already cites in the
-`request-id` register row.
+`request-id` register row *(annotation 2026-08-10: overreach — RFC 6648
+deprecates only new `X-` prefixed names and does not govern
+`Operation-Location`; the argument stands on the IANA registry alone, and the
+decision record was corrected to ground the header-name pick there, classified
+`[POLICY]`)*.
 
 **[FACT] RFC 9110 §7.6.1** (same source): intermediaries "SHOULD remove or
 replace fields that are known to require removal before forwarding" and
@@ -278,7 +289,10 @@ resource** you poll (Google AIP-151 `operations/{id}`; Microsoft Graph
 RELO/stepwise) and **header-driven polling** (Azure `202` +
 `Azure-AsyncOperation`/`Location` + `Retry-After`); Stripe stays largely
 synchronous and pushes completion via webhook events." That satisfies the
-two-source bar for the header/body split itself.
+two-source bar for the header/body split itself *(annotation 2026-08-10:
+`survey-05` is an in-repository report, not a primary source — it counts as
+independent internal corroboration only; the split's primary sourcing is the
+per-vendor rows above, each carrying its own vendor-doc URL)*.
 
 ---
 

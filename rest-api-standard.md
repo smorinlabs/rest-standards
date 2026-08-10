@@ -1873,7 +1873,7 @@ own maintenance rather than a conforming API.
 | R10.6 | Ack timeout and retry schedule published; retries at least 72 h; dead-letter at least 30 d with redelivery |
 | R10.7 | Webhooks signed per topology; SHA-1 banned |
 | R10.8 | Secrets at least 256 bits; overlapping rotation; HTTPS-only; verification tooling shipped |
-| R10.9 | `202` body identifies the operation (`id` + documented template, or `url`); `Location` recommended — the operation, never the result; header and body agree |
+| R10.9 | `202` body identifies the operation (`id` + documented template, or `url`); `Location` (the operation's absolute URI, never the result) recommended; header and body agree |
 | R11.1 | Page size, expansion depth, and bulk count maxima published and enforced |
 | R11.2 | 429 with `Retry-After` on exhaustion |
 | R11.3 | Draft-11 fields, when emitted, pinned and never called standard |
@@ -2367,4 +2367,5 @@ response that conformance predicts:
 | Quota | Exceed the published limit | 429 + `Retry-After` | R11.2 |
 | Error negotiation | Force an error with `Accept: application/problem+json` | Problem document with template-bound `type`/`code` | R5.12, R5.13 |
 | Correlation | Any request | `request-id` present on the response | R11.7 |
+| 202 discovery | Start an async operation | Body carries `id` or `url`; any `Location` is the operation's absolute URI and agrees with the body | R10.9 |
 | Cache posture | Authenticated GET | `Cache-Control: private, no-cache` (or stricter) | R7.1–R7.3 |

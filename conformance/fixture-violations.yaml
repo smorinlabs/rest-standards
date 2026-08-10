@@ -51,11 +51,11 @@ paths:
     post:
       responses:
         "202":
-          description: accepted without a Location header (should warn R10.9)
+          description: accepted without a Location header (should warn R10.9); body identity itself conforms
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/order_collection"
+                $ref: "#/components/schemas/operation"
   /v1/widgets/{widgetId}:
     get:
       parameters:
@@ -97,6 +97,15 @@ components:
       schema:
         type: string
   schemas:
+    operation:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+        status:
+          type: string
     order_collection:
       type: object
       properties:

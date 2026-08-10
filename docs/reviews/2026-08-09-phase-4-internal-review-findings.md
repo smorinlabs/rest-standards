@@ -166,11 +166,11 @@ CORS-safelisted) primary-sourced the defect.
 
 ## Process after fixes — all discharged
 
-- Structural check suite — **run clean 2026-08-10** (126 rule IDs, no
-  duplicates or gaps, no dangling references, checklist 126/126,
-  appendix keyword scan clean, fixture 12/12).
+- Structural check suite — **run clean 2026-08-10**; final state after
+  Gate E: 127 rule IDs, no duplicates or gaps, no dangling references,
+  checklist 127/127, appendix keyword scan clean, fixture 12/12.
 - Codex adversarial pass (different model family) on the corrected
   text — **done 2026-08-10**, dispositions above.
 - Owner walk — **done 2026-08-10**, all four rulings above.
-- Gate E is the next action; the CORS header-exposure item goes to it
-  as a decidable option pair.
+- Gate E — **passed 2026-08-10** (see the Gate E section above); the
+  CORS item was ruled there as option (a), R4.17.

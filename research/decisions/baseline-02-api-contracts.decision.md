@@ -551,9 +551,9 @@ requirement; the owner directed research before ruling.
 its operation resource in the response body — either the operation's
 `id` where the operation URI template is documented in the description
 document, or an absolute `url` member (either form permitted, owner
-choice) — and SHOULD additionally carry a `Location` header denoting the
-operation resource, never the eventual result; where both are present
-they MUST denote the same resource.
+choice) — and SHOULD additionally carry a `Location` header whose value
+is the absolute URI of the operation resource, never the eventual
+result; where both are present they MUST denote the same resource.
 
 **Classification:** the body clause is protocol-grounded (RFC 9110
 §15.3.3 names the representation as the status-monitor pointer); the
@@ -566,17 +566,23 @@ including OpenAI, Anthropic, and Google Gemini, none of which emits a
 discovery header — carry identity in the body; `[FACT]` `Location` is
 not CORS-safelisted (WHATWG Fetch + MDN), so a header-only mechanism is
 unreadable to cross-origin browser clients; `[FACT]` `Location` is the
-only IANA-registered candidate header — `Operation-Location` and
-`Azure-AsyncOperation` are unregistered, and RFC 6648 rules out minting
-them here.
+only IANA-registered candidate header (permanent, RFC 9110 §10.2.2) —
+`Operation-Location` and `Azure-AsyncOperation` appear nowhere in the
+IANA HTTP Field Name Registry, and mandating an unregistered vendor
+field is the defect this project already declined for `Idempotency-Key`
+and `RateLimit`; the header-name pick is `[POLICY]` grounded in that
+registry, not in RFC 6648 (which governs only `X-` prefixes).
 
 **Options declined:** keep-permitted (leaves `AC-019` addressability
 with no mechanism — GitHub repository statistics is the live failure
 case) · MUST `Location` (no RFC semantics; CORS-invisible; against
 14/17 practice) · `Operation-Location` (unregistered vendor field) ·
-RFC 8288 `Link` header (the mechanism the pagination decision already
-declined; recommended only by an individual Internet-Draft expiring
-2026-08-30).
+RFC 8288 `Link` header — declined **for this operation contract**
+(R6.4's prohibition is pagination-scoped, not global): its only
+recommender is an individual Internet-Draft expiring 2026-08-30, and
+with the body member as the normative source plus `Location` as the
+registered zero-knowledge hint, a third channel adds surface without
+adding capability.
 
 **Pagination-posture consistency:** examined and found disanalogous —
 the ratified one-source-of-truth argument targets volatile cursors and

@@ -83,12 +83,13 @@ neighbouring `.framing.md` recording its provenance and shaping decisions.
 Sixty-six proposed principles in total. **All are proposals carrying research
 confidence, not ratified policy** — see the series table above.
 
-### Follow-up leaves (Gate B and Gate C)
+### Follow-up leaves (Gate B, Gate C, and Phase 4)
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles (Gate B), plus ten run 2026-08-09 during Gate C and its addendum
-(`02d`–`02h`, `03c`–`03g`). Each verified its claims against primary sources
-with a two-source minimum.
+principles (Gate B), ten run 2026-08-09 during Gate C and its addendum
+(`02d`–`02h`, `03c`–`03g`), and one run 2026-08-10 during the Phase 4 owner
+walk (`02i`). Each verified its claims against primary sources with a
+two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |
@@ -120,7 +121,7 @@ five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
 would weaken the bearer default), any MCP proof-of-possession extension,
 OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
 
-## Decision index — `decisions/` (Gate C, complete 2026-08-09)
+## Decision index — `decisions/` (Gate C complete 2026-08-09; Phase 4/Gate E addenda 2026-08-10)
 
 The ADR layer. One file per stem, paired with its prompt and reports by the
 naming convention; each entry records the ratified rule, its Phase 2
