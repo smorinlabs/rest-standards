@@ -199,8 +199,62 @@ before content, deliberately.
 | NDJSON specification (ndjson/ndjson-spec) | **No standards body** — a GitHub repository | v1.0.0, last update 2014-10-19 | Recommends `application/x-ndjson` |
 | jsonlines.org | **No standards body** — a project website | Retrieved 2026-08-10 | Defines JSON Lines; explicitly says no registered media type |
 | WHATWG Fetch Standard | **Living standard** (WHATWG) | Living; retrieved 2026-08-10 | CORS-safelisted response headers; `Access-Control-Expose-Headers` |
-| `draft-gupta-httpapi-events-query` | **Internet-Draft**, individual submission, not WG-adopted | Published July 2025, **expired 2026-01-05** (unverified — from search results, see §11.1.9) | HTTP Events Query — never a published standard |
-| `draft-ietf-alto-incr-update-sse` | **Internet-Draft**, WG document (ALTO), rev 22 | Status and expiry **unverified** — from search results, see §11.1.9 | SSE for ALTO incremental updates; domain-specific, never a published standard |
+| `draft-gupta-httpapi-events-query` | **Internet-Draft**, individual submission, not WG-adopted | Rev **03**; **active**, expires **2027-01-06** — corrected 2026-08-10, see §3.0a | HTTP Events Query — not a published standard |
+| **RFC 8895** (cited in the run as `draft-ietf-alto-incr-update-sse`) | **IETF Standards Track RFC** — corrected 2026-08-10, see §3.0a | Published **November 2020** | ALTO incremental updates over SSE; normatively cites the SSE specification and uses `Accept: text/event-stream` |
+
+### 3.0a Correction — dated annotation, 2026-08-10
+
+*The two Internet-Draft rows above were filed unverified (the run recorded the
+gap itself, at §11.1.9). Both were checked against the IETF Datatracker and the
+RFC Editor after filing. Both were wrong, and one correction is load-bearing.
+The original rows are superseded above; this note records what changed and why
+it matters, rather than the change being made silently.*
+
+**Correction 1 — `draft-ietf-alto-incr-update-sse` is not a draft.** It was
+published as **RFC 8895**, *ALTO Incremental Updates Using Server-Sent Events
+(SSE)*, **Standards Track, November 2020**
+(`https://www.rfc-editor.org/rfc/rfc8895.txt`, retrieved 2026-08-10; the
+Datatracker document carries `std_level: ps`). The run's characterization —
+"never a published standard" — is the reverse of the fact. Three consequences
+bear on the ratification walk:
+
+1. **An IETF Standards Track RFC is built on SSE.** The claim that SSE has no
+   standards-track footing is too strong as stated. RFC 8895 §6 and its
+   examples use `Accept: text/event-stream` and
+   `Content-Type: text/event-stream` directly.
+2. **It sharpens the registration finding rather than weakening it.** RFC 8895
+   §12 states: "All other media types used in this document have already been
+   registered, either for ALTO, JSON merge patch, or JSON patch." Its examples
+   use `text/event-stream`, yet that media type has **no IANA row** (verified
+   independently 2026-08-10: absent from the 105-entry `text/*` subregistry;
+   per-type URL returns 404 against a `text/html` control returning 200). A
+   Standards Track RFC and the IANA registry therefore **disagree** about
+   whether `text/event-stream` is registered. Per `research/CONSTRAINTS.md`
+   this is surfaced, not averaged: the registry governs on registration status,
+   because it is the registry; the RFC's sentence is best read as an
+   understandable assumption rather than a registration event, since an RFC
+   registers a media type only through its own IANA Considerations section, and
+   RFC 8895's registers only the two `alto-*` types it defines.
+3. **The SSE authority chain has an obsoleted link.** RFC 8895's normative
+   reference `[SSE]` is Hickson, I., *Server-Sent Events*, **W3C
+   Recommendation, February 2015**, `https://www.w3.org/TR/eventsource/`. That
+   W3C document is now marked **obsolete** and the URL redirects to
+   `https://html.spec.whatwg.org/multipage/` (verified 2026-08-10). So a
+   Standards Track RFC normatively depends on a superseded W3C Recommendation
+   whose successor is a WHATWG living standard. Any Phase 6 rule citing "the
+   SSE specification" must name which document it means.
+
+**Correction 2 — the events-query draft is active, not expired.** The
+Datatracker shows `draft-gupta-httpapi-events-query` at **revision 03**,
+expiring **2027-01-06**, not expired 2026-01-05 as filed. It remains an
+individual submission, not WG-adopted, and is not a published standard — so it
+is still citable only as a draft, with its number and expiry recorded.
+
+**Effect on the Contested Axes Register.** Axis **S1** records negotiation
+option (d), `Accept: text/event-stream`, as used by "**nobody**." That remains
+accurate for the *vendor* references surveyed, which is what S1 compares, but
+it is not true of the standards layer: RFC 8895 uses exactly that mechanism.
+The row is qualified, not overturned — read "nobody" as "no surveyed vendor."
 
 ### 3.1 WHATWG Server-Sent Events — the operative text
 
@@ -1682,6 +1736,15 @@ AWS SQS long polling: `WaitTimeSeconds` — **0** means short polling (the defau
    unverified**. Neither may be cited as a published standard, and the httpapi working
    group's current docket was not enumerated. A targeted datatracker sweep is the obvious
    follow-up if the gate needs standards-track trajectory on this surface.
+
+   **[Resolved 2026-08-10 — see §3.0a.]** The sweep was run against the IETF
+   Datatracker and the RFC Editor after filing, and both entries above are
+   corrected there. In summary: `draft-gupta-httpapi-events-query` is **active
+   at revision 03, expiring 2027-01-06** — not expired; and
+   `draft-ietf-alto-incr-update-sse` **is not a draft at all** — it was
+   published as **RFC 8895, Standards Track, November 2020**, so the sentence
+   "neither may be cited as a published standard" does not hold for it. The
+   httpapi docket remains un-enumerated, so that part of this caveat stands.
 
 ### 11.2 Source conflicts surfaced, not averaged
 
