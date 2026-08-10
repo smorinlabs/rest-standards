@@ -252,6 +252,16 @@ zero). Nothing in the twenty conflicts with any walked decision.
 
 **Evidence:** `baseline-01` §7 (the principles table, per-row citations).
 
+> **Annotation (2026-08-10, Phase 4 classification sweep):** the batch
+> note "predominantly protocol requirements" is refined per raw-RFC
+> verification. `HS-004` (URI stability), `HS-011`/`HS-012` (status-code
+> usage guidance), and `HS-015` (requiring `If-Match`) are
+> evidence-backed defaults grounded in protocol-defined machinery, not
+> protocol law; `HS-016`/`HS-017` (explicit cache marking) and `HS-018`
+> (`Vary`, a SHOULD in RFC 9110 §12.5.5) are `[POLICY]` tightenings of
+> protocol-grounded rules. No ratified strength changes; the drafted
+> standard's provenance lines now label these accordingly.
+
 ---
 
 ## Addendum A3 — Status-code contested rows (+ drafting rows en bloc)
@@ -298,3 +308,11 @@ and the 207 declination.
 **Evidence:** `survey-02` finding 5 (Stripe 200-on-create outlier) ·
 RFC 9110 §15.3 · RFC 4918 (207's WebDAV definition) · Zalando 207 rule ·
 `OP-006` and the five-axes authorization decision · the gap review.
+
+> **Annotation (2026-08-10, Phase 4 second-lens review):** classification
+> nuance on row 1 — RFC 9110 §15.3.2/§9.3.3 make `Location` on `201` a
+> SHOULD, not a MUST, so the unconditional MUST ratified here is a
+> `[POLICY]` tightening of a protocol-grounded rule, not protocol law
+> itself. The ruling is unchanged; the drafted standard (R5.6) now labels
+> the strength accordingly. The 405+`Allow` row is unaffected — that MUST
+> is RFC 9110 §15.5.6's own.

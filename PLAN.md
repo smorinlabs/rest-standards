@@ -196,6 +196,21 @@ Phase 4 systematic review. Rulings recorded at the gate:
 
 ### Phase 4: Decision-focused review
 
+**Complete 2026-08-10** (started 2026-08-09). The internal three-agent
+pass (consistency / ambiguity / domain-gap) ran first — 22 findings,
+recorded in
+[`docs/reviews/2026-08-09-phase-4-internal-review-findings.md`](docs/reviews/2026-08-09-phase-4-internal-review-findings.md);
+fixes landed on the Phase 4 branch. The Codex second lens ran 2026-08-10
+against the corrected text (10 findings, all dispositioned — same review
+doc), followed by a raw-RFC classification sweep of every
+protocol-requirement label. The owner walk ruled all four
+decision-touching items 2026-08-10 (switches pruned; `cancel` broadened;
+R4.16 path placeholders; R10.9 operation discovery, backed by the
+`baseline-02i` research leaf and a filed decision record), and the
+closing structural pass ran clean. **Phase 4 completed 2026-08-10 and
+Gate E passed the same day (recorded below); the standard stands at 127
+rules, checklist 127/127, fixture 12/12.**
+
 Run the recovered `cli-standards` review pattern:
 
 1. internal consistency and cross-reference pass;
@@ -210,7 +225,14 @@ Run the recovered `cli-standards` review pattern:
 Finish with structural checks for duplicate IDs, missing anchors, stale references,
 undefined terms, and RFC-keyword consistency.
 
-**Gate E:** Approve the version 1.0 candidate.
+**Gate E — passed 2026-08-10.** The owner approved
+`rest-api-standard.md` (with the `conformance/` fixtures) as the
+version 1.0 candidate. Ruled at the gate: the CORS header-exposure item
+from `baseline-02i`, option (a) — new rule R4.17 mandates
+`Access-Control-Expose-Headers` coverage for cross-origin browser
+clients (rule count 127). The four Phase 4 apparatus rulings (switch
+pruning, `cancel` scope, R4.16, R10.9) become fully binding with this
+approval.
 
 ### Phase 5: Publish and maintain
 
@@ -249,7 +271,7 @@ destabilizing 1.0. Scope when opened:
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | **Complete 2026-08-09 — Gate D passed same day** — `rest-api-standard.md`: §1–§12 (124 rules with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register; the 18 apparatus provisions ratified en bloc at Gate D, marked in place), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-09 against `conformance/fixture-violations.yaml`) |
+| Normative standard | Stable rules and rationale | Phase 3 | **Gate E-approved version 1.0 candidate (2026-08-10)** — drafted and Gate D-approved 2026-08-09; Phase 4 review complete. `rest-api-standard.md`: §1–§12 (127 rules, each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
 
 ## Definition of done for version 1.0

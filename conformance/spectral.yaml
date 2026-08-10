@@ -2,10 +2,11 @@
 #
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
 # in each description cite the standard.
-# Status: execution-verified 2026-08-09 with @stoplight/spectral-cli 6.16.3
-# against fixture-violations.yaml in this directory — all ten expected
-# findings fired (6 errors, 4 warnings) and the $ref-only envelope schema
-# correctly passed. Command:
+# Status: execution-verified 2026-08-10 with @stoplight/spectral-cli 6.16.3
+# against fixture-violations.yaml in this directory — all twelve expected
+# findings fired (7 errors, 5 warnings); the $ref-only envelope schema is
+# deliberately not traversed (see per-rule descriptions for known
+# limits). Command:
 #   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
 #     conformance/fixture-violations.yaml
 extends: []
@@ -34,8 +35,23 @@ rules:
       function: pattern
       functionOptions:
         match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
+  rs-r10-9-202-operation-location:
+    description: "R10.9 - 202 responses declare a Location header for the operation resource (SHOULD-strength). Documented false negatives: the body-identity MUST, the absolute-URI form, and header/body agreement are not statically checked here - the Appendix G live-probe table covers them. $ref'd Response Objects may warn spuriously"
+    severity: warn
+    given: "$.paths[*][*].responses['202']"
+    then:
+      field: "headers.Location"
+      function: truthy
+  rs-r4-16-path-parameters-snake-case:
+    description: "R4.16 - path parameter names (in: path) match ^[a-z_][a-z_0-9]*$ (snake_case, body-property grammar)"
+    severity: error
+    given: "$..parameters[?(@.in == 'path')].name"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z_][a-z_0-9]*$"
   rs-s1-10-no-new-x-headers:
-    description: "Section 1.10 - no new X- prefixed header fields (RFC 6648); covers request header parameters, inline response headers, and reusable components.headers"
+    description: "Section 1.10 - no new X- prefixed header fields (RFC 6648); covers request header parameters, inline response headers, and reusable components.headers. The standard bans only NEW X- names: where a contract must document a pre-existing third-party X- field, suppress that instance with a Spectral override"
     severity: error
     given:
       - "$..parameters[?(@.in == 'header')].name"
@@ -46,7 +62,7 @@ rules:
       functionOptions:
         notMatch: "^[Xx]-"
   rs-r5-6-create-returns-location:
-    description: "R5.6 - 201 responses declare a Location header (POST creates and PUT creates with client-supplied IDs alike)"
+    description: "R5.6 - 201 responses declare a Location header (POST and PUT creates alike). Heuristic at warn severity: R5.6 binds single-resource creates only, so an atomic bulk 201, a $ref'd Response Object, or a lowercase 'location' key may warn spuriously - suppress per instance with a Spectral override"
     severity: warn
     given:
       - "$.paths[*].post.responses['201']"
@@ -55,7 +71,7 @@ rules:
       field: "headers.Location"
       function: truthy
   rs-r4-3-top-level-object:
-    description: "R4.3 / R6.1 - every application/json response schema is either a $ref or declares type object; referenced schema contents are not traversed by this rule"
+    description: "R4.3 / R6.1 - every application/json response schema is either a $ref or declares type object. Known limits: $ref targets are not traversed (a $ref to a non-object false-passes), and media types other than exact application/json (problem+json, vendor +json) are not inspected"
     severity: warn
     given: "$.paths[*][*].responses[*].content['application/json'].schema"
     then:
@@ -67,7 +83,7 @@ rules:
         functionOptions:
           match: "^object$"
   rs-r5-13-problem-code-grammar:
-    description: "R5.13 - problem code const values match ^[a-z][a-z0-9_]*$ (snake_case, hyphens excluded)"
+    description: "R5.13 - problem code const values match ^[a-z][a-z0-9_]*$ (snake_case, hyphens excluded). Spot-check heuristic: only const-declared codes are inspected (enum/pattern/$ref forms are not), and an unrelated schema with a code const may warn"
     severity: warn
     given: "$..properties.code.const"
     then:

@@ -83,12 +83,13 @@ neighbouring `.framing.md` recording its provenance and shaping decisions.
 Sixty-six proposed principles in total. **All are proposals carrying research
 confidence, not ratified policy** — see the series table above.
 
-### Follow-up leaves (Gate B and Gate C)
+### Follow-up leaves (Gate B, Gate C, and Phase 4)
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles (Gate B), plus ten run 2026-08-09 during Gate C and its addendum
-(`02d`–`02h`, `03c`–`03g`). Each verified its claims against primary sources
-with a two-source minimum.
+principles (Gate B), ten run 2026-08-09 during Gate C and its addendum
+(`02d`–`02h`, `03c`–`03g`), and one run 2026-08-10 during the Phase 4 owner
+walk (`02i`). Each verified its claims against primary sources with a
+two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |
@@ -105,6 +106,7 @@ with a two-source minimum.
 | `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
 | `baseline-03e-ratelimit-field-survey` | What does the industry actually emit for rate limits? | `2026-08-09` | **No convergence.** X-prefixed family is a plurality (10/31, corrected), not a majority; 11/31 publish no quota state; exactly one draft-11-shaped emitter (Cloudflare, uncited); every IETF citation in the wild is draft-06 or earlier — the superseded trio shape |
 | `baseline-03f-ratelimit-draft-trajectory` | Does the RateLimit draft have a path to RFC, and what is normatively available instead? | `2026-08-09` | **MUST rejected on RFC 2026 grounds.** Draft expired+revived 3×, no AD/WGLC/milestone, wire format still moving (PR #166 renames parameters); falsifies `03b`'s "editorial → stable" inference; recommends MUST 429+`Retry-After` (published standards) + SHOULD pinned draft-11 fields, contingency re-keyed off expiry |
+| `baseline-02i-operation-discovery` | How does a client learn a `202` operation resource's URI, and should `Location` be bound? (Phase 4 owner walk) | `2026-08-10` | **Two-part proposal.** Body identity MUST (RFC 9110 §15.3.3 names the representation as the status-monitor pointer; 14/17 surveyed APIs and 3/3 AI providers body-carry); `Location` SHOULD, denoting the operation, never the result; `Operation-Location` rejected on IANA-registry + RFC 6648 grounds; CORS header-visibility gap surfaced as a separate item |
 | `baseline-03g-risk-axes` | Defaults + flip triggers for the five threat-model-conditional security axes? | `2026-08-09` | **Deployment-profile skeleton produced.** Bearer+TTL/rotation default (BCP 240's MUST satisfiable by rotation; Entra ships neither DPoP nor mTLS; MCP mandates plain Bearer) · opaque-on-the-wire default · multi-dimensional tiered rate posture · 300s/60s asymmetric replay window + dedup · centralize authz decision, enforce in-handler |
 
 **Dated re-check triggers:** `OP-010` semi-annual review, next **2027-02-09**
@@ -119,7 +121,7 @@ five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
 would weaken the bearer default), any MCP proof-of-possession extension,
 OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
 
-## Decision index — `decisions/` (Gate C, complete 2026-08-09)
+## Decision index — `decisions/` (Gate C complete 2026-08-09; Phase 4/Gate E addenda 2026-08-10)
 
 The ADR layer. One file per stem, paired with its prompt and reports by the
 naming convention; each entry records the ratified rule, its Phase 2
@@ -164,6 +166,7 @@ the quick-citation index; the files are authoritative.
 | A3 · Status-code rows (addendum) | 2026-08-09 | **201+`Location`** on every create; **200 + envelope** over 207 for partial bulk; **404** masks cross-tenant existence; 405/415/428/401-403/empty-200 rows en bloc | `decisions/baseline-01-http-semantics.decision.md` |
 | A4 · Dry-run (addendum) | 2026-08-09 | **`?dry_run=true`**, MAY per endpoint / SHOULD on destructive+bulk; output contract ratified (marker, real outcome shape, validation depth, no key consumption); `Prefer: validate-only` declined on advisory-execution risk | `decisions/baseline-02-api-contracts.decision.md` |
 | A5 · Action verbs (addendum) | 2026-08-09 | **Core registry** (cancel, archive/restore, approve/reject, publish/unpublish, duplicate) + AIP-136 discipline + one-verb-per-meaning; no collection-level actions | `decisions/baseline-02-api-contracts.decision.md` |
+| P4 · Operation discovery on 202 (Phase 4 addendum) | 2026-08-10 | **Two-part rule completing `AC-019`**: `202` body MUST identify the operation (`id`+template or `url`); `Location` SHOULD, denoting the operation never the result, header/body agreeing; `Operation-Location` and `Link` declined | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

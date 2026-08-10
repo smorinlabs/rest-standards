@@ -417,3 +417,12 @@ expiring credentials, SHOULD).
 
 **Classification:** per each row's evidence class in `baseline-03` §7.
 **Evidence:** `baseline-03` §7 (per-row citations).
+
+> **Annotation (2026-08-10, Phase 4 second-lens review):** classification
+> nuance on `OP-011`, `OP-013`, and `OP-014` — RFC 9110 §15.6.4 and
+> RFC 6585 §4 make `Retry-After` optional, and RFC 9745's `deprecation`
+> link relation and RFC 8594's `Sunset` are optional mechanisms, so the
+> MUSTs ratified here are `[POLICY]` tightenings of protocol-grounded
+> rules (the same posture the `OP-010` entry already states explicitly
+> for its own 429 MUST). The rulings are unchanged; the drafted standard
+> (R11.5, R9.5, R9.6) now labels the strengths accordingly.

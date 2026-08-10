@@ -1,9 +1,12 @@
 # REST API Design Standard
 
-**Status:** **Gate D passed 2026-08-09** — the owner approved this draft
-(Parts I–III and [`conformance/spectral.yaml`](conformance/spectral.yaml))
-for Phase 4 systematic review per [`PLAN.md`](PLAN.md). Not yet a 1.0
-release; Gate E approves the release candidate after Phase 4.
+**Status:** **Gate E passed 2026-08-10** — the owner approved this
+document (Parts I–III and
+[`conformance/spectral.yaml`](conformance/spectral.yaml)) as the
+**version 1.0 candidate** after the Phase 4 systematic review (Gates C,
+D, and E all passed; review history in
+[`docs/reviews/`](docs/reviews/)). The version becomes 1.0 when
+Phase 5 tags the release per [`PLAN.md`](PLAN.md).
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
 and its addendum (recorded in [`research/decisions/`](research/decisions/));
@@ -105,7 +108,10 @@ throughout this document and remain the keys into
 minted in those series: a drafted rule that had no proposed principle would
 otherwise acquire fabricated research lineage. The full two-way mapping
 between rule IDs and provenance IDs is maintained in Part II (Decision
-Log).
+Log). Where a provenance line cites the CLI-standards gap review, the
+gap review's own rule numbers carry a `CLI-` prefix (for example
+`CLI-R4.3`); those identifiers belong to the CLI Design Standard's
+coverage table, never to this document's rule-ID namespace.
 
 **Section namespace.** The `R<section>` prefix space is fixed at twelve
 normative sections, in this order: 1 purpose/conformance · 2 resources and
@@ -174,9 +180,12 @@ rules as not applicable — MUST carry a stated reason in the conformance
 note (the N/A-with-reason discipline): "N/A" with no reason is a deviation,
 not an exemption.
 
-The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
-`multi-tenant` · `public-internet` · `handles-pii` · `third-party-clients` ·
-`file-upload`.
+The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations`.
+Every switch controls at least one rule (§10 names each scope); the
+vocabulary grows only when a new rule needs a switch, so a declaration
+never exists that waives nothing. Capability facts with no rule attached
+— tenancy model, PII handling, client audience — belong in the
+conformance note's free text, not here.
 
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8.
 
@@ -196,10 +205,10 @@ note using this template:
 Standard: rest-api-standard v<version>
 Tier: internal | partner | public
 Switches: webhooks=<on|off>, async-operations=<on|off>,
-  bulk-operations=<on|off>, multi-tenant=<on|off>,
-  public-internet=<on|off>, handles-pii=<on|off>,
-  third-party-clients=<on|off>, file-upload=<on|off>
+  bulk-operations=<on|off>
   (every switch declared off carries a one-line reason)
+Context: <free text — tenancy model, PII handling, client audience,
+  and other capability facts no rule attaches to>
 
 Deviations:
 - <rule ID> · <rule strength> · what differs · why · approver · date
@@ -230,8 +239,9 @@ than a synonym (same concept, same name — everywhere). Reserved names are
 part of the frozen compatibility surface once shipped.
 
 **R1.9 — `dry_run` rejection guard.** `dry_run` is reserved standard-wide:
-a mutating request carrying `dry_run=true` to an endpoint that does not
-implement dry-run MUST be rejected with `400`, never silently executed.
+a mutating request carrying the `dry_run` parameter — with any value — to
+an endpoint that does not implement dry-run MUST be rejected with `400`,
+never silently executed.
 (Without this guard, the parameter would carry the same
 silent-real-execution hazard that disqualified `Prefer: validate-only` at
 ratification.)
@@ -258,9 +268,9 @@ ratification.)
 | `Idempotency-Key` | Request | Idempotency key on non-idempotent state-changing requests; Stripe semantics — payload fingerprint, reuse with a different payload rejected; retained ≥ 24 h. `[POLICY]` — the IETF draft that standardized this shape expired 2026-04-18; never cite it as a standard | `AC-016`/`AC-017` (completed) |
 | `request-id` | Response | Correlation ID, emitted on every response including errors. Lowercase name; RFC 6648 deprecates new `X-` prefixed fields, ruling out `X-Request-Id` | Addendum A2.4, completing `OP-018` `[POLICY]` |
 | `ETag` / `If-Match` / `If-None-Match` | Response / request | Strong validators and conditional requests | `HS-014`/`HS-015` · protocol requirement (RFC 9110) |
-| `Location` | Response | Target of every single-resource create (`201 Created`) | Addendum A3.1 · protocol requirement (RFC 9110) |
+| `Location` | Response | Bound on every single-resource create (`201 Created`, R5.6) and, at SHOULD strength, on `202` operation responses — denoting the operation, never the result (R10.9); its RFC 9110 §10.2.2 redirect meaning on 3xx is untouched | Addendum A3.1 · `baseline-02i` + Phase 4 owner walk |
 | `Allow` | Response | Mandatory on every `405 Method Not Allowed` | Addendum A3 · protocol requirement (RFC 9110) |
-| `Retry-After` | Response | Mandatory on `429`; also used on `503` and on `202` polling guidance | `OP-010`/`OP-011` · protocol requirement (RFC 9110, RFC 6585) |
+| `Retry-After` | Response | Mandatory on `429` and on `503` (R11.5); recommended polling hint on `202` (R10.2) | `OP-010`/`OP-011` · protocol requirement (RFC 9110, RFC 6585) |
 | `RateLimit` / `RateLimit-Policy` | Response | SHOULD advertise quota state **in the syntax of `draft-ietf-httpapi-ratelimit-headers-11`**. `[POLICY]` — an unpublished Internet-Draft; MUST NOT be described as standards-compliant; the pinned revision is cited wherever referenced | `OP-010` |
 | `Deprecation` | Response | Deprecation signal (RFC 9745, Standards Track) | `OP-013` |
 | `Sunset` | Response | Retirement date signal (RFC 8594 — Informational, not Standards Track; the pair use different date formats and are not equivalent) | `OP-014` |
@@ -290,10 +300,10 @@ API-wide; kebab-case for multi-word verbs.
 
 | Verb | Registered meaning | Provenance |
 | --- | --- | --- |
-| `cancel` | Terminal, irreversible stop of an in-flight process | Addendum A5 `[POLICY]` |
-| `archive` / `restore` | Reversible visibility pair (the soft-delete pair the DELETE rule references) | Addendum A5 `[POLICY]` |
+| `cancel` | Terminal, irreversible stop of any in-flight state — a pending order, a running operation | Addendum A5 `[POLICY]`; scope confirmed at the Phase 4 owner walk (2026-08-10) |
+| `archive` / `restore` | Reversible visibility pair — removes a resource from default listings for every audience (the soft-delete modeling R5.7 references) | Addendum A5 `[POLICY]` |
 | `approve` / `reject` | Review outcomes | Addendum A5 `[POLICY]` |
-| `publish` / `unpublish` | Consumer-visibility pair | Addendum A5 `[POLICY]` |
+| `publish` / `unpublish` | Consumer-visibility pair — controls whether an otherwise-existing resource is visible to external consumers | Addendum A5 `[POLICY]` |
 | `duplicate` | Copy; returns `201` + `Location` | Addendum A5 `[POLICY]` |
 
 ### 1.11 Terminology
@@ -307,6 +317,7 @@ API-wide; kebab-case for multi-word verbs.
 | **Singleton** | A resource modeling exactly-one-per-context (the `/user`, `me` pattern); the documented exception to pluralization. |
 | **Action** | A non-CRUD operation on a resource, expressed as `POST /{collection}/{id}/{action}`. |
 | **Mutating request** | Any request whose success changes server state. |
+| **Destructive operation** | A mutating request that removes data or irreversibly ends a process: DELETE, and any action verb registered as irreversible (`cancel`). Reversible-visibility actions (`archive`) are not destructive. |
 | **Reserved name** | A query parameter, header, media type, or action verb registered in §1.10. |
 | **Conformance note** | The per-API document required by R1.7. |
 | **Tier / switch** | The declarations required by R1.5 and R1.6. |
@@ -342,13 +353,14 @@ appears.
 > (`baseline-01` decisions) · project policy on a near-universal
 > convention · confidence high.
 
-**R2.3** Resource names MUST be domain terms: the noun the business domain
-itself uses, unabbreviated, with exactly one noun per concept API-wide.
-The same concept MUST carry the same name wherever it appears — path,
-query parameter, body field, header — differing only by the casing rules
-of each surface (R2.4, R4.4).
+**R2.3** Resource names MUST be unabbreviated, and each concept MUST have
+exactly one noun API-wide (both checkable against the contract document).
+Names SHOULD be the noun the business domain itself uses — a judgment
+call, reviewed rather than machine-checked. The same concept MUST carry
+the same name wherever it appears — path, query parameter, body field,
+header — differing only by the casing rules of each surface (R2.4, R4.4).
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R2.2/R3.8 (noun naming,
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items CLI-R2.2/CLI-R3.8 (noun naming,
 > same-concept-same-name parity), extending R1.8.
 
 **R2.4** Path segments MUST use kebab-case (`/sales-order-items`), pattern
@@ -364,7 +376,11 @@ of each surface (R2.4, R4.4).
 **R2.5** Nest a sub-resource only where the child cannot exist outside its
 parent. One sub-resource level is the norm; a path MUST NOT reference more
 than three resources. Beyond that, flatten and relate with query filters
-(`GET /orders?customer=…`).
+(`GET /orders?customer=…`). Counting rule: resources are the noun segments
+(collections and singletons) with their identifiers; the version segment
+(R9.1) and a trailing action segment (§2.4) do not count.
+`/v1/orders/{order_id}/line-items/{line_item_id}/adjustments/{adjustment_id}`
+sits exactly at the ceiling.
 
 > Provenance: walked decision "Structural lock — Path depth" (`baseline-01`
 > decisions) · project policy · confidence moderate-high.
@@ -382,8 +398,10 @@ form (308 preserves method and body, per R5.5).
 across changes to its mutable attributes. **Exception:** deliberately
 versioned or dated resources.
 
-> Provenance: `HS-004` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §3.1; BCP 190) · confidence high.
+> Provenance: `HS-004` (batch, `baseline-01` §7) · evidence-backed
+> default, protocol-grounded (RFC 9110 §3.1 resource identity; BCP 190) —
+> no RFC mandates identity stability; the MUST is this standard's ·
+> confidence high.
 
 **R2.8** This standard's URI rules are construction rules applied within
 the adopting organization's own URI space (§1.3). Neither this standard
@@ -398,14 +416,14 @@ operation. Filtering, sorting, pagination, field selection, and rehearsal
 (`dry_run`) MUST travel as query parameters, and an operation modifier
 MUST NOT be encoded as a path segment.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R2.3, grounded in
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R2.3, grounded in
 > `HS-004` and the ratified filter grammar (§6).
 
 **R2.10** Personally identifiable information MUST NOT appear in any URI —
 path or query string. URIs land in access logs, browser history, referrer
 headers, and URL-keyed caches by default. Identify people by opaque IDs.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R9.7, adjacent to
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R9.7, adjacent to
 > `OP-002` (which bans tokens in query strings).
 
 ### 2.4 Actions — operations that resist CRUD
@@ -416,7 +434,10 @@ headers, and URL-keyed caches by default. Identify people by opaque IDs.
 verb and MUST NOT be used as a collection name under the same parent. The
 core verb registry, with fixed meanings, is in §1.10; a domain verb beyond
 the core registry is permitted with a per-API registry entry, and an API
-MUST use one verb per meaning API-wide.
+MUST use one verb per meaning API-wide. Response shape: a synchronous
+action returns `200 OK` with the mutated representation; a long-running
+action returns `202 Accepted` with the R10.1 operation resource;
+`duplicate` returns `201` with `Location` per R5.6.
 
 > Provenance: walked decision "Structural lock — Custom-action syntax" +
 > addendum A5.1/A5.2 (`baseline-01`/`baseline-02` decisions) · project
@@ -540,11 +561,15 @@ configuration.
 SHOULD require `If-Match`, returning `412 Precondition Failed` on
 mismatch, and `428 Precondition Required` where the precondition is
 demanded and absent (R5.11). Destructive-operation tightenings are in §7.3.
-**Exception:** single-writer resources; append-only collections.
+A resource within this rule's scope by definition supports conditional
+update, so R3.10's strong-`ETag` obligation applies to it — the two rules
+gate the same resource class. **Exception:** single-writer resources;
+append-only collections.
 
 > Provenance: `HS-015` (batch, `baseline-01` §7) + addendum A3 drafting
-> row (428) · protocol requirement (RFC 9110 §13.1.1; RFC 6585) ·
-> confidence high.
+> row (428) · protocol-grounded machinery (RFC 9110 §13.1.1; RFC 6585 §3
+> defines 428); requiring the precondition is an evidence-backed
+> default · confidence high.
 
 ### 3.6 Dry-run rehearsal
 
@@ -611,6 +636,19 @@ distinct.)
 > evidence-backed; the concrete pick is policy · confidence high (one
 > convention required), policy (the pick).
 
+**R4.16** Path placeholders — URI Template variable names and OpenAPI
+`in: path` parameter names, such as `{order_id}` — MUST use snake_case,
+the body-property grammar `^[a-z_][a-z_0-9]*$`. Placeholders never
+appear on the wire, but they appear throughout documentation and the
+contract document, and the value of the rule is uniformity itself.
+(Numbered out of prose order per R1.2: rules take the next unused
+number in their section.)
+
+> Provenance: Apparatus — ruled by the owner at the Phase 4 walk
+> (2026-08-10), closing the Part II register candidate; enters the
+> Gate E approval · project policy `[POLICY]` · confidence high (the
+> same uniformity logic as `AC-007`).
+
 **R4.5** Identifiers MUST be represented as JSON strings. **Exception:**
 genuinely numeric domain quantities.
 
@@ -661,15 +699,30 @@ parameter. A request whose `Accept` header excludes every representation
 the endpoint supports SHOULD receive `406 Not Acceptable` rather than a
 silently substituted type.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R4.2
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R4.2
 > (content-negotiation defaults).
 
 **R4.11** Every response whose content was selected by a request header
 MUST send `Vary` listing each header that influenced selection.
 **Exception:** responses with no negotiation.
 
-> Provenance: `HS-018` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §12.5.5) · confidence high.
+> Provenance: `HS-018` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9110 §12.5.5, where `Vary` on cacheable responses is a SHOULD);
+> the unconditional MUST is a `[POLICY]` tightening · confidence high.
+
+**R4.17** Where an API serves cross-origin browser clients, every
+response MUST list the standard-bound response headers it emits — among
+`request-id`, `ETag`, `Location`, `Retry-After`, `RateLimit`,
+`RateLimit-Policy`, `Deprecation`, `Sunset`, and any other §1.10
+response header in use — in `Access-Control-Expose-Headers`. None of
+those fields is CORS-safelisted, so without this header a cross-origin
+browser client cannot read them at all. (Numbered out of prose order
+per R1.2.)
+
+> Provenance: `baseline-02i` CORS surfacing (WHATWG Fetch + MDN,
+> primary-sourced); ruled option (a) by the owner at Gate E
+> (2026-08-10) · project policy `[POLICY]` — the invisibility mechanism
+> is fact; the exposure mandate is this standard's · confidence high.
 
 ### 4.4 Extension hygiene
 
@@ -695,9 +748,10 @@ Templates SHOULD be used rather than prose construction rules.
 **R4.15** An API MAY support RFC 7240 `Prefer`, including
 `return=minimal` / `return=representation` (and `respond-async`, §10.1).
 Preferences are advisory by design: a server MAY ignore them, and a
-client MUST NOT depend on one being honored. For exactly that reason a
-preference token MUST NOT carry safety semantics — the ground on which
-`Prefer: validate-only` was declined in favor of `dry_run` (§1.10).
+client MUST NOT depend on one being honored. That advisory nature is the
+ground on which `Prefer: validate-only` was declined in favor of
+`dry_run` (§1.10): a token a server may ignore cannot carry safety
+semantics.
 
 > Provenance: `AC-020` (batch, `baseline-02` §7) + addendum A4 rationale ·
 > evidence-backed default · confidence moderate.
@@ -724,15 +778,17 @@ invalid but well-formed requests, `409 Conflict` for conflicts with
 current resource state; `400 Bad Request` remains correct for malformed
 syntax.
 
-> Provenance: `HS-011` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §15.5.21) · confidence high.
+> Provenance: `HS-011` (batch, `baseline-01` §7) · evidence-backed
+> default over protocol-defined codes (RFC 9110 §15.5.21 defines 422;
+> the usage rule is this standard's) · confidence high.
 
 **R5.4** `410 Gone` SHOULD NOT be returned unless permanence is actually
 known and recorded. **Exception:** tombstoned resources with retained
 deletion records.
 
-> Provenance: `HS-012` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §15.5.11) · confidence high.
+> Provenance: `HS-012` (batch, `baseline-01` §7) · evidence-backed
+> default grounded in RFC 9110 §15.5.11's permanence semantics ·
+> confidence high.
 
 **R5.5** Where method and body must survive a redirect, `307` or `308`
 MUST be used; `301`/`302` have a documented history of rewriting the
@@ -749,13 +805,16 @@ client-supplied ID — MUST return `201 Created` with a `Location` header
 referencing the new resource. Updates return `200 OK` with the
 representation. Bulk creation is governed by R5.8, not this rule.
 
-> Provenance: addendum A3.1 (`baseline-01` decisions) · protocol
-> requirement (RFC 9110) · confidence high.
+> Provenance: addendum A3.1 (`baseline-01` decisions) · protocol-grounded
+> (RFC 9110 §15.3.2/§9.3.3, where `Location` on `201` is a SHOULD); the
+> unconditional MUST is a `[POLICY]` tightening · confidence high.
 
 **R5.7** A successful DELETE returns `204 No Content` with an empty body.
 **Exception:** an API that soft-deletes (marks deleted but keeps the
 resource readable) returns `200 OK` with the tombstoned representation,
-because a representation still exists.
+because a representation still exists. Reversible visibility modeled as
+an explicit action pair uses the registered `archive`/`restore` verbs
+(§1.10) rather than overloading DELETE.
 
 > Provenance: walked decision "DELETE response" (`baseline-01` decisions) ·
 > evidence-backed default · confidence moderate-high.
@@ -789,7 +848,8 @@ media type (including PATCH formats, R3.7). `428 Precondition Required`
 is the response where `If-Match` is demanded and absent (R3.11).
 
 > Provenance: addendum A3 drafting rows (`baseline-01` decisions) ·
-> protocol requirements (RFC 9110 §15.3; RFC 6585) · confidence high.
+> protocol requirements (RFC 9110 §15.5.6 — `Allow` on `405` is the
+> RFC's own MUST — and §15.5.16; RFC 6585 §3) · confidence high.
 
 ### 5.3 Errors
 
@@ -799,7 +859,11 @@ when the client requests it. **Exception (named carve-out):** errors
 emitted by infrastructure components outside application control —
 reverse proxies, CDNs, WAFs, rate limiters, load balancers terminating
 before application code — which MUST be documented as such. Nothing in
-this standard is premised on the IANA HTTP Problem Types registry. The
+this standard is premised on the IANA HTTP Problem Types registry. A
+provider MAY additionally serve the identical problem body under
+`application/json` when the client's `Accept` asks for it (the Cloudflare
+mirroring pattern) as a compatibility measure; this standard neither
+requires nor forbids it. The
 matching client obligation — never *relying* on a problem document —
 is R12.7.
 
@@ -811,7 +875,11 @@ is R12.7.
 **R5.13** Every problem document MUST carry `type`, `title`, `status`,
 and a stable machine-readable `code` extension member, bound as follows:
 
-1. `type` is the normative identifier; `code` is its short form. Each
+1. `type` is the normative identifier; `code` is its short form. `type`
+   is a stable absolute `https` URI **under a domain the provider
+   controls** (the URN exception in point 6 is the sole alternative) —
+   identity on an uncontrolled domain is the failure the
+   `httpstatuses.com` repurposing evidenced. Each
    problem type has exactly one of each, bound by the fixed template
    `<https base>/<code, underscores to hyphens>` — for example
    `code: "out_of_credit"` gives
@@ -844,7 +912,8 @@ permitted deviations from RFC 9457's defaults, made in writing here.
 **R5.14** RFC 7807 MUST NOT be cited — it is obsoleted by RFC 9457.
 **Exception:** historical notes explicitly labeled as such.
 
-> Provenance: `AC-005` (batch, `baseline-02` §7) · protocol requirement ·
+> Provenance: `AC-005` (batch, `baseline-02` §7) · the obsoletion is
+> protocol fact; the citation ban is project policy `[POLICY]` ·
 > confidence high.
 
 **R5.15** A validation failure covering one or more fields SHOULD carry a
@@ -859,7 +928,7 @@ whose entries each carry a JSON Pointer to the offending input location
 **R5.16** An API MUST publish a catalog of every problem `type`/`code`
 pair it can return.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R7.12; the pair
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R7.12; the pair
 > stability it catalogs is ratified (R5.13.2).
 
 **R5.17** No response body may expose stack traces, query fragments,
@@ -886,13 +955,17 @@ metadata can be added without a breaking change.
 never `404 Not Found`.
 
 > Provenance: addendum A3 drafting row (`baseline-01` decisions) ·
-> protocol requirement · confidence high.
+> evidence-backed default — the registered semantics of 200 and 404
+> decide it; no RFC states the collection-specific rule · confidence
+> high.
 
 ### 6.2 Pagination
 
 **R6.3** Pagination SHOULD use opaque, non-constructable cursors — offset
 pagination is incorrect under concurrent mutation. **Exception:** small or
-stable collections; UI requiring jump-to-page. The corresponding client
+stable collections; UI requiring jump-to-page. The exception applies only
+where the contract documents the property claimed — a bounded size or an
+append-only/immutable mutation pattern. The corresponding client
 obligation not to construct or modify cursors is R12.5.
 
 > Provenance: `AC-013` (batch, `baseline-02` §7) · evidence-backed
@@ -967,21 +1040,25 @@ deliberately not specified in this version of the standard.
 
 ### 7.1 Caching mechanism
 
-**R7.1** Every response MUST carry explicit freshness information or an
-explicit `no-store` — silence is not a decision; heuristic caching
-(RFC 9111 §4.2.2) means an unlabeled response may still be cached by
-intermediaries.
+**R7.1** Every response MUST carry an explicit `Cache-Control` header —
+stating freshness, `no-cache`, or `no-store` per the R7.3 posture —
+because silence is not a decision; heuristic caching (RFC 9111 §4.2.2)
+means an unlabeled response may still be cached by intermediaries, and
+the ratified posture names `Cache-Control` as the vehicle (an `Expires`
+header alone does not satisfy this rule).
 
-> Provenance: `HS-016` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9111 §4.2.2) · confidence high.
+> Provenance: `HS-016` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9111 §4.2.2 permits heuristic caching — the hazard); the
+> always-emit MUST is a `[POLICY]` tightening per the walked caching
+> decision · confidence high.
 
 **R7.2** Responses carrying user-specific or authenticated data MUST be
 marked `private` or `no-store` — a shared cache may otherwise serve one
 user's data to another. **Exception:** genuinely public responses.
 
-> Provenance: `HS-017` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9111 §3, §5.2.2.7 — a cross-user data-leak class) · confidence
-> high.
+> Provenance: `HS-017` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9111 §3, §5.2.2.7 — the cross-user leak class binds caches); the
+> origin-side marking MUST is a `[POLICY]` tightening · confidence high.
 
 ### 7.2 Caching posture
 
@@ -1012,7 +1089,7 @@ R3.10/R3.11. This section tightens it for destructive operations:
    destructive operation MUST require an explicit filter or explicit
    item list.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R8.1 (destructive
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R8.1 (destructive
 > guards); a `[POLICY]` tightening of the ratified `HS-015` SHOULD.
 
 ---
@@ -1038,7 +1115,8 @@ boundary is authority, not preference: OAuth/OIDC is REQUIRED wherever a
 user delegates authority or a third party acts on a user's behalf (an API
 key authenticates a caller; it cannot carry scoped, revocable, per-user
 consent). API keys are acceptable for server-to-server traffic with a
-single trust relationship.
+single trust relationship — a key issued to exactly one calling system;
+a key shared across distinct callers exceeds this boundary.
 
 > Provenance: walked decision "Auth mechanism per client class"
 > (`baseline-03` decisions) · evidence-backed default (the OAuth rules)
@@ -1091,8 +1169,8 @@ writable fields.
 ### 8.3 The deployment profile — five risk-based axes
 
 **R8.10** Each axis below carries a ratified default and named
-threat-model flip triggers. An API adopts the defaults unless a trigger
-applies, and records any flip in its conformance note. The full trigger
+threat-model flip triggers. An API MUST adopt each axis default unless a
+named trigger applies, and MUST record any flip in its conformance note. The full trigger
 tables and evidence live in the decision record (`baseline-03g`); the
 normative skeleton:
 
@@ -1101,7 +1179,7 @@ normative skeleton:
 | Sender-constrained tokens | Bearer over TLS + short TTL + audience restriction + refresh-token rotation for public clients; validation SHOULD NOT hard-code the `Bearer` scheme | FAPI 2.0 / open banking → DPoP or mTLS; tokens visible to logging intermediaries; hostile-environment public clients → DPoP; existing PKI server-to-server → mTLS; per-operation value → RFC 9470 step-up |
 | Token format | Opaque on the public wire; phantom-token pattern where a gateway exists; a client-visible JWT MUST be RFC 9068-conformant and paired with a revocation-propagation plan | Measured introspection bottleneck, AS-outage tolerance, or third-party resource servers → JWT; instant-revocation SLA or PII claims → stay opaque |
 | Rate-limit aggressiveness | Multi-dimensional tiered posture, published: per-principal sustained + token-bucket burst (start ≈100 rps/account, 25 rps/endpoint, `[POLICY]` numbers); unauthenticated per-IP an order of magnitude lower; auth endpoints strictly stricter (start ≤5/min per IP+account); failed-auth budget; concurrency separate | Large per-request cost variance → cost/token accounting; metered third-party spend → spend caps; credential stuffing → lockout tier; multi-tenant → fair-share; free-tier abuse → spend/tenure gating |
-| Replay window | 300 s past / 60 s future, asymmetric + mandatory dedup cache held at least the past window; NTP required; the window alone is never sufficient | Interactive high-value signing → 30–60 s; server-provided nonces remove skew; unmanaged clocks or store-and-forward → up to 15 min, never without dedup; signature omits body → add RFC 9530 binding |
+| Replay window | 300 s past / 60 s future, asymmetric + mandatory dedup cache held at least the past window; NTP required; the window alone is never sufficient. Does not reopen the ratified webhook tolerance convention (R12.8) | Interactive high-value signing → 30–60 s; server-provided nonces remove skew; unmanaged clocks or store-and-forward → up to 15 min, never without dedup; signature omits body → add RFC 9530 binding |
 | Object-level authorization | Centralized decision, in-handler enforcement (R8.6) | Relationship-derived permissions or cross-tenant sharing at scale → ReBAC; regulated audit or polyglot fleet → policy language; single service with an ownership column → stay embedded |
 
 > Provenance: walked decision "Deployment profile — the five risk-based
@@ -1125,7 +1203,7 @@ validated and restricted against internal address ranges.
 (R5.17 bans internal implementation detail; this rule bans sensitive
 caller data.)
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R5.6.
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item CLI-R5.6.
 
 ---
 
@@ -1186,7 +1264,7 @@ input required · tightening validation on existing inputs · changing
 defaults, including the default sort order · repurposing a status code ·
 removing or narrowing an authentication mechanism.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R7.2/R9.3 (breaking
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items CLI-R7.2/CLI-R9.3 (breaking
 > change taxonomy + frozen-surface enumeration), anchored in ratified
 > rules `AC-012`, A2.1, R5.13.2, and `OP-015`'s
 > compatible-evolution-first posture.
@@ -1200,15 +1278,18 @@ The two headers use deliberately different date formats and are not
 interchangeable; RFC 8594 is Informational while RFC 9745 is Standards
 Track.
 
-> Provenance: `OP-013` (batch, `baseline-03` §7) · protocol requirement ·
-> confidence high.
+> Provenance: `OP-013` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9745/RFC 8594 define the headers; emitting them is this
+> standard's `[POLICY]` MUST) · confidence high.
 
 **R9.6** Every deprecation MUST carry a `deprecation` link relation to
 human-readable migration documentation, and an element MUST NOT be
 deprecated without a sunset date.
 
-> Provenance: `OP-014` (batch, `baseline-03` §7) · protocol requirement
-> (RFC 9745) · confidence high.
+> Provenance: `OP-014` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9745; the link relation and RFC 8594 `Sunset` are optional
+> mechanisms there); the MUSTs are `[POLICY]` tightenings · confidence
+> high.
 
 **R9.7** A deprecated GA major version remains fully supported for at
 least 12 months after its successor ships, and the sunset date is
@@ -1239,8 +1320,25 @@ MUST state the expected polling cadence. Where an in-flight operation can
 be abandoned, cancellation is expressed as the `cancel` action (§1.10) on
 the operation resource.
 
-> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R7.4/R10.4
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items CLI-R7.4/CLI-R10.4
 > (polling/cancellation guidance), riding `AC-019` and addendum A5.
+
+**R10.9** A `202 Accepted` MUST identify its operation resource in the
+response body — either the operation's `id`, where the operation
+resource's URI template is documented in the description document
+(R4.1), or an absolute `url` member. The `202` SHOULD additionally
+carry a `Location` header whose value is the absolute URI of the
+operation resource — never of the eventual result — and where both are
+present they MUST denote the same resource. A `202` carrying neither
+body identity nor header strands the client and violates R10.1.
+(Numbered out of prose order per R1.2.)
+
+> Provenance: research leaf `baseline-02i` (2026-08-10), riding
+> `AC-019`; ruled by the owner at the Phase 4 walk · body clause
+> protocol-grounded (RFC 9110 §15.3.3 — the representation "ought to …
+> point to (or embed) a status monitor"); the `Location` SHOULD is
+> `[POLICY]` (RFC 9110 defines no `Location` semantics for `202`) ·
+> confidence moderate-high (body), moderate (header).
 
 **R10.3** An API MAY accept `Prefer: respond-async` (R4.15) to request
 asynchronous processing; honoring it remains at the server's discretion.
@@ -1378,8 +1476,10 @@ emitted is documented.
 **R11.5** `429` signals quota exhaustion; `503 Service Unavailable`
 signals capacity overload; both MUST carry `Retry-After`.
 
-> Provenance: `OP-011` (batch, `baseline-03` §7) · protocol requirement
-> (RFC 9110 §15.6.4; RFC 6585) · confidence high.
+> Provenance: `OP-011` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9110 §15.6.4 and RFC 6585 §4 both make `Retry-After` optional);
+> the MUST is a `[POLICY]` tightening, as the `OP-010` record states ·
+> confidence high.
 
 The rate-limit *posture* — dimensions, starting numbers, stricter auth
 endpoint tiers — is the third axis of the §8.3 deployment profile.
@@ -1475,8 +1575,9 @@ first and parses the body opportunistically.
 
 **R12.8** A webhook consumer MUST verify the signature over the raw
 request body before parsing; MUST enforce a bounded, non-zero timestamp
-tolerance (300 seconds is the convergent default, per the §8.3 replay
-axis); MUST deduplicate on the signed delivery ID for at least the
+tolerance (300 seconds is the ratified webhook convention — a fixed
+default, deliberately not coupled to the §8.3 replay axis or its flip
+triggers); MUST deduplicate on the signed delivery ID for at least the
 tolerance window; MUST compare signatures in constant time; and MUST
 fail closed on a missing, empty, or default secret at configuration
 load.
@@ -1607,18 +1708,21 @@ Appendix E worked example where it appears.
 | Five-axes deployment profile (walked) | R8.10, R8.6, R12.8 | B3 |
 | A1 · PATCH format | R3.7, R3.8 | B2 |
 | A2 · Sorting cluster | R6.5, R6.6, R6.7, R11.7 | B2 |
-| A3 · Status-code rows | R5.6, R5.7, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
+| A3 · Status-code rows | R5.6, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
 | A4 · Dry-run | R1.9, R3.12 | B2 |
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
+| Phase 4 owner walk (2026-08-10) | R4.16; R10.9; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
+| `baseline-02i` · Operation discovery on 202 (Phase 4) | R10.9 | B2 |
+| Gate E ruling (2026-08-10) | R4.17 | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
 Every provision marked **Apparatus** in this document, in one place.
 These have no Gate C decision record; they were ratified en bloc at
 Gate D (2026-08-09) when the owner approved this draft, and this
-register is their ratification record. The final row — the
-path-parameter naming candidate — was raised during drafting, is not a
-provision, and was not ratified; it remains an open Phase 4 item.
+register is their ratification record. Provisions ruled at the Phase 4
+owner walk (2026-08-10) are marked as such in their rows; they enter
+the Gate E approval.
 
 | Item | Where | Origin |
 | --- | --- | --- |
@@ -1627,20 +1731,23 @@ provision, and was not ratified; it remains an open Phase 4 item.
 | Applicability switches + N/A-with-reason | §1.8 (R1.6) | Gap review B.8 |
 | No-silent-deviation + conformance-note template | §1.9 (R1.7) | Gap review B.12 |
 | Reserved-name inventory as a register | §1.10 (R1.8) | Gap review B.5 |
-| Noun naming, same-concept-same-name | §2.2 (R2.3) | Gap review R2.2/R3.8 |
-| Path = identity, query = modifiers | §2.3 (R2.9) | Gap review R2.3 |
-| PII never in URIs | §2.3 (R2.10) | Gap review R9.7 |
-| Content-negotiation defaults | §4.3 (R4.10) | Gap review R4.2 |
+| Noun naming, same-concept-same-name | §2.2 (R2.3) | Gap review CLI-R2.2/CLI-R3.8 |
+| Path = identity, query = modifiers | §2.3 (R2.9) | Gap review CLI-R2.3 |
+| PII never in URIs | §2.3 (R2.10) | Gap review CLI-R9.7 |
+| Content-negotiation defaults | §4.3 (R4.10) | Gap review CLI-R4.2 |
 | Field-level `errors[]` shape | §5.3 (R5.15) | Gap review B.21 |
-| Problem-type catalog obligation | §5.3 (R5.16) | Gap review R7.12 |
-| Destructive-operation guards | §7.3 (R7.4) | Gap review R8.1 |
-| Secret/PII redaction in responses | §8.5 (R8.12) | Gap review R5.6 |
-| Breaking-change taxonomy + frozen surface | §9.3 (R9.4) | Gap review R7.2/R9.3 |
-| Polling and cancellation guidance | §10.1 (R10.2) | Gap review R7.4/R10.4 |
+| Problem-type catalog obligation | §5.3 (R5.16) | Gap review CLI-R7.12 |
+| Destructive-operation guards | §7.3 (R7.4) | Gap review CLI-R8.1 |
+| Secret/PII redaction in responses | §8.5 (R8.12) | Gap review CLI-R5.6 |
+| Breaking-change taxonomy + frozen surface | §9.3 (R9.4) | Gap review CLI-R7.2/CLI-R9.3 |
+| Polling and cancellation guidance | §10.1 (R10.2) | Gap review CLI-R7.4/CLI-R10.4 |
 | Client obligations: `Retry-After`, timeouts, TLS, unknown fields | §12 (R12.2, R12.3, part of R12.4) | Gap review B.9 |
 | Amendment rule (SemVer + atomic five-surface updates) | Part II preamble | Gap review B.11 |
 | Exception process | Appendix B | Gap review B.12 |
-| **Candidate raised during drafting:** path-parameter naming convention (R4.4 covers bodies and query parameters only; the worked example uses snake_case placeholders like `{order_id}`) | — | Appendix E drafting |
+| Path-placeholder naming rule (raised during drafting as an open candidate; ruled snake_case at the Phase 4 owner walk 2026-08-10) | §4.2 (R4.16) | Appendix E drafting → Phase 4 owner walk |
+| Switch vocabulary pruned to the three rule-gating switches (was eight) | §1.8 (R1.6) | Phase 4 owner walk (2026-08-10) |
+| `202` operation-discovery rule | §10.1 (R10.9) | Research leaf `baseline-02i` + Phase 4 owner walk (2026-08-10) |
+| CORS header exposure | §4.3 (R4.17) | `baseline-02i` surfacing + Gate E ruling (2026-08-10) |
 
 ---
 
@@ -1668,7 +1775,7 @@ own maintenance rather than a conforming API.
 | R1.9 | `dry_run` on a non-implementing endpoint rejected with 400 |
 | R2.1 | Surface is resource-oriented; no RPC-style overlay |
 | R2.2 | Collections plural; singletons documented as singletons |
-| R2.3 | Resource names are unabbreviated domain terms; one noun per concept |
+| R2.3 | Resource names unabbreviated; one noun per concept; domain vocabulary reviewed |
 | R2.4 | Path segments kebab-case |
 | R2.5 | Nesting justified by containment; three resources per path at most |
 | R2.6 | No canonical trailing slash; slash requests redirected 308 |
@@ -1676,7 +1783,7 @@ own maintenance rather than a conforming API.
 | R2.8 | No fixed-prefix constraint on another party's URI space |
 | R2.9 | Operation modifiers in query parameters, never path segments |
 | R2.10 | No PII in any URI |
-| R2.11 | Actions use `POST /{collection}/{id}/{action}`; verbs registered |
+| R2.11 | Actions use `POST /{collection}/{id}/{action}`; verbs registered; response shape per the A5 map (200 sync, 202 long-running, 201 duplicate) |
 | R2.12 | Status field or sub-resource considered before any new verb |
 | R2.13 | No collection-level custom actions |
 | R3.1 | Semantics cited from RFC 9110/9111, never RFC 723x |
@@ -1685,7 +1792,7 @@ own maintenance rather than a conforming API.
 | R3.4 | No method tunneling |
 | R3.5 | PUT for full replacement; PATCH for partial modification |
 | R3.6 | QUERY, where used, only for safe idempotent body-carrying reads |
-| R3.7 | PATCH accepts `merge-patch+json`; 415 otherwise; `Accept-Patch` advertised |
+| R3.7 | PATCH accepts `merge-patch+json` (plus `json-patch+json` where the MAY is exercised); unsupported types 415; `Accept-Patch` advertised |
 | R3.8 | Null and absent equivalent everywhere; Merge Patch deletion the sole exception |
 | R3.9 | `Idempotency-Key` accepted on non-idempotent mutations; payload fingerprinted; retention window at least 24 h and stated |
 | R3.10 | Strong `ETag` on conditionally updatable resources |
@@ -1705,7 +1812,9 @@ own maintenance rather than a conforming API.
 | R4.12 | New header fields use RFC 9651 structured types |
 | R4.13 | Registered link relations used where one fits |
 | R4.14 | URI Templates describe URI families |
-| R4.15 | Preferences advisory only; no safety semantics on `Prefer` |
+| R4.15 | Preferences advisory only; never relied on for safety-relevant behavior |
+| R4.16 | Path placeholders snake_case (body-property grammar) |
+| R4.17 | Cross-origin browser clients: standard-bound headers listed in `Access-Control-Expose-Headers` |
 | R5.1 | Status matches outcome; no 2xx failures |
 | R5.2 | Registered status codes only |
 | R5.3 | 422, 409, and 400 used per their distinctions |
@@ -1718,14 +1827,14 @@ own maintenance rather than a conforming API.
 | R5.10 | Cross-tenant existence masked with 404 |
 | R5.11 | 405 carries `Allow`; 415 for unsupported media; 428 where a precondition is demanded |
 | R5.12 | Every application error servable as `problem+json`; infrastructure carve-out documented |
-| R5.13 | Problem documents carry `type`/`title`/`status`/`code`; template binding; pairs immutable; no `about:blank` |
+| R5.13 | Problem documents carry `type`/`title`/`status`/`code`; `type` under a provider-controlled domain; template binding; pairs immutable; no `about:blank` |
 | R5.14 | RFC 7807 never cited |
 | R5.15 | Validation failures carry `errors[]` with JSON Pointers |
 | R5.16 | Problem `type`/`code` catalog published |
 | R5.17 | No internal implementation detail in any response body |
 | R6.1 | Collection responses use the items-plus-continuation envelope |
 | R6.2 | Empty collections return 200 with an empty array |
-| R6.3 | Cursor pagination; cursors opaque and non-constructable |
+| R6.3 | Cursor pagination (recommendation-strength, with documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
 | R6.4 | No `Link` headers for pagination |
 | R6.5 | `cursor` and `limit` names; default and maximum documented |
 | R6.6 | Total stable default order documented; `id` tiebreak |
@@ -1764,6 +1873,7 @@ own maintenance rather than a conforming API.
 | R10.6 | Ack timeout and retry schedule published; retries at least 72 h; dead-letter at least 30 d with redelivery |
 | R10.7 | Webhooks signed per topology; SHA-1 banned |
 | R10.8 | Secrets at least 256 bits; overlapping rotation; HTTPS-only; verification tooling shipped |
+| R10.9 | `202` body identifies the operation (`id` + documented template, or `url`); `Location` (the operation's absolute URI, never the result) recommended; header and body agree |
 | R11.1 | Page size, expansion depth, and bulk count maxima published and enforced |
 | R11.2 | 429 with `Retry-After` on exhaustion |
 | R11.3 | Draft-11 fields, when emitted, pinned and never called standard |
@@ -1836,7 +1946,7 @@ every response · strong `ETag` on updatable resources · `Location` on
 | Empty collection | 200 + empty array |
 | Malformed syntax | 400 |
 | Unauthenticated | 401 |
-| Unauthorized | 403 — or 404 where existence would leak |
+| Unauthorized | 404 by default (existence masking, R5.10); 403 only where existence is public or the caller is intra-tenant |
 | State conflict | 409 |
 | Precondition failed / missing | 412 / 428 |
 | Unsupported media type | 415 |
@@ -1885,6 +1995,10 @@ How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
 A fictional flower-delivery platform, "Bloom," at
 `https://api.example.com/v1`. Every block is annotated with the rules it
 exercises; all identifiers, keys, and signatures are placeholders.
+Bloom serves cross-origin browser clients, so every response also
+carries `Access-Control-Expose-Headers` listing the standard-bound
+headers it emits (R4.17); like the R7.1/R11.7 always-on headers in
+E.10, it is omitted from the excerpts below for brevity.
 
 ### E.1 Conformance note (§1.9 template, filled in)
 
@@ -1895,10 +2009,10 @@ Standard: rest-api-standard v0.1.0-draft
 Tier: public
 Switches: webhooks=on, async-operations=on,
   bulk-operations=off (imports run through the async export/import
-  operations; no synchronous bulk endpoint is offered),
-  multi-tenant=off (single-tenant product; no tenant boundary inside
-  the API), public-internet=on, handles-pii=on,
-  third-party-clients=on, file-upload=off (no binary payloads in v1)
+  operations; no synchronous bulk endpoint is offered)
+Context: single-tenant product; handles PII (delivery addresses);
+  public-internet API with third-party clients; no binary payloads
+  in v1
 
 Deviations: none.
 
@@ -2089,13 +2203,14 @@ Authorization: Bearer <access-token>
 
 ### E.7 Asynchronous work — export as an operation resource
 
-Exercises R10.1, R10.2, R5.1.
+Exercises R10.1, R10.2, R10.9, R5.1.
 
 ```http
 POST /v1/order-exports HTTP/1.1
 Host: api.example.com
 Authorization: Bearer <access-token>
 Content-Type: application/json
+Idempotency-Key: 2c7d1f4b-8a3e-4b6f-b1d0-000001example
 
 {
   "created_after": "2026-01-01T00:00:00Z"
@@ -2120,9 +2235,12 @@ request-id: req_004example
 
 The reading: the operation is addressable, has documented terminal
 states (`succeeded`, `failed`, `canceled`), an expiry, and a failure
-representation (R10.1); `Retry-After` paces the polling (R10.2); an
-abandonable run is stopped with
-`POST /v1/operations/op_000example/cancel` (R10.2, §1.10).
+representation (R10.1); the body `id` plus Bloom's documented
+`/v1/operations/{operation_id}` template satisfies R10.9's body clause,
+and `Location` carries the same operation URI — the two are required to
+agree (R10.9); `Retry-After` paces the polling (R10.2); an abandonable
+run is stopped with `POST /v1/operations/op_000example/cancel` (R10.2,
+§1.10).
 
 ### E.8 A webhook delivery
 
@@ -2185,7 +2303,9 @@ restating a moving wire format.
 Exercises R9.5, R9.6, R9.7.
 
 A v1 response after the v2 launch (deprecation announced 2026-09-01,
-sunset one year later):
+sunset one year later; only the deprecation-relevant headers are
+excerpted — the full response also carries the always-on headers of
+R7.1 and R11.7):
 
 ```http
 Deprecation: @1788220800
@@ -2221,12 +2341,15 @@ Two fixtures: a Spectral ruleset over the contract document, and a
 live-probe table over a running API. The ruleset,
 [`conformance/spectral.yaml`](conformance/spectral.yaml), is drafted
 from the pinned patterns in Part I and cites rule IDs in each rule
-description. It is execution-verified: run 2026-08-09 with
+description. It is execution-verified: run 2026-08-10 with
 `@stoplight/spectral-cli` 6.16.3 against
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
 header directions, POST and PUT creates, and a `$ref`-only envelope
-schema that correctly passes), all ten expected findings fired.
+schema the ruleset deliberately does not traverse), all twelve expected
+findings fired. The rules are conservative heuristics: each description
+states its known false-positive and false-negative limits, and
+warn-severity rules exist to be reviewed, not blindly enforced.
 
 Live probes — each row is one request against a deployed API and the
 response that conformance predicts:
@@ -2244,4 +2367,5 @@ response that conformance predicts:
 | Quota | Exceed the published limit | 429 + `Retry-After` | R11.2 |
 | Error negotiation | Force an error with `Accept: application/problem+json` | Problem document with template-bound `type`/`code` | R5.12, R5.13 |
 | Correlation | Any request | `request-id` present on the response | R11.7 |
+| 202 discovery | Start an async operation | Body carries `id` or `url`; any `Location` is the operation's absolute URI and agrees with the body | R10.9 |
 | Cache posture | Authenticated GET | `Cache-Control: private, no-cache` (or stricter) | R7.1–R7.3 |
