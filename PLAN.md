@@ -264,6 +264,44 @@ destabilizing 1.0. Scope when opened:
   the Part II amendment rule (semantic versioning, atomic five-surface
   updates).
 
+### Phase 7: Skill apparatus (post-1.0)
+
+The standard is a document; this phase gives it an applier. `rest-standards`
+is an agent skill that reads `rest-api-standard.md` live and applies it in
+four modes — `plan`, `check`, `review`, `audit` — the REST counterpart to the
+`cli-standards` skill that ships beside the CLI Design Standard.
+
+This closes the second half of the transfer begun at Gate C. The gap review
+(`docs/reviews/2026-08-09-cli-standards-gap-review.md`) moved the CLI
+standard's *content* here — items B.8 and B.12 are why §1.7–1.9 exist. This
+phase moves its *operating apparatus*. Design:
+[`docs/specs/2026-08-10-rest-standards-skill-design.md`](docs/specs/2026-08-10-rest-standards-skill-design.md).
+
+Scope:
+
+- author `.claude/skills/rest-standards/` — `SKILL.md` plus four procedure
+  references (`scoping`, `planning`, `review`, `audit`);
+- ship **no normative content in the skill**: §1.7–1.9 are already ratified,
+  so the skill reads tiers, switches, and the conformance-note template live
+  rather than restating them, and navigates by grepping the standard's
+  headings rather than shipping a section index that a Part II amendment
+  would silently stale;
+- scale audit depth by **evidence plane** — contract document
+  (`conformance/spectral.yaml`), source, deployed runtime (Appendix G probes)
+  — because §1.7 tiers name an audience, not a depth;
+- gate the runtime plane: opt-in, non-production only, read-only probes
+  first, mutating and quota probes behind a second confirmation (owner
+  ruling 2026-08-10); and
+- hand placement, wiring, and the quality gate to the `skill-create` and
+  `skill-quality` pipelines.
+
+**Gate F — skill accepted.** The skill's `audit` mode, run against the
+Appendix E worked example (Bloom Orders API), reproduces that appendix's
+rule-ID annotations and conformance note; `skill-quality` passes; and the
+Spectral ruleset still fires 12/12 when invoked through the skill's own path.
+No rule text changes in this phase — anything the skill exposes as a missing
+rule is an amendment under Part II, not a skill addition.
+
 ## Planned artifacts
 
 | Artifact | Purpose | Created in | Status |
@@ -280,6 +318,7 @@ destabilizing 1.0. Scope when opened:
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 | **Gate E-approved version 1.0 candidate (2026-08-10)** — drafted and Gate D-approved 2026-08-09; Phase 4 review complete. `rest-api-standard.md`: §1–§12 (127 rules, each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
+| `.claude/skills/rest-standards/` | Agent skill applying the standard in four modes | Phase 7 | **Designed 2026-08-10** (`docs/specs/2026-08-10-rest-standards-skill-design.md`); authoring pending |
 
 ## Definition of done for version 1.0
 
