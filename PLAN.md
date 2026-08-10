@@ -196,6 +196,13 @@ Phase 4 systematic review. Rulings recorded at the gate:
 
 ### Phase 4: Decision-focused review
 
+**In progress 2026-08-09.** The internal three-agent pass (consistency /
+ambiguity / domain-gap) is complete — 22 findings, recorded in
+[`docs/reviews/2026-08-09-phase-4-internal-review-findings.md`](docs/reviews/2026-08-09-phase-4-internal-review-findings.md);
+fixes are underway on the Phase 4 branch. Remaining before Gate E: the
+owner walk for decision-touching items, the Codex adversarial second lens
+on the corrected text, and the closing structural checks.
+
 Run the recovered `cli-standards` review pattern:
 
 1. internal consistency and cross-reference pass;
