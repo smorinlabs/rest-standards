@@ -1,6 +1,6 @@
 ---
 name: rest-standards
-description: Apply the org's REST API Design Standard (rest-api-standard.md in this repo) to any HTTP API work, scaled by conformance tier (internal / partner / public), applicability switches, and available evidence. Four modes — plan (greenfield interview → OpenAPI skeleton + seeded conformance note), check (mid-build lookups — "what status code / header / query parameter does the standard say"), review (design review of an API spec, OpenAPI document, or unshipped diff; findings cite rule IDs), audit (conformance sweep of an existing API across three evidence planes — contract document via Spectral, source, and gated live probes against a non-production deployment). Fires whenever an HTTP API is being created, designed, extended, reviewed, or audited — "new API", "design this endpoint", "review this OpenAPI spec", "is this API conformant", "audit this API", "REST standards". Not for CLIs (cli-standards), generic non-API architecture review (factor-architect), generic quality sweeps (factor-scan), or external REST-practice research (guided-research).
+description: Apply the org's REST API Design Standard (rest-api-standard.md in this repo) to any HTTP API work, scaled by conformance tier (internal / partner / public), applicability switches, and available evidence. Four modes — plan (greenfield interview → OpenAPI skeleton + seeded conformance note), check (mid-build lookups — "what status code / header / query parameter does the standard say"), review (design review of an API spec, OpenAPI document, or unshipped diff; findings cite rule IDs), audit (conformance sweep of an existing API across three evidence planes — contract document via Spectral or direct reading, source, and gated live probes against a non-production deployment). Fires whenever an HTTP API is being created, designed, extended, reviewed, or audited — "new API", "design this endpoint", "review this OpenAPI spec", "is this API conformant", "audit this API", "REST standards". Not for CLIs (cli-standards), generic non-API architecture review (factor-architect), generic quality sweeps (factor-scan), or external REST-practice research (guided-research).
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, AskUserQuestion
 ---
 
@@ -24,18 +24,28 @@ evidence supports.
 ## Locating the standard
 
 This skill ships beside the canonical standard and reads it live — never from
-memory, never from a bundled copy. Resolve the skill's base directory first
-(it is a symlink under a global placement), then walk up to the repo root:
+memory, never from a bundled copy. Substitute `<skill-base-dir>` below with the
+directory holding this `SKILL.md` — the harness names it when it loads the
+skill, and it is often a symlink into the repo. `realpath` resolves the link;
+the three `..` steps then climb out of `rest-standards`, `skills`, and
+`.claude` to reach the repo root:
 
-    STD="$(dirname "$(dirname "$(dirname "$(realpath "<skill-base-dir>")")")")/rest-api-standard.md"
+    STD="$(realpath "<skill-base-dir>")/../../../rest-api-standard.md"
 
 Read the header and note the **Version** line:
 
     grep -m1 -oE '\*\*Version [0-9]+\.[0-9]+\.[0-9]+' "$STD"
 
+Keep both as short, standalone commands. Some harnesses refuse a shell command
+they cannot statically verify, and nesting or bundling these with other
+commands is what trips that check. **A refusal to run the command is not a
+missing standard** — it is a shell problem, so retry rather than stop: run
+`realpath "<skill-base-dir>"` on its own, then use its literal output in place
+of the substitution in a second plain command.
+
 Every deliverable — spec, review, audit, conformance note — pins the standard
-version it was produced against. If the file is missing, stop and report; do
-not proceed from memory.
+version it was produced against. Stop and report only when the file itself is
+absent (`test -f "$STD"` fails); never proceed from memory.
 
 ## Navigating the standard
 
