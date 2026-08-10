@@ -89,6 +89,42 @@ To the owner walk: AM-1 (five switches gate no rule — prune vs tie), AM-2
 (`cancel` scope vs E.6's order usage), the path-parameter naming
 candidate, and optionally ratifying `Location`-on-202 as a SHOULD.
 
+## Codex second lens (2026-08-10, run against 2e14b5a)
+
+The different-model-family adversarial pass returned 10 findings (8 major,
+2 minor); none blocker. Dispositions, fixed unless noted:
+
+1. **Classification as protocol law of house tightenings** (R5.6 `Location`
+   MUST, R11.5 `Retry-After` MUST, R9.5/R9.6 deprecation MUSTs — the RFCs
+   make each optional): provenance lines relabeled "protocol-grounded +
+   `[POLICY]` tightening"; dated annotations added to the A3 entry
+   (`baseline-01` decisions) and the OP batch entry (`baseline-03`
+   decisions). Rule strengths unchanged.
+2. **E.7 export POST lacked `Idempotency-Key`:** fixed as an example
+   improvement — technically R3.9 binds the server to *accept* a key, not
+   the client to send one, so this was not a conformance violation; the
+   example now models best practice.
+3. **R7.1 transcribed the looser batch text** ("freshness information")
+   where the walked caching decision requires `Cache-Control` explicitly:
+   R7.1 now names `Cache-Control` as the vehicle; `Expires` alone does
+   not satisfy it.
+4.–7. **Spectral rules overclaim** (Location rule warns on atomic-bulk
+   201s/$ref'd responses/lowercase key; top-level-object rule skips +json
+   types and $ref targets; problem-code rule is const-only; X- rule
+   flags pre-existing third-party fields): each rule description now
+   states its false-positive/false-negative limits and the override
+   escape hatch; Appendix G no longer claims the $ref fixture "passes"
+   (it is deliberately not traversed). Selector-level hardening declined
+   for 1.0 — warn-severity heuristics with stated limits, revisit in
+   Phase 5 if adopted in CI.
+8. **Appendix A misstated two rules** (R3.7 row implied JSON Patch draws
+   415; R6.3 row dropped the SHOULD and its exceptions): rows corrected.
+9. **Part II attributed R5.7 to addendum A3** (it is the separate walked
+   DELETE decision): A3 row corrected.
+10. **R5.11 cited RFC 9110 §15.3** (the 2xx section) for 405/415:
+    corrected to §15.5.6/§15.5.16, noting §15.5.6's `Allow` MUST is the
+    RFC's own.
+
 ## Process after fixes
 
 - Re-run structural check suite (IDs, cross-refs, keywords, checklist count —

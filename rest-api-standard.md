@@ -766,8 +766,9 @@ client-supplied ID — MUST return `201 Created` with a `Location` header
 referencing the new resource. Updates return `200 OK` with the
 representation. Bulk creation is governed by R5.8, not this rule.
 
-> Provenance: addendum A3.1 (`baseline-01` decisions) · protocol
-> requirement (RFC 9110) · confidence high.
+> Provenance: addendum A3.1 (`baseline-01` decisions) · protocol-grounded
+> (RFC 9110 §15.3.2/§9.3.3, where `Location` on `201` is a SHOULD); the
+> unconditional MUST is a `[POLICY]` tightening · confidence high.
 
 **R5.7** A successful DELETE returns `204 No Content` with an empty body.
 **Exception:** an API that soft-deletes (marks deleted but keeps the
@@ -808,7 +809,8 @@ media type (including PATCH formats, R3.7). `428 Precondition Required`
 is the response where `If-Match` is demanded and absent (R3.11).
 
 > Provenance: addendum A3 drafting rows (`baseline-01` decisions) ·
-> protocol requirements (RFC 9110 §15.3; RFC 6585) · confidence high.
+> protocol requirements (RFC 9110 §15.5.6 — `Allow` on `405` is the
+> RFC's own MUST — and §15.5.16; RFC 6585 §3) · confidence high.
 
 ### 5.3 Errors
 
@@ -996,10 +998,12 @@ deliberately not specified in this version of the standard.
 
 ### 7.1 Caching mechanism
 
-**R7.1** Every response MUST carry explicit freshness information or an
-explicit `no-store` — silence is not a decision; heuristic caching
-(RFC 9111 §4.2.2) means an unlabeled response may still be cached by
-intermediaries.
+**R7.1** Every response MUST carry an explicit `Cache-Control` header —
+stating freshness, `no-cache`, or `no-store` per the R7.3 posture —
+because silence is not a decision; heuristic caching (RFC 9111 §4.2.2)
+means an unlabeled response may still be cached by intermediaries, and
+the ratified posture names `Cache-Control` as the vehicle (an `Expires`
+header alone does not satisfy this rule).
 
 > Provenance: `HS-016` (batch, `baseline-01` §7) · protocol requirement
 > (RFC 9111 §4.2.2) · confidence high.
@@ -1230,15 +1234,18 @@ The two headers use deliberately different date formats and are not
 interchangeable; RFC 8594 is Informational while RFC 9745 is Standards
 Track.
 
-> Provenance: `OP-013` (batch, `baseline-03` §7) · protocol requirement ·
-> confidence high.
+> Provenance: `OP-013` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9745/RFC 8594 define the headers; emitting them is this
+> standard's `[POLICY]` MUST) · confidence high.
 
 **R9.6** Every deprecation MUST carry a `deprecation` link relation to
 human-readable migration documentation, and an element MUST NOT be
 deprecated without a sunset date.
 
-> Provenance: `OP-014` (batch, `baseline-03` §7) · protocol requirement
-> (RFC 9745) · confidence high.
+> Provenance: `OP-014` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9745; the link relation and RFC 8594 `Sunset` are optional
+> mechanisms there); the MUSTs are `[POLICY]` tightenings · confidence
+> high.
 
 **R9.7** A deprecated GA major version remains fully supported for at
 least 12 months after its successor ships, and the sunset date is
@@ -1408,8 +1415,10 @@ emitted is documented.
 **R11.5** `429` signals quota exhaustion; `503 Service Unavailable`
 signals capacity overload; both MUST carry `Retry-After`.
 
-> Provenance: `OP-011` (batch, `baseline-03` §7) · protocol requirement
-> (RFC 9110 §15.6.4; RFC 6585) · confidence high.
+> Provenance: `OP-011` (batch, `baseline-03` §7) · protocol-grounded
+> (RFC 9110 §15.6.4 and RFC 6585 §4 both make `Retry-After` optional);
+> the MUST is a `[POLICY]` tightening, as the `OP-010` record states ·
+> confidence high.
 
 The rate-limit *posture* — dimensions, starting numbers, stricter auth
 endpoint tiers — is the third axis of the §8.3 deployment profile.
@@ -1638,7 +1647,7 @@ Appendix E worked example where it appears.
 | Five-axes deployment profile (walked) | R8.10, R8.6, R12.8 | B3 |
 | A1 · PATCH format | R3.7, R3.8 | B2 |
 | A2 · Sorting cluster | R6.5, R6.6, R6.7, R11.7 | B2 |
-| A3 · Status-code rows | R5.6, R5.7, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
+| A3 · Status-code rows | R5.6, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
 | A4 · Dry-run | R1.9, R3.12 | B2 |
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
 
@@ -1716,7 +1725,7 @@ own maintenance rather than a conforming API.
 | R3.4 | No method tunneling |
 | R3.5 | PUT for full replacement; PATCH for partial modification |
 | R3.6 | QUERY, where used, only for safe idempotent body-carrying reads |
-| R3.7 | PATCH accepts `merge-patch+json`; 415 otherwise; `Accept-Patch` advertised |
+| R3.7 | PATCH accepts `merge-patch+json` (plus `json-patch+json` where the MAY is exercised); unsupported types 415; `Accept-Patch` advertised |
 | R3.8 | Null and absent equivalent everywhere; Merge Patch deletion the sole exception |
 | R3.9 | `Idempotency-Key` accepted on non-idempotent mutations; payload fingerprinted; retention window at least 24 h and stated |
 | R3.10 | Strong `ETag` on conditionally updatable resources |
@@ -1756,7 +1765,7 @@ own maintenance rather than a conforming API.
 | R5.17 | No internal implementation detail in any response body |
 | R6.1 | Collection responses use the items-plus-continuation envelope |
 | R6.2 | Empty collections return 200 with an empty array |
-| R6.3 | Cursor pagination; cursors opaque and non-constructable |
+| R6.3 | Cursor pagination (SHOULD; documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
 | R6.4 | No `Link` headers for pagination |
 | R6.5 | `cursor` and `limit` names; default and maximum documented |
 | R6.6 | Total stable default order documented; `id` tiebreak |
@@ -2127,6 +2136,7 @@ POST /v1/order-exports HTTP/1.1
 Host: api.example.com
 Authorization: Bearer <access-token>
 Content-Type: application/json
+Idempotency-Key: 2c7d1f4b-8a3e-4b6f-b1d0-000001example
 
 {
   "created_after": "2026-01-01T00:00:00Z"
@@ -2257,7 +2267,10 @@ description. It is execution-verified: run 2026-08-09 with
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
 header directions, POST and PUT creates, and a `$ref`-only envelope
-schema that correctly passes), all ten expected findings fired.
+schema the ruleset deliberately does not traverse), all ten expected
+findings fired. The rules are conservative heuristics: each description
+states its known false-positive and false-negative limits, and
+warn-severity rules exist to be reviewed, not blindly enforced.
 
 Live probes — each row is one request against a deployed API and the
 response that conformance predicts:

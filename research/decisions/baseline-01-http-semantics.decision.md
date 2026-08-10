@@ -298,3 +298,11 @@ and the 207 declination.
 **Evidence:** `survey-02` finding 5 (Stripe 200-on-create outlier) ·
 RFC 9110 §15.3 · RFC 4918 (207's WebDAV definition) · Zalando 207 rule ·
 `OP-006` and the five-axes authorization decision · the gap review.
+
+> **Annotation (2026-08-10, Phase 4 second-lens review):** classification
+> nuance on row 1 — RFC 9110 §15.3.2/§9.3.3 make `Location` on `201` a
+> SHOULD, not a MUST, so the unconditional MUST ratified here is a
+> `[POLICY]` tightening of a protocol-grounded rule, not protocol law
+> itself. The ruling is unchanged; the drafted standard (R5.6) now labels
+> the strength accordingly. The 405+`Allow` row is unaffected — that MUST
+> is RFC 9110 §15.5.6's own.
