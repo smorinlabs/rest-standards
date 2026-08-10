@@ -1,12 +1,12 @@
 # REST API Design Standard
 
-**Status:** **Gate E passed 2026-08-10** — the owner approved this
-document (Parts I–III and
-[`conformance/spectral.yaml`](conformance/spectral.yaml)) as the
-**version 1.0 candidate** after the Phase 4 systematic review (Gates C,
-D, and E all passed; review history in
-[`docs/reviews/`](docs/reviews/)). The version becomes 1.0 when
-Phase 5 tags the release per [`PLAN.md`](PLAN.md).
+**Version 1.0.0 — released 2026-08-10.** Gates C, D, and E all passed
+(decision layer ratified 2026-08-09; draft approved and systematically
+reviewed 2026-08-09/10; review history in
+[`docs/reviews/`](docs/reviews/)). This document, with
+[`conformance/spectral.yaml`](conformance/spectral.yaml) and its
+fixture, is the released standard; changes from here follow the Part II
+amendment rule and are recorded in [`CHANGELOG.md`](CHANGELOG.md).
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
 and its addendum (recorded in [`research/decisions/`](research/decisions/));
@@ -2005,7 +2005,7 @@ E.10, it is omitted from the excerpts below for brevity.
 ```markdown
 ## Conformance note — Bloom Orders API
 
-Standard: rest-api-standard v0.1.0-draft
+Standard: rest-api-standard v1.0.0
 Tier: public
 Switches: webhooks=on, async-operations=on,
   bulk-operations=off (imports run through the async export/import
