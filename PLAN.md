@@ -293,7 +293,12 @@ Scope:
   first, mutating and quota probes behind a second confirmation (owner
   ruling 2026-08-10); and
 - hand placement, wiring, and the quality gate to the `skill-create` and
-  `skill-quality` pipelines.
+  `skill-quality` pipelines; and
+- add the repository's first `.claude/settings.json` startup announcement,
+  which names the skill and points at `docs/skills/rest-standards.md`. The
+  announcement text is written up front and is **forward-looking until this
+  phase completes** — both the skill and that documentation page are
+  therefore Gate F conditions, not optional follow-ups.
 
 **Gate F — skill accepted.** The skill's `audit` mode, run against the
 Appendix E worked example (Bloom Orders API), reproduces that appendix's

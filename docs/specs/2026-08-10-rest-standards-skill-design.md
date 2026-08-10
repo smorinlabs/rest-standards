@@ -130,6 +130,14 @@ in hand, not what any API must do.
 | **source** | Route tables, handlers, middleware | `Read` / `Grep` / `ast-grep` | Rules with no contract expression: idempotency-key retention, existence masking (R5.10), redaction, documented default sort order |
 | **runtime** | A deployed base URL | The Appendix G live-probe table, gated per §3.6 | R2.6 trailing-slash 308, R1.9 `dry_run` 400 guard, R7.4 `If-Match` 428, R11.2 429 + `Retry-After`, R11.7 `request-id` |
 
+**Planes overlap, and that is a feature.** Some rules are reachable two ways —
+existence masking (R5.10) is both a source-plane read of the authorization
+path and an Appendix G runtime probe. The table above names each rule's
+*cheapest* plane, not its only one. Where two planes both reach a rule, the
+skill reports both, and agreement between them is a stronger result than
+either alone; disagreement between them is itself a finding, because it means
+the deployed behavior and the source have diverged.
+
 Every finding names the plane that produced it. A rule that no available plane
 can reach is reported `unverified — no <plane> available`, carrying the
 CLI audit rule across verbatim: **never an inferred pass**.
@@ -257,7 +265,10 @@ Naming this split keeps two pipelines from each running in full:
 | Where is this work tracked? | `PLAN.md` Phase 7, matching every other unit of work in this repository | 2026-08-10, owner |
 | Ship a conformance-note template with the skill? | No — render from §1.9 live | 2026-08-10, design |
 | Ship a section index with the skill? | No — grep the live file (§3.3) | 2026-08-10, design |
-| Build now, or wait for Phase 6 streaming? | Build now; the skill reads the standard live, so a new section needs no skill edit | 2026-08-10, design |
+| Build now, or wait for Phase 6 streaming? | Build now; the skill reads the standard live, so a new section needs no skill edit. Caveat: a streaming section could introduce an evidence plane that is neither document nor request/response pair, which would require a §3.5 edit | 2026-08-10, design |
+| May the runtime plane probe an API the user does not own? | No — hard ban. Probing a third party's deployment raises an authorization question the skill cannot resolve. Reviewing a vendor's *published contract* on the contract plane remains available | 2026-08-10, reviewed and upheld |
+| Conformance notes carry no audit-history section, unlike the CLI template | Accepted. §1.9 defines the note's shape; git records history. The skill will not emit structure the standard does not define (§4) | 2026-08-10, reviewed and upheld |
+| Announcement wording — interim string, or the final one naming the skill? | The final one. `.claude/settings.json` is written up front and is forward-looking until this phase completes; both the skill and `docs/skills/rest-standards.md` become Gate F conditions | 2026-08-10, owner |
 
 ## 9. Deferred, and not part of Phase 7
 
