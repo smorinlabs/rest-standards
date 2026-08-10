@@ -265,7 +265,7 @@ ratification.)
 | `Idempotency-Key` | Request | Idempotency key on non-idempotent state-changing requests; Stripe semantics — payload fingerprint, reuse with a different payload rejected; retained ≥ 24 h. `[POLICY]` — the IETF draft that standardized this shape expired 2026-04-18; never cite it as a standard | `AC-016`/`AC-017` (completed) |
 | `request-id` | Response | Correlation ID, emitted on every response including errors. Lowercase name; RFC 6648 deprecates new `X-` prefixed fields, ruling out `X-Request-Id` | Addendum A2.4, completing `OP-018` `[POLICY]` |
 | `ETag` / `If-Match` / `If-None-Match` | Response / request | Strong validators and conditional requests | `HS-014`/`HS-015` · protocol requirement (RFC 9110) |
-| `Location` | Response | This standard binds it on every single-resource create (`201 Created`); other RFC 9110 `Location` uses (3xx targets, the common `202` operation-resource pointer, as in Appendix E.7) are permitted, not restricted | Addendum A3.1 · protocol requirement (RFC 9110) |
+| `Location` | Response | Bound on every single-resource create (`201 Created`, R5.6) and, at SHOULD strength, on `202` operation responses — denoting the operation, never the result (R10.9); 3xx targets unrestricted (RFC 9110) | Addendum A3.1 · `baseline-02i` + Phase 4 owner walk |
 | `Allow` | Response | Mandatory on every `405 Method Not Allowed` | Addendum A3 · protocol requirement (RFC 9110) |
 | `Retry-After` | Response | Mandatory on `429` and on `503` (R11.5); recommended polling hint on `202` (R10.2) | `OP-010`/`OP-011` · protocol requirement (RFC 9110, RFC 6585) |
 | `RateLimit` / `RateLimit-Policy` | Response | SHOULD advertise quota state **in the syntax of `draft-ietf-httpapi-ratelimit-headers-11`**. `[POLICY]` — an unpublished Internet-Draft; MUST NOT be described as standards-compliant; the pinned revision is cited wherever referenced | `OP-010` |
@@ -1306,6 +1306,23 @@ the operation resource.
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items CLI-R7.4/CLI-R10.4
 > (polling/cancellation guidance), riding `AC-019` and addendum A5.
 
+**R10.9** A `202 Accepted` MUST identify its operation resource in the
+response body — either the operation's `id`, where the operation
+resource's URI template is documented in the description document
+(R4.1), or an absolute `url` member. The `202` SHOULD additionally
+carry a `Location` header whose value is the absolute URI of the
+operation resource — never of the eventual result — and where both are
+present they MUST denote the same resource. A `202` carrying neither
+body identity nor header strands the client and violates R10.1.
+(Numbered out of prose order per R1.2.)
+
+> Provenance: research leaf `baseline-02i` (2026-08-10), riding
+> `AC-019`; ruled by the owner at the Phase 4 walk · body clause
+> protocol-grounded (RFC 9110 §15.3.3 — the representation "ought to …
+> point to (or embed) a status monitor"); the `Location` SHOULD is
+> `[POLICY]` (RFC 9110 defines no `Location` semantics for `202`) ·
+> confidence moderate-high (body), moderate (header).
+
 **R10.3** An API MAY accept `Prefer: respond-async` (R4.15) to request
 asynchronous processing; honoring it remains at the server's discretion.
 
@@ -1677,7 +1694,8 @@ Appendix E worked example where it appears.
 | A3 · Status-code rows | R5.6, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
 | A4 · Dry-run | R1.9, R3.12 | B2 |
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
-| Phase 4 owner walk (2026-08-10) | R4.16; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
+| Phase 4 owner walk (2026-08-10) | R4.16; R10.9; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
+| `baseline-02i` · Operation discovery on 202 (Phase 4) | R10.9 | B2 |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
@@ -1710,6 +1728,7 @@ the Gate E approval.
 | Exception process | Appendix B | Gap review B.12 |
 | Path-placeholder naming rule (raised during drafting as an open candidate; ruled snake_case at the Phase 4 owner walk 2026-08-10) | §4.2 (R4.16) | Appendix E drafting → Phase 4 owner walk |
 | Switch vocabulary pruned to the three rule-gating switches (was eight) | §1.8 (R1.6) | Phase 4 owner walk (2026-08-10) |
+| `202` operation-discovery rule | §10.1 (R10.9) | Research leaf `baseline-02i` + Phase 4 owner walk (2026-08-10) |
 
 ---
 
@@ -1834,6 +1853,7 @@ own maintenance rather than a conforming API.
 | R10.6 | Ack timeout and retry schedule published; retries at least 72 h; dead-letter at least 30 d with redelivery |
 | R10.7 | Webhooks signed per topology; SHA-1 banned |
 | R10.8 | Secrets at least 256 bits; overlapping rotation; HTTPS-only; verification tooling shipped |
+| R10.9 | `202` body identifies the operation (`id` + documented template, or `url`); `Location` recommended — the operation, never the result; header and body agree |
 | R11.1 | Page size, expansion depth, and bulk count maxima published and enforced |
 | R11.2 | 429 with `Retry-After` on exhaustion |
 | R11.3 | Draft-11 fields, when emitted, pinned and never called standard |
@@ -2159,7 +2179,7 @@ Authorization: Bearer <access-token>
 
 ### E.7 Asynchronous work — export as an operation resource
 
-Exercises R10.1, R10.2, R5.1.
+Exercises R10.1, R10.2, R10.9, R5.1.
 
 ```http
 POST /v1/order-exports HTTP/1.1
@@ -2191,9 +2211,12 @@ request-id: req_004example
 
 The reading: the operation is addressable, has documented terminal
 states (`succeeded`, `failed`, `canceled`), an expiry, and a failure
-representation (R10.1); `Retry-After` paces the polling (R10.2); an
-abandonable run is stopped with
-`POST /v1/operations/op_000example/cancel` (R10.2, §1.10).
+representation (R10.1); the body `id` plus Bloom's documented
+`/v1/operations/{operation_id}` template satisfies R10.9's body clause,
+and `Location` carries the same operation URI — the two are required to
+agree (R10.9); `Retry-After` paces the polling (R10.2); an abandonable
+run is stopped with `POST /v1/operations/op_000example/cancel` (R10.2,
+§1.10).
 
 ### E.8 A webhook delivery
 
@@ -2299,7 +2322,7 @@ description. It is execution-verified: run 2026-08-10 with
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
 header directions, POST and PUT creates, and a `$ref`-only envelope
-schema the ruleset deliberately does not traverse), all eleven expected
+schema the ruleset deliberately does not traverse), all twelve expected
 findings fired. The rules are conservative heuristics: each description
 states its known false-positive and false-negative limits, and
 warn-severity rules exist to be reviewed, not blindly enforced.

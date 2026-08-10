@@ -144,12 +144,25 @@ The four decision-touching items, ruled by the owner:
    capture-on-payment-intents precedent.
 3. **Path placeholders ruled snake_case** — new rule R4.16 (rule count
    125), Spectral rule + fixture case added, Part II candidate closed.
-4. **`Location` on 202:** owner directed research before ruling —
-   research leaf `baseline-02i-operation-discovery` dispatched
-   2026-08-10 (opus, repo evidence rules, AI-provider coverage
-   mandatory); ruling pending its report.
+4. **`Location` on 202:** owner directed research before ruling; leaf
+   `baseline-02i-operation-discovery` ran 2026-08-10 and the owner
+   ratified its two-part recommendation — `202` body MUST identify the
+   operation (either `id` + documented template or an absolute `url`,
+   both forms permitted), `Location` SHOULD (the operation, never the
+   result, header/body agreeing). Drafted as R10.9 (rule count 126);
+   decision record filed in `baseline-02` decisions; `Operation-Location`
+   and `Link`-header alternatives declined on IANA/RFC 6648 and
+   pagination-posture grounds.
 
-Rulings 1–3 enter the Gate E approval as Phase 4 apparatus.
+Rulings 1–4 enter the Gate E approval as Phase 4 apparatus (ruling 4
+carries its own research leaf and decision record).
+
+**Carried to Gate E discussion (no ruling yet):** the `baseline-02i`
+CORS surfacing — none of the headers this standard mandates
+(`request-id`, `ETag`, `Retry-After`, `RateLimit`, `Location`) is
+CORS-safelisted, and the standard never mentions
+`Access-Control-Expose-Headers`; cross-origin browser clients cannot
+read them without it.
 
 ## Process after fixes
 

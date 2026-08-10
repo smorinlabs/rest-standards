@@ -539,6 +539,67 @@ discipline are load-bearing; the exact pairs are editable.
 
 ---
 
+## Phase 4 addendum — Operation discovery on 202 (completes AC-019)
+
+**Decision (2026-08-10, Phase 4 owner walk): RATIFIED, two-part rule,
+both parts as recommended by `baseline-02i`.** Raised when the internal
+review found the drafted standard permitting `Location` on `202` without
+defining any discovery mechanism, despite `AC-019`'s addressability
+requirement; the owner directed research before ruling.
+
+**The ratified rule (drafted as R10.9):** a `202 Accepted` MUST identify
+its operation resource in the response body — either the operation's
+`id` where the operation URI template is documented in the description
+document, or an absolute `url` member (either form permitted, owner
+choice) — and SHOULD additionally carry a `Location` header denoting the
+operation resource, never the eventual result; where both are present
+they MUST denote the same resource.
+
+**Classification:** the body clause is protocol-grounded (RFC 9110
+§15.3.3 names the representation as the status-monitor pointer); the
+`Location` SHOULD is project policy `[POLICY]` — RFC 9110 defines no
+`Location` semantics for `202`.
+
+**Justification:** `[FACT]` RFC 9110 §15.3.3 makes the body the
+RFC-preferred carrier; `[COMPARATIVE]` 14 of 17 surveyed running APIs —
+including OpenAI, Anthropic, and Google Gemini, none of which emits a
+discovery header — carry identity in the body; `[FACT]` `Location` is
+not CORS-safelisted (WHATWG Fetch + MDN), so a header-only mechanism is
+unreadable to cross-origin browser clients; `[FACT]` `Location` is the
+only IANA-registered candidate header — `Operation-Location` and
+`Azure-AsyncOperation` are unregistered, and RFC 6648 rules out minting
+them here.
+
+**Options declined:** keep-permitted (leaves `AC-019` addressability
+with no mechanism — GitHub repository statistics is the live failure
+case) · MUST `Location` (no RFC semantics; CORS-invisible; against
+14/17 practice) · `Operation-Location` (unregistered vendor field) ·
+RFC 8288 `Link` header (the mechanism the pagination decision already
+declined; recommended only by an individual Internet-Draft expiring
+2026-08-30).
+
+**Pagination-posture consistency:** examined and found disanalogous —
+the ratified one-source-of-truth argument targets volatile cursors and
+strict redundancy over a mandated envelope; an operation URI is minted
+once, and the equality clause makes header/body divergence a
+conformance failure. Full analysis in the leaf, §5.3.
+
+**Carried item:** the leaf surfaced that no header this standard
+mandates is CORS-exposed by default (`Access-Control-Expose-Headers`
+never mentioned) — recorded as a Gate E discussion item, out of scope
+here.
+
+**Confidence: moderate-high** (body clause) · **moderate** (`Location`
+SHOULD — the judgment call, flippable if browser clients are ruled out
+of scope).
+
+**Evidence:** `baseline-02i` throughout (raw-RFC and primary-doc
+verified, two-source minimum; ARM RPC row explicitly flagged as
+below-bar) · `survey-05` (the header/body split, independently) ·
+`AC-019`.
+
+---
+
 ## Batch ratification — the fifteen remaining AC principles
 
 **Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`

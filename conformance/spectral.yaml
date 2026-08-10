@@ -3,8 +3,8 @@
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
 # in each description cite the standard.
 # Status: execution-verified 2026-08-10 with @stoplight/spectral-cli 6.16.3
-# against fixture-violations.yaml in this directory — all eleven expected
-# findings fired (7 errors, 4 warnings); the $ref-only envelope schema is
+# against fixture-violations.yaml in this directory — all twelve expected
+# findings fired (7 errors, 5 warnings); the $ref-only envelope schema is
 # deliberately not traversed (see per-rule descriptions for known
 # limits). Command:
 #   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
@@ -35,6 +35,13 @@ rules:
       function: pattern
       functionOptions:
         match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
+  rs-r10-9-202-operation-location:
+    description: "R10.9 - 202 responses declare a Location header for the operation resource (SHOULD-strength; the body-identity MUST is not statically lintable). Heuristic at warn severity; $ref'd Response Objects may warn spuriously"
+    severity: warn
+    given: "$.paths[*][*].responses['202']"
+    then:
+      field: "headers.Location"
+      function: truthy
   rs-r4-16-path-parameters-snake-case:
     description: "R4.16 - path parameter names (in: path) match ^[a-z_][a-z_0-9]*$ (snake_case, body-property grammar)"
     severity: error
