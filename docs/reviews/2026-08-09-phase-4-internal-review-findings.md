@@ -132,6 +132,25 @@ The different-model-family adversarial pass returned 10 findings (8 major,
     corrected to §15.5.6/§15.5.16, noting §15.5.6's `Allow` MUST is the
     RFC's own.
 
+## Owner walk (2026-08-10)
+
+The four decision-touching items, ruled by the owner:
+
+1. **Switches pruned to three** (webhooks, async-operations,
+   bulk-operations) — the five no-effect switches removed; capability
+   facts move to the conformance note's free-text `Context` field.
+2. **`cancel` broadened** to any in-flight state (pending order, running
+   operation) — the worked example stands; matches the ratified
+   capture-on-payment-intents precedent.
+3. **Path placeholders ruled snake_case** — new rule R4.16 (rule count
+   125), Spectral rule + fixture case added, Part II candidate closed.
+4. **`Location` on 202:** owner directed research before ruling —
+   research leaf `baseline-02i-operation-discovery` dispatched
+   2026-08-10 (opus, repo evidence rules, AI-provider coverage
+   mandatory); ruling pending its report.
+
+Rulings 1–3 enter the Gate E approval as Phase 4 apparatus.
+
 ## Process after fixes
 
 - Re-run structural check suite (IDs, cross-refs, keywords, checklist count —

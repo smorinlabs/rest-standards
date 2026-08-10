@@ -1,9 +1,9 @@
 # Verification fixture for spectral.yaml — a deliberately violating OpenAPI
-# document. Expected: 10 findings (6 errors, 4 warnings): camelCase query
-# param and body property, non-kebab path segment, X- header in all three
-# positions (request parameter, inline response header, components.headers),
-# POST 201 and PUT 201 each without Location, and two schemas with neither
-# $ref nor type.
+# document. Expected: 11 findings (7 errors, 4 warnings): camelCase query
+# param, body property, and path parameter, non-kebab path segment, X-
+# header in all three positions (request parameter, inline response header,
+# components.headers), POST 201 and PUT 201 each without Location, and two
+# schemas with neither $ref nor type.
 # The $ref-only envelope schema on GET /v1/orders 200 must NOT be flagged.
 openapi: 3.1.0
 info:
@@ -43,6 +43,21 @@ paths:
       responses:
         "201":
           description: PUT create with client-supplied ID but no Location (should warn R5.6)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/order_collection"
+  /v1/widgets/{widgetId}:
+    get:
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: camelCase path parameter (should error R4.16)
           content:
             application/json:
               schema:

@@ -177,9 +177,12 @@ rules as not applicable — MUST carry a stated reason in the conformance
 note (the N/A-with-reason discipline): "N/A" with no reason is a deviation,
 not an exemption.
 
-The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
-`multi-tenant` · `public-internet` · `handles-pii` · `third-party-clients` ·
-`file-upload`.
+The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations`.
+Every switch controls at least one rule (§10 names each scope); the
+vocabulary grows only when a new rule needs a switch, so a declaration
+never exists that waives nothing. Capability facts with no rule attached
+— tenancy model, PII handling, client audience — belong in the
+conformance note's free text, not here.
 
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8.
 
@@ -199,10 +202,10 @@ note using this template:
 Standard: rest-api-standard v<version>
 Tier: internal | partner | public
 Switches: webhooks=<on|off>, async-operations=<on|off>,
-  bulk-operations=<on|off>, multi-tenant=<on|off>,
-  public-internet=<on|off>, handles-pii=<on|off>,
-  third-party-clients=<on|off>, file-upload=<on|off>
+  bulk-operations=<on|off>
   (every switch declared off carries a one-line reason)
+Context: <free text — tenancy model, PII handling, client audience,
+  and other capability facts no rule attaches to>
 
 Deviations:
 - <rule ID> · <rule strength> · what differs · why · approver · date
@@ -294,7 +297,7 @@ API-wide; kebab-case for multi-word verbs.
 
 | Verb | Registered meaning | Provenance |
 | --- | --- | --- |
-| `cancel` | Terminal, irreversible stop of an in-flight process | Addendum A5 `[POLICY]` |
+| `cancel` | Terminal, irreversible stop of any in-flight state — a pending order, a running operation | Addendum A5 `[POLICY]`; scope confirmed at the Phase 4 owner walk (2026-08-10) |
 | `archive` / `restore` | Reversible visibility pair — removes a resource from default listings for every audience (the soft-delete modeling R5.7 references) | Addendum A5 `[POLICY]` |
 | `approve` / `reject` | Review outcomes | Addendum A5 `[POLICY]` |
 | `publish` / `unpublish` | Consumer-visibility pair — controls whether an otherwise-existing resource is visible to external consumers | Addendum A5 `[POLICY]` |
@@ -629,6 +632,19 @@ distinct.)
 > project policy `[POLICY]` — the consistency requirement is
 > evidence-backed; the concrete pick is policy · confidence high (one
 > convention required), policy (the pick).
+
+**R4.16** Path placeholders — URI Template variable names and OpenAPI
+`in: path` parameter names, such as `{order_id}` — MUST use snake_case,
+the body-property grammar `^[a-z_][a-z_0-9]*$`. Placeholders never
+appear on the wire, but they appear throughout documentation and the
+contract document, and the value of the rule is uniformity itself.
+(Numbered out of prose order per R1.2: rules take the next unused
+number in their section.)
+
+> Provenance: Apparatus — ruled by the owner at the Phase 4 walk
+> (2026-08-10), closing the Part II register candidate; enters the
+> Gate E approval · project policy `[POLICY]` · confidence high (the
+> same uniformity logic as `AC-007`).
 
 **R4.5** Identifiers MUST be represented as JSON strings. **Exception:**
 genuinely numeric domain quantities.
@@ -1661,15 +1677,16 @@ Appendix E worked example where it appears.
 | A3 · Status-code rows | R5.6, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
 | A4 · Dry-run | R1.9, R3.12 | B2 |
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
+| Phase 4 owner walk (2026-08-10) | R4.16; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
 Every provision marked **Apparatus** in this document, in one place.
 These have no Gate C decision record; they were ratified en bloc at
 Gate D (2026-08-09) when the owner approved this draft, and this
-register is their ratification record. The final row — the
-path-parameter naming candidate — was raised during drafting, is not a
-provision, and was not ratified; it remains an open Phase 4 item.
+register is their ratification record. Provisions ruled at the Phase 4
+owner walk (2026-08-10) are marked as such in their rows; they enter
+the Gate E approval.
 
 | Item | Where | Origin |
 | --- | --- | --- |
@@ -1691,7 +1708,8 @@ provision, and was not ratified; it remains an open Phase 4 item.
 | Client obligations: `Retry-After`, timeouts, TLS, unknown fields | §12 (R12.2, R12.3, part of R12.4) | Gap review B.9 |
 | Amendment rule (SemVer + atomic five-surface updates) | Part II preamble | Gap review B.11 |
 | Exception process | Appendix B | Gap review B.12 |
-| **Candidate raised during drafting:** path-parameter naming convention (R4.4 covers bodies and query parameters only; the worked example uses snake_case placeholders like `{order_id}`) | — | Appendix E drafting |
+| Path-placeholder naming rule (raised during drafting as an open candidate; ruled snake_case at the Phase 4 owner walk 2026-08-10) | §4.2 (R4.16) | Appendix E drafting → Phase 4 owner walk |
+| Switch vocabulary pruned to the three rule-gating switches (was eight) | §1.8 (R1.6) | Phase 4 owner walk (2026-08-10) |
 
 ---
 
@@ -1757,6 +1775,7 @@ own maintenance rather than a conforming API.
 | R4.13 | Registered link relations used where one fits |
 | R4.14 | URI Templates describe URI families |
 | R4.15 | Preferences advisory only; never relied on for safety-relevant behavior |
+| R4.16 | Path placeholders snake_case (body-property grammar) |
 | R5.1 | Status matches outcome; no 2xx failures |
 | R5.2 | Registered status codes only |
 | R5.3 | 422, 409, and 400 used per their distinctions |
@@ -1946,10 +1965,10 @@ Standard: rest-api-standard v0.1.0-draft
 Tier: public
 Switches: webhooks=on, async-operations=on,
   bulk-operations=off (imports run through the async export/import
-  operations; no synchronous bulk endpoint is offered),
-  multi-tenant=off (single-tenant product; no tenant boundary inside
-  the API), public-internet=on, handles-pii=on,
-  third-party-clients=on, file-upload=off (no binary payloads in v1)
+  operations; no synchronous bulk endpoint is offered)
+Context: single-tenant product; handles PII (delivery addresses);
+  public-internet API with third-party clients; no binary payloads
+  in v1
 
 Deviations: none.
 
@@ -2275,12 +2294,12 @@ Two fixtures: a Spectral ruleset over the contract document, and a
 live-probe table over a running API. The ruleset,
 [`conformance/spectral.yaml`](conformance/spectral.yaml), is drafted
 from the pinned patterns in Part I and cites rule IDs in each rule
-description. It is execution-verified: run 2026-08-09 with
+description. It is execution-verified: run 2026-08-10 with
 `@stoplight/spectral-cli` 6.16.3 against
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
 header directions, POST and PUT creates, and a `$ref`-only envelope
-schema the ruleset deliberately does not traverse), all ten expected
+schema the ruleset deliberately does not traverse), all eleven expected
 findings fired. The rules are conservative heuristics: each description
 states its known false-positive and false-negative limits, and
 warn-severity rules exist to be reviewed, not blindly enforced.

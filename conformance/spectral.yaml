@@ -2,9 +2,9 @@
 #
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
 # in each description cite the standard.
-# Status: execution-verified 2026-08-09 with @stoplight/spectral-cli 6.16.3
-# against fixture-violations.yaml in this directory — all ten expected
-# findings fired (6 errors, 4 warnings); the $ref-only envelope schema is
+# Status: execution-verified 2026-08-10 with @stoplight/spectral-cli 6.16.3
+# against fixture-violations.yaml in this directory — all eleven expected
+# findings fired (7 errors, 4 warnings); the $ref-only envelope schema is
 # deliberately not traversed (see per-rule descriptions for known
 # limits). Command:
 #   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
@@ -35,6 +35,14 @@ rules:
       function: pattern
       functionOptions:
         match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
+  rs-r4-16-path-parameters-snake-case:
+    description: "R4.16 - path parameter names (in: path) match ^[a-z_][a-z_0-9]*$ (snake_case, body-property grammar)"
+    severity: error
+    given: "$..parameters[?(@.in == 'path')].name"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z_][a-z_0-9]*$"
   rs-s1-10-no-new-x-headers:
     description: "Section 1.10 - no new X- prefixed header fields (RFC 6648); covers request header parameters, inline response headers, and reusable components.headers. The standard bans only NEW X- names: where a contract must document a pre-existing third-party X- field, suppress that instance with a Spectral override"
     severity: error
