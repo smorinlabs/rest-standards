@@ -30,6 +30,7 @@ they did, and what to do about proxies — is here.
 10. [Frame-size leakage](#10-frame-size-leakage)
 11. [What the field actually does](#11-what-the-field-actually-does)
 12. [Registration status, stated plainly](#12-registration-status-stated-plainly)
+13. [What §13 does not yet answer](#13-what-13-does-not-yet-answer)
 
 ---
 
@@ -427,3 +428,32 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 §1.10 row's caveat both dissolve. A dated re-check is registered for
 **2027-02-10** in
 [`research/README.md`](research/README.md).
+
+## 13. What §13 does not yet answer
+
+§13.4 records five interactions between streaming and the rest of the
+standard that are **recognized and not yet ruled**. They are listed there so
+that silence reads as a decision rather than an oversight, and Phase 7 in
+[`PLAN.md`](PLAN.md) is open to rule them with the same evidence discipline
+that produced §13.
+
+The practical advice while they are open: resolve each as your deployment
+requires, and record the choice in your conformance note under `R1.7`. Two
+deserve a note here because getting them wrong is expensive.
+
+**Frame-type names are effectively frozen, even though §9.3 does not say so
+yet.** `R12.10` requires clients to ignore frame types they do not
+recognize. That tolerance is what makes a growing vocabulary safe — and it
+is also a trap: rename your terminal frame and every deployed client
+silently ignores the new name, sees no terminal frame, and reports
+**truncation on every successful stream**. Treat documented frame-type names,
+and which types are terminal, as part of the frozen compatibility surface
+until Phase 7 rules otherwise. Add frame types freely; rename none.
+
+**A stream can outlive the credential that opened it.** `R8.6` authorizes a
+request, and a stream is one request. A 45-minute stream opened with a
+5-minute token is authorized once, at minute zero, and no rule yet requires
+re-evaluation. If revocation matters in your threat model — and §8.3's
+token-format axis says it should — bound stream lifetime by credential
+lifetime, or re-evaluate periodically and terminate through an `error` frame
+(R13.7). Do not assume the standard has covered this for you.

@@ -394,6 +394,54 @@ provenance row · Appendix A checklist row · Appendix E worked example).
 **Version consequence:** additions plus these scoped amendments are a **MINOR**
 bump under the Part II amendment rule — **v1.1.0**.
 
+## Phase 6 review walk — 2026-08-10
+
+Three internal review lenses over the drafted §13 found collisions the
+research leaves had not: the descriptive survey documented the field, and the
+prescriptive leaf composed against the rules it was pointed at, but neither
+read **every** ratified rule against streaming. `P6-D3` turned out to be an
+instance of a pattern — *a rule that assumes a status is still available
+breaks once the status is committed* — and the pattern had more instances.
+The owner ruled all three tiers on 2026-08-10.
+
+### Tier A — RATIFIED: scope all three (ratified MUSTs a conforming streaming API could not satisfy)
+
+| Rule | Collision | Ratified resolution |
+| --- | --- | --- |
+| `R11.2`, `R11.5` | `429` + `Retry-After` is required on quota exhaustion and is a deliberate tightening of RFC 6585's MAY — but neither status nor header exists mid-stream, and `R13.7`'s frame had no carrier for a pacing hint | Scope both: the `429` obligation binds while a status can still be generated; mid-stream exhaustion reports under `R13.7` carrying a reserved `retry_after` member. This does **not** reopen `P6-D2`, which declined a reserved member for `status` specifically — a pacing hint is not a status code, and RFC 9457 §3.1 constrains only `status` |
+| `R2.11` | "A long-running action returns `202 Accepted`" is unscoped, while `R13.1` forbids `202` for a streaming response — both bind the same request | Scope the response-shape clause: `202` where the action does not stream; `200` + stream media type where it does, with `R13.9` binding the channels |
+| `R6.1` | "Every collection response MUST return a top-level object… never a bare array" has no non-JSON exception, so a streamed NDJSON collection violates it — the shape the companion recommends | Scope it: a streamed collection carries continuation state on its terminal frame, which preserves what the envelope protects (room for metadata without a breaking change). All other §6 rules bind unchanged |
+
+### Tier B — RATIFIED: document as known gaps, open Phase 7
+
+Five interactions are recognized, unruled, and recorded in a new **§13.4**
+register rather than silently omitted, with Phase 7 opened in `PLAN.md` to
+rule them under the same evidence discipline: frame-vocabulary versioning
+(§9.3) · authorization over a stream's lifetime (§8) · caching posture (§7) ·
+idempotency-key replay of a streaming request (§3) · resource ceilings for
+streams (§11).
+
+The rejected alternative was ruling all five now. Declined for the reason
+Option B was declined at the phase opening: five normative decisions with no
+research leaf behind them is exactly the thin-evidence ruling that invites
+re-litigation. **The versioning item carries the sharpest known failure** and
+is called out in the register: `R9.4` does not classify frame-type names, so
+renaming a terminal frame reads as compatible while `R12.10` makes every
+deployed client ignore it, see no terminal frame, and report truncation on
+every success. The register states the interim posture — treat frame-type
+names and terminality as frozen surface.
+
+### Tier C — RATIFIED: absorb all three completions
+
+| Gap | Ratified completion |
+| --- | --- |
+| `R13.9`'s cross-channel identifier was unnamed, and under `R10.9`'s permitted `url` form there was no identifier at all — so the rule had no referent and two APIs would name it differently | Reserve `operation_id` and `operation_url` in §1.10 as a new **reserved stream members** category; the stream carries whichever matches the `202` body's form |
+| `R13.9` required both channels to report "the same terminal state", but `R10.1` has a documented vocabulary and `R13.6` had none — the equality was unverifiable by construction | The terminal frame carries the value from the operation resource's `R10.1` vocabulary wherever `R13.9` binds |
+| No rule required a provider to document keep-alive emission, yet `R12.10` binds clients not to depend on keep-alive timing — undischargeable against an undocumented mechanism | `R13.5` gains a disclosure duty: document whether keep-alives are emitted and in what form. **No interval is mandated**, so `ST-016`'s ratified reasoning is untouched |
+
+No new rule identifiers were minted for any of the above: every change scopes
+an existing rule or adds a clause to one, so the standard stands at 139 rules.
+
 ---
 
 ## Re-check trigger — added to the register in `research/README.md`

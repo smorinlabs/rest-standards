@@ -294,13 +294,39 @@ Step sequence and status:
 | 1b | Prescriptive leaf `baseline-04-streaming` | **Done 2026-08-10** — 898-line report, 20 proposed `ST-*` principles, six conflicts with ratified 1.0 rules raised |
 | 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
 | 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | **Done 2026-08-10** — 12 new rules (`R13.1`–`R13.11`, `R12.10`); standard at **139 rules, checklist 139/139, fixture 12/12** |
-| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | Pending |
+| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | In progress — three internal lenses run and dispositioned; Tier A/B/C ruled by the owner 2026-08-10; Codex second lens and fixture additions outstanding |
 | 5 | Release v1.1.0 | Pending |
 
 Drafting in Step 3 must also amend §1.5's "the `R<section>` prefix space is
 fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
 deferral, add the `streaming` applicability switch to §1.8, register any
 reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
+
+### Phase 7: Streaming's unresolved interactions (post-1.1.0)
+
+Opened 2026-08-10 by the Phase 6 review walk. The three internal review
+lenses over the drafted §13 found that streaming disturbs more of the 1.0
+standard than the research leaves had been pointed at. Collisions where a
+ratified MUST became unsatisfiable were fixed inside Phase 6 (Tier A:
+`R11.2`, `R11.5`, `R2.11`, `R6.1`). **Five interactions where the standard is
+merely silent were deliberately deferred here** rather than ruled without
+evidence — the same reasoning that declined the single-lighter-leaf option
+at the phase opening.
+
+The register lives in **§13.4** of `rest-api-standard.md`, so a reader who
+hits one of these knows the silence is a decision. Scope when opened:
+
+| Item | The unresolved question |
+| --- | --- |
+| Frame-vocabulary versioning (§9.3) | `R9.4` does not classify frame-type names. Renaming a terminal frame reads as compatible, while `R12.10` makes every deployed client ignore it and report truncation on every success. **Sharpest known failure; interim posture recorded in §13.4.** |
+| Stream authorization lifetime (§8) | `R8.6` authorizes a request; a stream is one request that can outlive the credential that opened it. |
+| Caching posture for streams (§7) | `R7.3` tier 1 revalidates via strong `ETag`, which a stream cannot supply. |
+| Idempotency-key replay of a streaming request (§3) | `R3.9`'s "stored response" is undefined for a stream, and overlaps `R13.10` resumption. |
+| Resource ceilings for streams (§11) | `R11.1`'s published maxima cover page size, expansion depth, and bulk count — not stream duration or per-principal concurrency. |
+
+Method when opened: a research leaf per cluster under the two-series
+discipline, a ratification walk, then amendments under the Part II amendment
+rule. Some items may prove to need no rule; that verdict is itself recorded.
 
 ## Planned artifacts
 
