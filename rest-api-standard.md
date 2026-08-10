@@ -243,7 +243,7 @@ ratification.)
 | `fields` | Sparse fieldsets (field selection) | Offering is MAY; when offered: comma-separated list of snake_case field names | Walked decision "Field selection" (`baseline-02` decisions) `[POLICY]` |
 | `cursor` | Opaque pagination position | Request-side name for cursor pagination; cursors are opaque and non-constructable (`AC-013`) | Addendum A2.3, completing `AC-013`/`AC-014` `[POLICY]` |
 | `limit` | Requested page size | Request-side name; each collection documents its default and maximum (`OP-009`) | Addendum A2.3 `[POLICY]` |
-| `dry_run` | Rehearse a mutation without executing it | Support is MAY per endpoint, SHOULD for destructive and bulk operations; unsupported ⇒ `400` per R1.9; response carries an explicit dry-run marker and MUST NOT consume an `Idempotency-Key` | Addendum A4 `[POLICY]` |
+| `dry_run` | Rehearse a mutation without executing it | Support is MAY per endpoint, SHOULD for destructive and bulk operations; unsupported ⇒ `400` per R1.9; full output contract in R3.12 | Addendum A4 `[POLICY]` |
 | `<field>[gte]`, `<field>[gt]`, `<field>[lte]`, `<field>[lt]` | Range filters on collection lists | The only permitted bracketed query-parameter forms; AND-combined; base name obeys the `AC-007` grammar | Walked decision "Filter grammar" (`baseline-02` decisions) `[POLICY]` |
 
 #### Reserved headers
@@ -541,6 +541,28 @@ demanded and absent (R5.11). Destructive-operation tightenings are in §7.3.
 > row (428) · protocol requirement (RFC 9110 §13.1.1; RFC 6585) ·
 > confidence high.
 
+### 3.6 Dry-run rehearsal
+
+**R3.12** A mutating endpoint that offers a rehearsal accepts
+`?dry_run=true` — support is MAY per endpoint and SHOULD for destructive
+and bulk operations, with the standard-wide `400` rejection guard of
+R1.9. The dry-run response contract:
+
+1. MUST carry an explicit dry-run marker stating that no mutation
+   occurred;
+2. MUST return the outcome the real call would produce — validation
+   errors in the ratified problem-document shape (R5.12), or the would-be
+   representation with the real status semantics (R5.6 for creates);
+3. MUST declare its validation depth (full pipeline versus schema-only),
+   so a passing rehearsal is not over-trusted; and
+4. MUST NOT consume an `Idempotency-Key` (R3.9).
+
+> Provenance: addendum A4 (`baseline-02` decisions) · project policy
+> `[POLICY]`; the transport-failure analysis behind declining
+> `Prefer: validate-only` is evidence-backed (RFC 7240 advisory
+> semantics) · confidence moderate-high (transport), moderate (contract
+> details).
+
 ---
 
 ## 4. Requests, representations, negotiation, and schemas
@@ -619,7 +641,7 @@ sole exception.
 > · confidence high.
 
 **R4.9** Enum additions are non-breaking and MUST be documented as such;
-the corresponding client obligation to tolerate unknown values is R12.5.
+the corresponding client obligation to tolerate unknown values is R12.4.
 **Exception:** genuinely closed enumerations, documented as closed.
 
 > Provenance: `AC-012` (batch, `baseline-02` §7) · evidence-backed
@@ -866,7 +888,7 @@ never `404 Not Found`.
 **R6.3** Pagination SHOULD use opaque, non-constructable cursors — offset
 pagination is incorrect under concurrent mutation. **Exception:** small or
 stable collections; UI requiring jump-to-page. The corresponding client
-obligation not to construct or modify cursors is R12.6.
+obligation not to construct or modify cursors is R12.5.
 
 > Provenance: `AC-013` (batch, `baseline-02` §7) · evidence-backed
 > default · confidence high.

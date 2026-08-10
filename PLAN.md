@@ -222,7 +222,7 @@ undefined terms, and RFC-keyword consistency.
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | **In progress 2026-08-09** — `rest-api-standard.md` Part I complete: rule-ID mapping policy (R-numbers; `HS-*`/`AC-*`/`OP-*` frozen as provenance keys), §1–§12 drafted (76 rules, each with provenance, classification, and confidence; unratified apparatus marked "Apparatus (Gate D)"). Part II Decision Log and appendices pending |
+| Normative standard | Stable rules and rationale | Phase 3 | **In progress 2026-08-09** — `rest-api-standard.md` Part I complete: rule-ID mapping policy (R-numbers; `HS-*`/`AC-*`/`OP-*` frozen as provenance keys), §1–§12 drafted (124 rules, each with provenance, classification, and confidence; unratified apparatus marked "Apparatus (Gate D)"). Part II Decision Log and appendices pending |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |
 
 ## Definition of done for version 1.0
