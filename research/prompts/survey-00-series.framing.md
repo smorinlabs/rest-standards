@@ -30,6 +30,19 @@ look in `../reports/` for its runs.
 3. **Step 4 —** the generation prompt is drafted once with all locked decisions baked in (plus a built-in self-review pass), then run to produce the REST Design Standard v1.0.0.
 4. **Step 5 —** one consolidated hardening pass (ambiguities/conflicts/gaps) → v1.1.0 → scripted consistency sweep.
 
+## Addendum 2026-08-10 — Part 8 extends the series
+
+The seven parts above (plus the P1b supplement) were the version 1.0 series and
+are complete. **Phase 6 adds an eighth part, `survey-08-streaming`**, covering
+Server-Sent Events, long-polling, and streaming HTTP bodies — a surface ruled
+out of scope at Gate D and reopened after 1.0 shipped. It is a genuine series
+member and carries every series-wide convention listed below, with one recorded
+exception: **its reference set is not the eight above**, because most of the
+eight publish no streaming surface. The substitution and its reasons are in
+[`survey-08-streaming.framing.md`](survey-08-streaming.framing.md). The "seven"
+counts in the table and prose above are the 1.0 series and are left as written
+rather than silently restated.
+
 ## Series-wide conventions (already embedded in every prompt)
 
 Descriptive-only mandate · Stripe as key-reference-not-canonical · the same out-of-scope guard (OAuth internals, GraphQL/gRPC, infra, SDKs, event-streaming platforms) · primary-sources-first, currency checks, per-finding confidence, surfaced conflicts · a scoped Contested Axes Register as a required output of every part (except P1b) · **a specification-grade detail requirement in every part**: exact names/formats, at least one verbatim example per mechanism, concrete numbers with sources, collected in an Examples Appendix — the completion test is "implementable without opening the reference's docs."

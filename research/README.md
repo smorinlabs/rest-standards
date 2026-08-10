@@ -54,9 +54,13 @@ Phase 2 (Gate C) and lands in `decisions/`.
 
 ## Inventory — `survey` series
 
-Eight prompts, ten runs. Descriptive comparison across Stripe, GitHub,
-Google/AIP, Microsoft, Twilio, Shopify, Zalando, and AWS-as-contrast.
-Series framing: [`prompts/survey-00-series.framing.md`](prompts/survey-00-series.framing.md).
+Nine prompts, ten runs. The first eight are a descriptive comparison across
+Stripe, GitHub, Google/AIP, Microsoft, Twilio, Shopify, Zalando, and
+AWS-as-contrast. Series framing:
+[`prompts/survey-00-series.framing.md`](prompts/survey-00-series.framing.md).
+`survey-08` was opened for Phase 6 and **deliberately departs from that
+reference set** — most of the eight publish no streaming surface — as recorded
+in [`prompts/survey-08-streaming.framing.md`](prompts/survey-08-streaming.framing.md).
 
 | Stem | Covers | Runs | Decision |
 | --- | --- | --- | --- |
@@ -68,20 +72,26 @@ Series framing: [`prompts/survey-00-series.framing.md`](prompts/survey-00-series
 | `survey-05-reliability` | Idempotency, concurrency/ETags, async operations, bulk | `2026-07-19` | — |
 | `survey-06-lifecycle-operations` | Versioning, deprecation, rate limits, caching, auth surface, docs | `2026-07-19a`, `2026-07-19b` | — |
 | `survey-07-webhooks` | Envelopes, signatures, delivery/retries, verification, thin-vs-fat | `2026-07-19` | — |
+| `survey-08-streaming` | SSE, long-polling, streaming HTTP bodies (NDJSON/JSON Lines): negotiation, framing, termination, post-commit errors, resumption, browser/CORS constraints. WebSockets excluded by owner ruling | **unrun** (Phase 6) | — |
 
 ## Inventory — `baseline` series
 
-Three prompts derived from the original three-thread plan. Each carries a
-neighbouring `.framing.md` recording its provenance and shaping decisions.
+Four prompts: three derived from the original three-thread plan, plus
+`baseline-04` opened for Phase 6. Each carries a neighbouring `.framing.md`
+recording its provenance and shaping decisions.
 
 | Stem | Covers | Runs | Principle IDs | Decision |
 | --- | --- | --- | --- | --- |
 | `baseline-01-http-semantics` | REST constraints, resource identity, URI modeling, methods, status codes, conditional requests, caching | `2026-07-25` | `HS-001`–`HS-020` | — |
 | `baseline-02-api-contracts` | JSON representation, OpenAPI/JSON Schema contracts, Problem Details, collections, compatibility, idempotency contracts, bulk, async | `2026-07-25` | `AC-001`–`AC-021` | — |
 | `baseline-03-operational-practice` | Transport security, authn/authz, rate limits, retries, deprecation, observability, webhook delivery and signing | `2026-07-25` | `OP-001`–`OP-025` | — |
+| `baseline-04-streaming` | Streaming posture for the Phase 6 extension: negotiation, framing, post-commit errors, resumption, composition with `R5.12`/`R10.9`/`R4.17` | **unrun** (Phase 6; runs after `survey-08`) | `ST-*` (new series) | — |
 
-Sixty-six proposed principles in total. **All are proposals carrying research
-confidence, not ratified policy** — see the series table above.
+Sixty-six proposed principles from `baseline-01`–`03`. **All are proposals
+carrying research confidence, not ratified policy** — see the series table
+above. `baseline-04` mints its principles in a new `ST-*` series: `R1.3` of the
+released standard freezes `HS-*`, `AC-*`, and `OP-*` as 1.0 provenance keys, so
+a Phase 6 principle minted there would carry fabricated lineage.
 
 ### Follow-up leaves (Gate B, Gate C, and Phase 4)
 

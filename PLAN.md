@@ -264,6 +264,44 @@ destabilizing 1.0. Scope when opened:
   the Part II amendment rule (semantic versioning, atomic five-surface
   updates).
 
+**Opened 2026-08-10 — in progress.** Two owner rulings scope the phase:
+
+1. **Coverage:** SSE, long-polling, and streaming HTTP bodies (chunked
+   NDJSON/JSON Lines). **WebSockets are an explicit non-goal** — after the
+   `101` upgrade the exchange leaves HTTP, so no status-code, media-type,
+   `Problem Details`, or applicability-switch machinery in this standard
+   binds it. §1.2's open deferral is replaced by a stated boundary.
+2. **Deliverable shape:** §13-in-document with the body held in a separate
+   referenced document, for progressive disclosure. The reading recorded
+   here — **pending explicit owner confirmation before Step 3 drafts** — is
+   the detail split: a **compact normative §13** in
+   `rest-api-standard.md` carrying the `R13.x` rules, paired with a
+   separate **informative companion document** holding the explanatory
+   body (mechanism comparison, wire examples, vendor evidence, client
+   guidance). Progressive disclosure — an API that does not stream
+   declares the `streaming` switch off and never opens the companion —
+   while the conformance surface stays single (one Appendix A checklist,
+   one Part II provenance map, one Spectral ruleset). The exact
+   normative/informative line is set at drafting, once the rule count is
+   known. Additions are a MINOR bump under the amendment rule: **v1.1.0**.
+
+Step sequence and status:
+
+| Step | What | Status |
+| --- | --- | --- |
+| 0 | Scope framing + research prompts (`survey-08-streaming`, `baseline-04-streaming`) | **Done 2026-08-10** |
+| 1a | Descriptive leaf `survey-08-streaming` dispatched | In progress |
+| 1b | Prescriptive leaf `baseline-04-streaming` (runs after 1a's report is filed) | Pending |
+| 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | Pending |
+| 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | Pending |
+| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | Pending |
+| 5 | Release v1.1.0 | Pending |
+
+Drafting in Step 3 must also amend §1.5's "the `R<section>` prefix space is
+fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
+deferral, add the `streaming` applicability switch to §1.8, register any
+reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
+
 ## Planned artifacts
 
 | Artifact | Purpose | Created in | Status |
@@ -280,6 +318,10 @@ destabilizing 1.0. Scope when opened:
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 | **Gate E-approved version 1.0 candidate (2026-08-10)** — drafted and Gate D-approved 2026-08-09; Phase 4 review complete. `rest-api-standard.md`: §1–§12 (127 rules, each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
+| `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Written 2026-08-10.** `survey-08` dispatched; `baseline-04` held until its report lands |
+| `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | Pending |
+| `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | Pending |
+| §13 of `rest-api-standard.md` + informative streaming companion | The v1.1.0 extension: compact `R13.x` rules plus the explanatory body | Phase 6 | Pending |
 
 ## Definition of done for version 1.0
 
