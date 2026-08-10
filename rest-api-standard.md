@@ -1493,7 +1493,142 @@ unordered delivery (R10.5).
 
 ## Part II — Decision Log
 
-*Drafted later in Phase 3. One row per ratified decision, mapping rule IDs
-(R-numbers) to research-provenance IDs (`HS-*`, `AC-*`, `OP-*`, walked
-decisions, addenda A1–A5) and linking each to its record in
-[`research/decisions/`](research/decisions/).*
+This log is the two-way mapping between the decision layer and the drafted
+rules. The decision records in [`research/decisions/`](research/decisions/)
+remain authoritative for rationale, evidence, declined options, and
+confidence; each Part I rule's provenance line points here-compatible keys,
+and this log points back. Record files are abbreviated:
+**B1** = `research/decisions/baseline-01-http-semantics.decision.md` ·
+**B2** = `research/decisions/baseline-02-api-contracts.decision.md` ·
+**B3** = `research/decisions/baseline-03-operational-practice.decision.md`.
+
+**Amendment rule (Apparatus, Gate D).** This document is versioned with
+semantic versioning once approved: editorial changes bump patch; added
+rules, appendices, or relaxations bump minor; strengthened, removed, or
+re-meant rules bump major. A change to any rule is atomic across five
+surfaces — the rule text, its decision record (as a dated annotation,
+never a silent edit), its row here, its Appendix A checklist row, and the
+Appendix E worked example where it appears.
+
+### II.1 Provenance map — decision layer → rules
+
+| Key | Maps to | Record |
+| --- | --- | --- |
+| `HS-001` | R3.1 | B1 |
+| `HS-002` | R3.2 | B1 |
+| `HS-003` | R5.2 | B1 |
+| `HS-004` | R2.7 | B1 |
+| `HS-005` | R2.8 | B1 |
+| `HS-006` | R3.3 | B1 |
+| `HS-007` | R3.4 | B1 |
+| `HS-008` | R3.5, R3.7 | B1 |
+| `HS-009` | R3.6 | B1 |
+| `HS-010` | R5.1 | B1 |
+| `HS-011` | R5.3 | B1 |
+| `HS-012` | R5.4 | B1 |
+| `HS-013` | R5.5, R2.6 | B1 |
+| `HS-014` | R3.10, R7.3 | B1 |
+| `HS-015` | R3.11, R7.4 | B1 |
+| `HS-016` | R7.1 | B1 |
+| `HS-017` | R7.2 | B1 |
+| `HS-018` | R4.11 | B1 |
+| `HS-019` | R4.12 | B1 |
+| `HS-020` | R4.13 | B1 |
+| `AC-001` (completed) | R4.1 | B2 |
+| `AC-002` | R4.2 | B2 |
+| `AC-003` (amended) | R5.12, R12.6, R12.7 | B2 |
+| `AC-004` (amended) | R5.13 | B2 |
+| `AC-005` | R5.14 | B2 |
+| `AC-006` | R4.3 | B2 |
+| `AC-007` (completed) | R4.4 | B2 |
+| `AC-008` | R4.5 | B2 |
+| `AC-009` | R4.6 | B2 |
+| `AC-010` | R4.7 | B2 |
+| `AC-011` | R4.8, R3.8 | B2 |
+| `AC-012` | R4.9, R12.4 | B2 |
+| `AC-013` | R6.3, R12.5 | B2 |
+| `AC-014` | R6.1 | B2 |
+| `AC-015` | R6.9 | B2 |
+| `AC-016` (completed) | R3.9 | B2 |
+| `AC-017` (completed) | R3.9 | B2 |
+| `AC-018` | R10.4 | B2 |
+| `AC-019` | R10.1 | B2 |
+| `AC-020` | R4.15, R10.3 | B2 |
+| `AC-021` | R4.14 | B2 |
+| `OP-001` | R8.1 | B3 |
+| `OP-002` | R8.2 | B3 |
+| `OP-003` | R8.4 | B3 |
+| `OP-004` | R8.4 | B3 |
+| `OP-005` | R8.6 | B3 |
+| `OP-006` | R8.7 | B3 |
+| `OP-007` | R8.8 | B3 |
+| `OP-008` | R8.9 | B3 |
+| `OP-009` | R11.1 | B3 |
+| `OP-010` (re-framed) | R11.2, R11.3, R11.4 | B3 |
+| `OP-011` | R11.5, R12.2 | B3 |
+| `OP-012` | R11.6, R12.1 | B3 |
+| `OP-013` | R9.5 | B3 |
+| `OP-014` | R9.6 | B3 |
+| `OP-015` (completed) | R9.1, R9.2 | B3 |
+| `OP-016` (amended) | R10.7, R10.8, R12.8 | B3 |
+| `OP-017` | R12.8 | B3 |
+| `OP-018` | R11.7 | B3 |
+| `OP-019` | R11.8 | B3 |
+| `OP-020` | R5.17 | B3 |
+| `OP-021` | R10.5 | B3 |
+| `OP-022` | R10.6, R12.9 | B3 |
+| `OP-023` | R8.11 | B3 |
+| `OP-024` | R10.8 | B3 |
+| `OP-025` | R8.5 | B3 |
+| Resource orientation (walked) | R2.1 | B1 |
+| Pluralization (walked) | R2.2 | B1 |
+| Path depth (walked) | R2.5 | B1 |
+| Trailing slash (walked) | R2.6 | B1 |
+| Custom-action syntax (walked) | R2.11 | B1 |
+| Path-segment casing (walked) | R2.4 | B1 |
+| DELETE response (walked) | R5.7 | B1 |
+| BCP 190 scope reading (walked) | position, §1.3; R2.8 | B1 |
+| HATEOAS posture (walked) | position, §1.2 | B1 |
+| Caching posture (walked) | R7.3 | B1 |
+| Money representation (walked) | R4.7 | B2 |
+| Pagination links (walked) | R6.4 | B2 |
+| Field selection (walked) | R6.10 | B2 |
+| Filter grammar (walked) | R6.8 | B2 |
+| Deprecation window (walked) | R9.7 | B3 |
+| Webhook retry/dead-letter (walked) | R10.6 | B3 |
+| Support tiers (walked) | R9.3 | B3 |
+| Auth per client class (walked) | R8.3 | B3 |
+| Five-axes deployment profile (walked) | R8.10, R8.6, R12.8 | B3 |
+| A1 · PATCH format | R3.7, R3.8 | B2 |
+| A2 · Sorting cluster | R6.5, R6.6, R6.7, R11.7 | B2 |
+| A3 · Status-code rows | R5.6, R5.7, R5.8, R5.9, R5.10, R5.11, R6.2, R3.11 | B1 |
+| A4 · Dry-run | R1.9, R3.12 | B2 |
+| A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
+
+### II.2 Apparatus register — provisions pending Gate D
+
+Every provision marked **Apparatus (Gate D)** in Part I, in one place.
+These have no Gate C decision record; they become binding when Gate D
+approves this document. This register is the Gate D walk list.
+
+| Item | Where | Origin |
+| --- | --- | --- |
+| Rule-ID scheme and frozen provenance series | §1.5 (R1.2, R1.3) | Gap review B.13 |
+| Conformance tier system | §1.7 (R1.5) | Gap review B.8 |
+| Applicability switches + N/A-with-reason | §1.8 (R1.6) | Gap review B.8 |
+| No-silent-deviation + conformance-note template | §1.9 (R1.7) | Gap review B.12 |
+| Reserved-name inventory as a register | §1.10 (R1.8) | Gap review B.5 |
+| Noun naming, same-concept-same-name | §2.2 (R2.3) | Gap review R2.2/R3.8 |
+| Path = identity, query = modifiers | §2.3 (R2.9) | Gap review R2.3 |
+| PII never in URIs | §2.3 (R2.10) | Gap review R9.7 |
+| Content-negotiation defaults | §4.3 (R4.10) | Gap review R4.2 |
+| Field-level `errors[]` shape | §5.3 (R5.15) | Gap review B.21 |
+| Problem-type catalog obligation | §5.3 (R5.16) | Gap review R7.12 |
+| Destructive-operation guards | §7.3 (R7.4) | Gap review R8.1 |
+| Secret/PII redaction in responses | §8.5 (R8.12) | Gap review R5.6 |
+| Breaking-change taxonomy + frozen surface | §9.3 (R9.4) | Gap review R7.2/R9.3 |
+| Polling and cancellation guidance | §10.1 (R10.2) | Gap review R7.4/R10.4 |
+| Client obligations: `Retry-After`, timeouts, TLS, unknown fields | §12 (R12.2, R12.3, part of R12.4) | Gap review B.9 |
+| Amendment rule (SemVer + atomic five-surface updates) | Part II preamble | Gap review B.11 |
+| Exception process | Appendix B | Gap review B.12 |
+| **Candidate raised during drafting:** path-parameter naming convention (R4.4 covers bodies and query parameters only; the worked example uses snake_case placeholders like `{order_id}`) | — | Appendix E drafting |
