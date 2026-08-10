@@ -1,9 +1,12 @@
 # REST API Design Standard
 
-**Status:** **Gate D passed 2026-08-09** — the owner approved this draft
-(Parts I–III and [`conformance/spectral.yaml`](conformance/spectral.yaml))
-for Phase 4 systematic review per [`PLAN.md`](PLAN.md). Not yet a 1.0
-release; Gate E approves the release candidate after Phase 4.
+**Status:** **Gate E passed 2026-08-10** — the owner approved this
+document (Parts I–III and
+[`conformance/spectral.yaml`](conformance/spectral.yaml)) as the
+**version 1.0 candidate** after the Phase 4 systematic review (Gates C,
+D, and E all passed; review history in
+[`docs/reviews/`](docs/reviews/)). The version becomes 1.0 when
+Phase 5 tags the release per [`PLAN.md`](PLAN.md).
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
 and its addendum (recorded in [`research/decisions/`](research/decisions/));
@@ -706,6 +709,20 @@ MUST send `Vary` listing each header that influenced selection.
 > Provenance: `HS-018` (batch, `baseline-01` §7) · protocol-grounded
 > (RFC 9110 §12.5.5, where `Vary` on cacheable responses is a SHOULD);
 > the unconditional MUST is a `[POLICY]` tightening · confidence high.
+
+**R4.17** Where an API serves cross-origin browser clients, every
+response MUST list the standard-bound response headers it emits — among
+`request-id`, `ETag`, `Location`, `Retry-After`, `RateLimit`,
+`RateLimit-Policy`, `Deprecation`, `Sunset`, and any other §1.10
+response header in use — in `Access-Control-Expose-Headers`. None of
+those fields is CORS-safelisted, so without this header a cross-origin
+browser client cannot read them at all. (Numbered out of prose order
+per R1.2.)
+
+> Provenance: `baseline-02i` CORS surfacing (WHATWG Fetch + MDN,
+> primary-sourced); ruled option (a) by the owner at Gate E
+> (2026-08-10) · project policy `[POLICY]` — the invisibility mechanism
+> is fact; the exposure mandate is this standard's · confidence high.
 
 ### 4.4 Extension hygiene
 
@@ -1696,6 +1713,7 @@ Appendix E worked example where it appears.
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
 | Phase 4 owner walk (2026-08-10) | R4.16; R10.9; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
 | `baseline-02i` · Operation discovery on 202 (Phase 4) | R10.9 | B2 |
+| Gate E ruling (2026-08-10) | R4.17 | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
@@ -1729,6 +1747,7 @@ the Gate E approval.
 | Path-placeholder naming rule (raised during drafting as an open candidate; ruled snake_case at the Phase 4 owner walk 2026-08-10) | §4.2 (R4.16) | Appendix E drafting → Phase 4 owner walk |
 | Switch vocabulary pruned to the three rule-gating switches (was eight) | §1.8 (R1.6) | Phase 4 owner walk (2026-08-10) |
 | `202` operation-discovery rule | §10.1 (R10.9) | Research leaf `baseline-02i` + Phase 4 owner walk (2026-08-10) |
+| CORS header exposure | §4.3 (R4.17) | `baseline-02i` surfacing + Gate E ruling (2026-08-10) |
 
 ---
 
@@ -1795,6 +1814,7 @@ own maintenance rather than a conforming API.
 | R4.14 | URI Templates describe URI families |
 | R4.15 | Preferences advisory only; never relied on for safety-relevant behavior |
 | R4.16 | Path placeholders snake_case (body-property grammar) |
+| R4.17 | Cross-origin browser clients: standard-bound headers listed in `Access-Control-Expose-Headers` |
 | R5.1 | Status matches outcome; no 2xx failures |
 | R5.2 | Registered status codes only |
 | R5.3 | 422, 409, and 400 used per their distinctions |
@@ -1975,6 +1995,10 @@ How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
 A fictional flower-delivery platform, "Bloom," at
 `https://api.example.com/v1`. Every block is annotated with the rules it
 exercises; all identifiers, keys, and signatures are placeholders.
+Bloom serves cross-origin browser clients, so every response also
+carries `Access-Control-Expose-Headers` listing the standard-bound
+headers it emits (R4.17); like the R7.1/R11.7 always-on headers in
+E.10, it is omitted from the excerpts below for brevity.
 
 ### E.1 Conformance note (§1.9 template, filled in)
 

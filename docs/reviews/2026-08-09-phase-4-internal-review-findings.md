@@ -157,12 +157,12 @@ The four decision-touching items, ruled by the owner:
 Rulings 1–4 enter the Gate E approval as Phase 4 apparatus (ruling 4
 carries its own research leaf and decision record).
 
-**Carried to Gate E discussion (no ruling yet):** the `baseline-02i`
-CORS surfacing — none of the headers this standard mandates
-(`request-id`, `ETag`, `Retry-After`, `RateLimit`, `Location`) is
-CORS-safelisted, and the standard never mentions
-`Access-Control-Expose-Headers`; cross-origin browser clients cannot
-read them without it.
+**Gate E (2026-08-10): passed.** The owner approved the document as the
+version 1.0 candidate and ruled the carried CORS item as option (a):
+R4.17 (rule count 127) mandates `Access-Control-Expose-Headers`
+coverage where cross-origin browser clients are served — the
+`baseline-02i` surfacing (none of the standard-bound headers is
+CORS-safelisted) primary-sourced the defect.
 
 ## Process after fixes — all discharged
 

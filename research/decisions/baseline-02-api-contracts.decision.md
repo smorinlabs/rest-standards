@@ -584,10 +584,13 @@ strict redundancy over a mandated envelope; an operation URI is minted
 once, and the equality clause makes header/body divergence a
 conformance failure. Full analysis in the leaf, §5.3.
 
-**Carried item:** the leaf surfaced that no header this standard
-mandates is CORS-exposed by default (`Access-Control-Expose-Headers`
-never mentioned) — recorded as a Gate E discussion item, out of scope
-here.
+**Carried item — ruled at Gate E (2026-08-10):** the leaf surfaced that
+no header this standard mandates is CORS-exposed by default
+(`Access-Control-Expose-Headers` was never mentioned). The owner
+adopted option (a): drafted as R4.17 — where cross-origin browser
+clients are served, responses MUST list the standard-bound headers in
+`Access-Control-Expose-Headers`. Declined: deferring to post-1.0 as a
+recorded known gap.
 
 **Confidence: moderate-high** (body clause) · **moderate** (`Location`
 SHOULD — the judgment call, flippable if browser clients are ruled out
