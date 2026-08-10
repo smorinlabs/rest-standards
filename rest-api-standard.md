@@ -1,9 +1,9 @@
 # REST API Design Standard
 
 **Status:** Phase 3 working draft — not approved. Gate D (approval for
-systematic review) has not run. Part I (§1–§12) is drafted; Part II (the
-Decision Log) and the appendices are pending per [`PLAN.md`](PLAN.md)
-Phase 3.
+systematic review) has not run. Part I (§1–§12), Part II (the Decision
+Log), and Appendices A–G are drafted; Gate D is the next gate per
+[`PLAN.md`](PLAN.md).
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
 and its addendum (recorded in [`research/decisions/`](research/decisions/));
@@ -1632,3 +1632,599 @@ approves this document. This register is the Gate D walk list.
 | Amendment rule (SemVer + atomic five-surface updates) | Part II preamble | Gap review B.11 |
 | Exception process | Appendix B | Gap review B.12 |
 | **Candidate raised during drafting:** path-parameter naming convention (R4.4 covers bodies and query parameters only; the worked example uses snake_case placeholders like `{order_id}`) | — | Appendix E drafting |
+
+---
+
+## Part III — Appendices
+
+The appendices are informative. The rules in Part I are authoritative;
+where an appendix restates or illustrates one, the rule governs, and no
+appendix defines a new rule identifier.
+
+## Appendix A — Conformance checklist
+
+One row per rule. Rows marked *(standard-internal)* bind this document's
+own maintenance rather than a conforming API.
+
+| Rule | Check |
+| --- | --- |
+| R1.1 | BCP 14 keywords normative only in all capitals *(standard-internal)* |
+| R1.2 | Rule IDs stable — never renumbered or reused; tombstones on removal *(standard-internal)* |
+| R1.3 | No new `HS-`/`AC-`/`OP-` identifiers minted *(standard-internal)* |
+| R1.4 | Every rule carries one classification; policy labeled `[POLICY]` *(standard-internal)* |
+| R1.5 | Conformance note declares exactly one tier |
+| R1.6 | Every switch declared; every off switch carries a reason |
+| R1.7 | Conformance note exists; every deviation recorded in it |
+| R1.8 | No reserved name repurposed; reserved name used when the capability is offered |
+| R1.9 | `dry_run` on a non-implementing endpoint rejected with 400 |
+| R2.1 | Surface is resource-oriented; no RPC-style overlay |
+| R2.2 | Collections plural; singletons documented as singletons |
+| R2.3 | Resource names are unabbreviated domain terms; one noun per concept |
+| R2.4 | Path segments kebab-case |
+| R2.5 | Nesting justified by containment; three resources per path at most |
+| R2.6 | No canonical trailing slash; slash requests redirected 308 |
+| R2.7 | URIs stable across mutable-attribute changes |
+| R2.8 | No fixed-prefix constraint on another party's URI space |
+| R2.9 | Operation modifiers in query parameters, never path segments |
+| R2.10 | No PII in any URI |
+| R2.11 | Actions use `POST /{collection}/{id}/{action}`; verbs registered |
+| R2.12 | Status field or sub-resource considered before any new verb |
+| R2.13 | No collection-level custom actions |
+| R3.1 | Semantics cited from RFC 9110/9111, never RFC 723x |
+| R3.2 | No redefined or overlaid method, status, or header semantics |
+| R3.3 | Methods used per registered safety and idempotence |
+| R3.4 | No method tunneling |
+| R3.5 | PUT for full replacement; PATCH for partial modification |
+| R3.6 | QUERY, where used, only for safe idempotent body-carrying reads |
+| R3.7 | PATCH accepts `merge-patch+json`; 415 otherwise; `Accept-Patch` advertised |
+| R3.8 | Null and absent equivalent everywhere; Merge Patch deletion the sole exception |
+| R3.9 | `Idempotency-Key` accepted on non-idempotent mutations; payload fingerprinted; retention window at least 24 h and stated |
+| R3.10 | Strong `ETag` on conditionally updatable resources |
+| R3.11 | `If-Match` expected where concurrent modification is exposed; 412 and 428 used correctly |
+| R3.12 | Dry-run responses carry the marker, the real outcome shape, and validation depth; no key consumed |
+| R4.1 | OpenAPI 3.1 (or verified 3.2) published; JSON Schema 2020-12 dialect |
+| R4.2 | Contract changes gated on an automated compatibility check |
+| R4.3 | Top-level JSON object on every response |
+| R4.4 | snake_case bodies and query parameters; patterns pass |
+| R4.5 | Identifiers are strings |
+| R4.6 | Timestamps RFC 3339 with explicit offset |
+| R4.7 | Money as minor-unit integer with required ISO 4217 `currency` |
+| R4.8 | Null-versus-omission rule stated in the contract |
+| R4.9 | Open enums documented; additions non-breaking |
+| R4.10 | Default media type `application/json` UTF-8; no `format` parameter; 406 for unsatisfiable `Accept` |
+| R4.11 | `Vary` lists every selecting header |
+| R4.12 | New header fields use RFC 9651 structured types |
+| R4.13 | Registered link relations used where one fits |
+| R4.14 | URI Templates describe URI families |
+| R4.15 | Preferences advisory only; no safety semantics on `Prefer` |
+| R5.1 | Status matches outcome; no 2xx failures |
+| R5.2 | Registered status codes only |
+| R5.3 | 422, 409, and 400 used per their distinctions |
+| R5.4 | 410 only with recorded permanence |
+| R5.5 | 307/308 where method and body must survive redirects |
+| R5.6 | Single-resource creates return 201 with `Location` |
+| R5.7 | DELETE returns 204; soft delete returns 200 with tombstone |
+| R5.8 | Partial bulk returns 200 with the per-item envelope; never 207 |
+| R5.9 | 401 for unauthenticated, 403 for unauthorized, never conflated |
+| R5.10 | Cross-tenant existence masked with 404 |
+| R5.11 | 405 carries `Allow`; 415 for unsupported media; 428 where a precondition is demanded |
+| R5.12 | Every application error servable as `problem+json`; infrastructure carve-out documented |
+| R5.13 | Problem documents carry `type`/`title`/`status`/`code`; template binding; pairs immutable; no `about:blank` |
+| R5.14 | RFC 7807 never cited |
+| R5.15 | Validation failures carry `errors[]` with JSON Pointers |
+| R5.16 | Problem `type`/`code` catalog published |
+| R5.17 | No internal implementation detail in any response body |
+| R6.1 | Collection responses use the items-plus-continuation envelope |
+| R6.2 | Empty collections return 200 with an empty array |
+| R6.3 | Cursor pagination; cursors opaque and non-constructable |
+| R6.4 | No `Link` headers for pagination |
+| R6.5 | `cursor` and `limit` names; default and maximum documented |
+| R6.6 | Total stable default order documented; `id` tiebreak |
+| R6.7 | Sort syntax fixed when offered; sortable set enumerated |
+| R6.8 | Filters are per-field equality plus bracket ranges, AND-only; DSL only on a search endpoint |
+| R6.9 | No storage syntax in filters |
+| R6.10 | `fields` comma-list when field selection is offered |
+| R7.1 | Explicit `Cache-Control` on every response |
+| R7.2 | Authenticated data `private` or `no-store` |
+| R7.3 | Three-tier posture applied; no blanket `no-store` |
+| R7.4 | Destructive operations demand `If-Match`; no unfiltered collection DELETE |
+| R8.1 | TLS 1.2+ only, 1.3 preferred |
+| R8.2 | No tokens in query strings |
+| R8.3 | OAuth where authority is delegated; keys only server-to-server single-trust |
+| R8.4 | No password grant; PKCE; exact redirect matching; no implicit grant |
+| R8.5 | Credentials scoped and expiring |
+| R8.6 | Object-level authorization on every request; centralized decision, in-handler enforcement |
+| R8.7 | Unguessability never an access control |
+| R8.8 | Property-level authorization per caller |
+| R8.9 | Writable-field allow-lists |
+| R8.10 | Five-axes defaults adopted, or flips recorded in the conformance note |
+| R8.11 | Caller-supplied URLs validated against internal ranges |
+| R8.12 | No secrets or PII in problem `detail` or echoed input |
+| R9.1 | `/v1` path major only; no minor versions in URIs |
+| R9.2 | Evolution additive; majors rare |
+| R9.3 | Pre-GA tiers in the path; graduation an explicit migration |
+| R9.4 | Frozen surface respected; every change classified per the taxonomy |
+| R9.5 | `Deprecation` and `Sunset` headers, correct formats, sunset not earlier |
+| R9.6 | Deprecation link relation to migration docs; sunset date always present |
+| R9.7 | Deprecated GA majors supported at least 12 months |
+| R10.1 | 202 returns an operation resource with terminal states, expiry, failure shape |
+| R10.2 | `Retry-After` polling hints; `cancel` action where abandonable |
+| R10.3 | `respond-async` honored at server discretion only |
+| R10.4 | Bulk endpoints declare atomic or partial; per-item outcomes |
+| R10.5 | Delivery documented at-least-once, unordered; monotonic version per event |
+| R10.6 | Ack timeout and retry schedule published; retries at least 72 h; dead-letter at least 30 d with redelivery |
+| R10.7 | Webhooks signed per topology; SHA-1 banned |
+| R10.8 | Secrets at least 256 bits; overlapping rotation; HTTPS-only; verification tooling shipped |
+| R11.1 | Page size, expansion depth, and bulk count maxima published and enforced |
+| R11.2 | 429 with `Retry-After` on exhaustion |
+| R11.3 | Draft-11 fields, when emitted, pinned and never called standard |
+| R11.4 | Proprietary quota headers documented, including epoch-versus-delta |
+| R11.5 | 429 for quota, 503 for overload; `Retry-After` on both |
+| R11.6 | Retryable failure classes documented |
+| R11.7 | `request-id` on every response |
+| R11.8 | `traceparent` propagated; `tracestate` caps published |
+| R12.1 | Clients retry only documented-retryable failures, with backoff and jitter; keys on non-idempotent retries |
+| R12.2 | Clients honor `Retry-After` |
+| R12.3 | Clients set timeouts; TLS verification never disabled |
+| R12.4 | Clients tolerate unknown fields and enum values |
+| R12.5 | Clients treat cursors as opaque |
+| R12.6 | Clients send `Accept: application/problem+json` when they want problem documents |
+| R12.7 | Client error handling never assumes a problem document |
+| R12.8 | Consumers verify raw-body-first; window enforced; dedupe; constant-time compare; fail closed |
+| R12.9 | Consumers ack before processing; tolerate at-least-once, unordered delivery |
+
+## Appendix B — Exception process
+
+*Apparatus (Gate D). This appendix describes process; the normative
+anchor is R1.7 (no silent deviation).*
+
+An API that cannot meet a rule follows these steps, in order:
+
+1. **Attempt conformance first.** The process exists for genuine
+   constraints, not preferences; the request records what was tried.
+2. **Write the rationale.** Rule ID, rule strength, what differs, why,
+   the evidence, and the blast radius (who is affected and how).
+3. **Obtain approval.** The API's governance owner approves deviations
+   from `SHOULD`-strength rules; deviations from `MUST`-strength rules
+   go to the standard's owner, because they render the API nonconformant
+   unless recorded (R1.7).
+4. **Record it.** The approved exception lands in the API's conformance
+   note (§1.9 template — this appendix does not restate it): rule ID,
+   strength, difference, reason, approver, date.
+5. **Bound it.** Every exception carries a review date or expiry;
+   open-ended exceptions are not granted.
+6. **Revisit.** Exceptions are re-reviewed at every major version of the
+   API and at least annually; an expired exception is a deviation again.
+
+## Appendix C — Cheat sheet
+
+Informative quick reference; every entry restates a Part I rule.
+
+**Shape.** `https://api.example.com/v1/{collection}/{id}[/{action}]` —
+plural kebab-case collections, at most three resources deep, no trailing
+slash, PII never in URIs.
+
+**Casing.** Paths kebab-case · bodies and query parameters snake_case ·
+problem `code` snake_case · multi-word action verbs kebab-case.
+
+**Always emit.** `Cache-Control` on every response · `request-id` on
+every response · strong `ETag` on updatable resources · `Location` on
+201.
+
+**Reserved names.** §1.10 is the register: `sort`, `fields`, `cursor`,
+`limit`, `dry_run` and the bracket range filters; `Idempotency-Key`,
+`request-id`, the webhook envelope headers, and the rest.
+
+**Status quick map.**
+
+| Outcome | Status |
+| --- | --- |
+| Create (single resource) | 201 + `Location` |
+| Update | 200 + representation |
+| Delete | 204 (soft delete: 200 + tombstone) |
+| Bulk, partial completion | 200 + per-item envelope |
+| Accepted for async | 202 + operation resource |
+| Empty collection | 200 + empty array |
+| Malformed syntax | 400 |
+| Unauthenticated | 401 |
+| Unauthorized | 403 — or 404 where existence would leak |
+| State conflict | 409 |
+| Precondition failed / missing | 412 / 428 |
+| Unsupported media type | 415 |
+| Semantically invalid | 422 |
+| Quota exhausted | 429 + `Retry-After` |
+| Capacity overload | 503 + `Retry-After` |
+
+**Errors.** `application/problem+json`; `type` and `code` bound by the
+fixed template; pairs immutable; catalog published; field failures in
+`errors[]`.
+
+**Collections.** `cursor` + `limit` in; `items` + continuation out;
+documented stable default order with `id` tiebreak; filters per-field
+plus `[gte]`/`[gt]`/`[lte]`/`[lt]`.
+
+**Lifecycle.** `/v1` majors only; additive within a major; `Deprecation`
++ `Sunset` + migration link; deprecated majors live at least 12 months.
+
+**Webhooks.** Sign per topology (Standard Webhooks shared-secret;
+RFC 9421 + RFC 9530 cross-org); retry at least 72 h; dead-letter at
+least 30 d with redelivery.
+
+## Appendix D — OpenAPI mapping
+
+How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
+
+| Rule(s) | OpenAPI 3.1 expression |
+| --- | --- |
+| R4.1 | The document itself: `openapi: 3.1.x`, `jsonSchemaDialect` pinned to JSON Schema 2020-12 |
+| R9.1, R9.3 | `servers` entries carry the versioned base (`https://api.example.com/v1`, `/v1beta…`) |
+| R2.4, R2.5 | Path keys: kebab-case segments, at most three resources |
+| R4.4 | Schema property keys and parameter names satisfy the pinned patterns (lintable — Appendix G) |
+| R5.6 | `responses` for create operations declare `201` with a `Location` header object |
+| R5.12, R5.13 | A shared problem schema under `components.schemas`; 4xx/5xx responses declare `application/problem+json` content |
+| R3.7 | PATCH `requestBody.content` keyed by `application/merge-patch+json` (and `application/json-patch+json` only where R3.7's JSON Patch option is exercised) |
+| R3.9 | A shared `components.parameters` header parameter for `Idempotency-Key`, referenced by every non-idempotent mutation |
+| R6.1, R6.5 | A shared collection envelope schema (`items` + continuation member); shared `cursor`/`limit` query parameters with documented default and maximum |
+| R6.7, R6.10 | `sort` and `fields` parameters with enumerated permitted values |
+| R9.5, R9.6 | `deprecated: true` on sunsetting operations; description carries the sunset date and migration link |
+| R8.3, R8.4 | `components.securitySchemes` for OAuth flows and server-to-server keys; per-operation `security` |
+| R10.7 | The OpenAPI 3.1 `webhooks` object documents deliveries, envelope headers, and event schemas |
+| R11.2, R11.5 | Shared `429`/`503` responses declaring the `Retry-After` header |
+
+## Appendix E — Worked example
+
+A fictional flower-delivery platform, "Bloom," at
+`https://api.example.com/v1`. Every block is annotated with the rules it
+exercises; all identifiers, keys, and signatures are placeholders.
+
+### E.1 Conformance note (§1.9 template, filled in)
+
+```markdown
+## Conformance note — Bloom Orders API
+
+Standard: rest-api-standard v0.1.0-draft
+Tier: public
+Switches: webhooks=on, async-operations=on,
+  bulk-operations=off (imports run through the async export/import
+  operations; no synchronous bulk endpoint is offered),
+  multi-tenant=off (single-tenant product; no tenant boundary inside
+  the API), public-internet=on, handles-pii=on,
+  third-party-clients=on, file-upload=off (no binary payloads in v1)
+
+Deviations: none.
+
+N/A declarations: none beyond the switch reasons above.
+```
+
+### E.2 Create an order — idempotent create, 201 + Location
+
+Exercises R5.6, R3.9, R4.4–R4.7, R7.1/R7.3, R11.7, R3.10.
+
+```http
+POST /v1/orders HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+Content-Type: application/json
+Accept: application/json
+Idempotency-Key: 8f1c6e0a-4b2d-4c19-9c3a-000000example
+
+{
+  "customer_id": "cus_000example",
+  "deliver_on": "2026-08-12",
+  "amount": 4599,
+  "currency": "usd",
+  "note": "Birthday bouquet"
+}
+```
+
+```http
+HTTP/1.1 201 Created
+Location: https://api.example.com/v1/orders/ord_000example
+Content-Type: application/json
+Cache-Control: private, no-cache
+ETag: "v1-000example"
+request-id: req_000example
+
+{
+  "id": "ord_000example",
+  "customer_id": "cus_000example",
+  "status": "pending",
+  "deliver_on": "2026-08-12",
+  "amount": 4599,
+  "currency": "usd",
+  "note": "Birthday bouquet",
+  "created_at": "2026-08-09T17:04:05-07:00"
+}
+```
+
+The reading: `id` is a string (R4.5); `amount` 4599 with `"usd"` is
+$45.99 in minor units (R4.7); `deliver_on` is a date-only field (R4.6
+exception); `created_at` carries an explicit offset (R4.6); the body is
+snake_case (R4.4); the response is explicitly non-cacheable-shared
+(R7.2/R7.3) and carries the correlation ID (R11.7). Replaying the same
+`Idempotency-Key` with this payload returns this stored response;
+replaying it with a different payload is rejected (R3.9).
+
+### E.3 Validation failure — problem document with field errors
+
+Exercises R5.12, R5.13, R5.15, R5.3.
+
+```http
+HTTP/1.1 422 Unprocessable Content
+Content-Type: application/problem+json
+Cache-Control: no-store
+request-id: req_001example
+
+{
+  "type": "https://problems.example.com/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "code": "validation_failed",
+  "detail": "One or more fields are invalid.",
+  "documentation": "https://developers.example.com/errors#validation_failed",
+  "errors": [
+    {
+      "pointer": "/amount",
+      "code": "below_minimum",
+      "detail": "amount must be at least 500."
+    }
+  ]
+}
+```
+
+The reading: `code` `validation_failed` maps to `type`
+`…/validation-failed` by the fixed template — underscores to hyphens
+(R5.13.1); the human link lives in `documentation`, not in `type`
+(R5.13.4); field-level failures ride `errors[]` with JSON Pointers
+(R5.15).
+
+### E.4 List orders — envelope, filters, sort, pagination
+
+Exercises R6.1, R6.3, R6.5–R6.8, R2.9.
+
+```http
+GET /v1/orders?status=pending&created_at[gte]=2026-08-01T00:00:00Z&sort=-created_at&limit=50 HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: private, no-cache
+request-id: req_002example
+
+{
+  "items": [
+    {
+      "id": "ord_000example",
+      "customer_id": "cus_000example",
+      "status": "pending",
+      "deliver_on": "2026-08-12",
+      "amount": 4599,
+      "currency": "usd",
+      "created_at": "2026-08-09T17:04:05-07:00"
+    }
+  ],
+  "next_cursor": "b3BhcXVlLW5vdC1jb25zdHJ1Y3RhYmxl"
+}
+```
+
+The reading: equality plus a bracket range filter, AND-combined (R6.8);
+`-created_at` descending (R6.7); the envelope carries `items` and
+`next_cursor` (R6.1); the documented default order is `-created_at`
+with `id` as tiebreak (R6.6); the next page is
+`GET /v1/orders?cursor=…&limit=50` and the cursor is opaque (R6.3,
+R12.5). An empty result is `200` with `"items": []` (R6.2).
+
+### E.5 Partial update and the destructive guard
+
+Exercises R3.7, R3.8, R3.10, R3.11, R7.4, R5.11.
+
+```http
+PATCH /v1/orders/ord_000example HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+Content-Type: application/merge-patch+json
+If-Match: "v1-000example"
+
+{
+  "note": null
+}
+```
+
+A `200` response returns the representation without `note` — under Merge
+Patch, `null` deletes (R3.7), the one exception to null-equals-absent
+(R3.8). A DELETE without its precondition is refused:
+
+```http
+DELETE /v1/orders/ord_000example HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+```
+
+```http
+HTTP/1.1 428 Precondition Required
+Content-Type: application/problem+json
+Cache-Control: no-store
+request-id: req_003example
+
+{
+  "type": "https://problems.example.com/precondition-required",
+  "title": "Precondition required",
+  "status": 428,
+  "code": "precondition_required",
+  "detail": "DELETE on this resource requires If-Match."
+}
+```
+
+With `If-Match` supplied and matching, the delete returns
+`204 No Content` (R5.7).
+
+### E.6 An action — cancel
+
+Exercises R2.11, R2.13, §1.10 verb registry, R5.1.
+
+```http
+POST /v1/orders/ord_000example/cancel HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+```
+
+`200 OK` returns the representation with `"status": "canceled"` —
+`cancel` is the registered terminal, irreversible stop. There is no
+`POST /v1/orders/cancel`: collection-level actions do not exist (R2.13).
+
+### E.7 Asynchronous work — export as an operation resource
+
+Exercises R10.1, R10.2, R5.1.
+
+```http
+POST /v1/order-exports HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+Content-Type: application/json
+
+{
+  "created_after": "2026-01-01T00:00:00Z"
+}
+```
+
+```http
+HTTP/1.1 202 Accepted
+Location: https://api.example.com/v1/operations/op_000example
+Retry-After: 5
+Content-Type: application/json
+Cache-Control: private, no-cache
+request-id: req_004example
+
+{
+  "id": "op_000example",
+  "status": "running",
+  "created_at": "2026-08-09T17:08:00-07:00",
+  "expires_at": "2026-08-16T17:08:00-07:00"
+}
+```
+
+The reading: the operation is addressable, has documented terminal
+states (`succeeded`, `failed`, `canceled`), an expiry, and a failure
+representation (R10.1); `Retry-After` paces the polling (R10.2); an
+abandonable run is stopped with
+`POST /v1/operations/op_000example/cancel` (R10.2, §1.10).
+
+### E.8 A webhook delivery
+
+Exercises R10.5, R10.7, R12.8, R12.9.
+
+```http
+POST /webhooks/bloom HTTP/1.1
+Host: consumer.example.net
+Content-Type: application/json
+webhook-id: msg_000example
+webhook-timestamp: 1786295445
+webhook-signature: v1,<signature-example-redacted>
+
+{
+  "type": "order.canceled",
+  "created_at": "2026-08-09T17:10:45Z",
+  "version": 3,
+  "data": {
+    "id": "ord_000example",
+    "status": "canceled"
+  }
+}
+```
+
+The reading: the Standard Webhooks envelope for the shared-secret
+topology (R10.7.1) — the signature covers `id.timestamp.payload`, the
+secret is `whsec_`-prefixed and never appears on the wire. `version` is
+the monotonic per-event marker (R10.5). The consumer verifies over the
+raw body before parsing, enforces the timestamp window, dedupes on
+`webhook-id`, compares in constant time, and acks before processing
+(R12.8, R12.9).
+
+### E.9 Rate limiting
+
+Exercises R11.2, R11.5, R12.2.
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+Content-Type: application/problem+json
+Cache-Control: no-store
+request-id: req_005example
+
+{
+  "type": "https://problems.example.com/rate-limit-exceeded",
+  "title": "Rate limit exceeded",
+  "status": 429,
+  "code": "rate_limit_exceeded",
+  "detail": "Retry after the interval in Retry-After."
+}
+```
+
+Bloom also advertises quota state with the pinned draft-11 `RateLimit`
+fields (R11.3); their concrete syntax is deliberately not reproduced
+here — the pinned draft is the reference, and this appendix avoids
+restating a moving wire format.
+
+### E.10 Deprecation signals
+
+Exercises R9.5, R9.6, R9.7.
+
+A v1 response after the v2 launch (deprecation announced 2026-09-01,
+sunset one year later):
+
+```http
+Deprecation: @1788220800
+Sunset: Wed, 01 Sep 2027 00:00:00 GMT
+Link: <https://developers.example.com/migrate-v2>; rel="deprecation"
+```
+
+The reading: `Deprecation` is a structured-field date (RFC 9745);
+`Sunset` is an HTTP-date (RFC 8594) — deliberately different formats —
+and the window honors the 12-month floor (R9.7).
+
+## Appendix F — Framework and gateway mapping
+
+Informative. Each row records a verified finding from the research layer
+with its report; findings carry the date they were verified and may age.
+
+| Surface | Recorded finding | Bearing on this standard | Source |
+| --- | --- | --- | --- |
+| ASP.NET Core | Emits RFC 9457 Problem Details by default; the .NET 7→8 transition changed a problem `type` identity | R5.12 is near-free on this stack; the identity break is the failure R5.13.2 (immutability) exists to prevent | `baseline-02c` (2026-07-25), `baseline-02f` (2026-08-09) |
+| Spring | RFC 9457 support enabled via a single property | R5.12 adoption cost is one configuration line | `baseline-02c` (2026-07-25) |
+| Spectral | Silently ignores OpenAPI 3.2 constructs — a lint pass that validates nothing | Why R4.1 gates 3.2 on a verified toolchain | `baseline-02b` (2026-07-25) |
+| Redocly CLI | Full OpenAPI 3.2 support | The one verified all-3.2 tool in the surveyed chain | `baseline-02b` (2026-07-25) |
+| swagger-parser / openapi-generator | Open, unaddressed 3.2 issues (#2248, #22728) | The registered re-check triggers for flipping R4.1's default | `baseline-02b` (2026-07-25) |
+| Cloudflare | Network-wide `problem+json` rollout 2026-03-11 with a measured 55–64× payload reduction for agent consumers; yet its own edge once served `text/plain` for an enforced rate limit despite `Accept: application/problem+json` | Live proof of both R5.12's value and its infrastructure carve-out — hence R12.7 | `baseline-02d`, `baseline-02e` (2026-08-09, live-verified) |
+| Kong | The only surveyed gateway documenting the phantom-token pattern natively | The token-format axis (R8.10) names phantom-token as integration work everywhere else | `baseline-03g` (2026-08-09) |
+| AWS Cognito | Documents that revoked JWTs still verify | Why the token-format axis pairs any client-visible JWT with a revocation-propagation plan | `baseline-03g` (2026-08-09) |
+| Microsoft Entra | Ships neither DPoP nor RFC 8705 today; CAE revocation lag documented at up to 15 minutes; mTLS PoP announced as the future direction | Why bearer-over-TLS is the ratified default and Entra mTLS PoP is the highest-value watch item | `baseline-03g` (2026-08-09) |
+| MCP | The specification mandates plain `Bearer` | A whole 2025–2026 protocol ecosystem on the ratified default | `baseline-03g` (2026-08-09) |
+
+## Appendix G — Executable conformance fixtures
+
+Two fixtures: a Spectral ruleset over the contract document, and a
+live-probe table over a running API. The ruleset,
+[`conformance/spectral.yaml`](conformance/spectral.yaml), is drafted
+from the pinned patterns in Part I and cites rule IDs in each rule
+description; it is execution-verified during Phase 4 review.
+
+Live probes — each row is one request against a deployed API and the
+response that conformance predicts:
+
+| Probe | Request | Expected | Rules |
+| --- | --- | --- | --- |
+| Trailing slash | `GET /v1/orders/` | 308 to `/v1/orders` | R2.6 |
+| Rehearsal guard | `POST …?dry_run=true` to an endpoint without dry-run | 400 | R1.9 |
+| PATCH media type | PATCH with `Content-Type: application/json` | 415 + `Accept-Patch` | R3.7, R5.11 |
+| Destructive guard | DELETE a guarded resource without `If-Match` | 428 | R7.4, R5.11 |
+| Unknown method | An unimplemented method on a real path | 405 + `Allow` | R5.11 |
+| Empty collection | List with a filter matching nothing | 200 + empty `items` | R6.2 |
+| Auth split | No credentials | 401 | R5.9 |
+| Existence masking | Another tenant's resource ID | 404 | R5.10 |
+| Quota | Exceed the published limit | 429 + `Retry-After` | R11.2 |
+| Error negotiation | Force an error with `Accept: application/problem+json` | Problem document with template-bound `type`/`code` | R5.12, R5.13 |
+| Correlation | Any request | `request-id` present on the response | R11.7 |
+| Cache posture | Authenticated GET | `Cache-Control: private, no-cache` (or stricter) | R7.1–R7.3 |
