@@ -85,7 +85,7 @@ recording its provenance and shaping decisions.
 | `baseline-01-http-semantics` | REST constraints, resource identity, URI modeling, methods, status codes, conditional requests, caching | `2026-07-25` | `HS-001`–`HS-020` | — |
 | `baseline-02-api-contracts` | JSON representation, OpenAPI/JSON Schema contracts, Problem Details, collections, compatibility, idempotency contracts, bulk, async | `2026-07-25` | `AC-001`–`AC-021` | — |
 | `baseline-03-operational-practice` | Transport security, authn/authz, rate limits, retries, deprecation, observability, webhook delivery and signing | `2026-07-25` | `OP-001`–`OP-025` | — |
-| `baseline-04-streaming` | Streaming posture for the Phase 6 extension: negotiation, framing, post-commit errors, resumption, composition with `R5.12`/`R10.9`/`R4.17` | **unrun** (Phase 6; runs after `survey-08`) | `ST-*` (new series) | — |
+| `baseline-04-streaming` | Streaming posture for the Phase 6 extension: negotiation, framing, post-commit errors, resumption, composition with `R5.12`/`R10.9`/`R4.17` | `2026-08-10` | `ST-001`–`ST-020` | `decisions/baseline-04-streaming.decision.md` |
 
 Sixty-six proposed principles from `baseline-01`–`03`. **All are proposals
 carrying research confidence, not ratified policy** — see the series table
@@ -129,9 +129,15 @@ Webhooks issue #34, and any UCP revision after 2026-04-08 (`OP-016`) ·
 2026-11-15, `draft-knauer-secure-webhook-token` expiry (`OP-016`) ·
 five-axes profile watches: Microsoft Entra shipping mTLS PoP (highest-value —
 would weaken the bearer default), any MCP proof-of-possession extension,
-OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance.
+OpenFGA CNCF graduation, FAPI 2.0 adoption outside finance ·
+**2027-02-10 streaming standards-footing re-check** (`ST-004`): re-probe the
+IANA media-type registry for `text/event-stream` (per-type URL, against a
+`text/html` control) and re-enumerate the IETF `httpapi` docket for any HTTP
+response-streaming or stream-media-type work item; either change fires a §13
+review. Baseline 2026-08-10: probe returns 404 against a 200 control; the
+`httpapi` docket carries three active working-group drafts, none on streaming.
 
-## Decision index — `decisions/` (Gate C complete 2026-08-09; Phase 4/Gate E addenda 2026-08-10)
+## Decision index — `decisions/` (Gate C complete 2026-08-09; Phase 4/Gate E addenda and the Phase 6 streaming walk 2026-08-10)
 
 The ADR layer. One file per stem, paired with its prompt and reports by the
 naming convention; each entry records the ratified rule, its Phase 2
@@ -177,6 +183,13 @@ the quick-citation index; the files are authoritative.
 | A4 · Dry-run (addendum) | 2026-08-09 | **`?dry_run=true`**, MAY per endpoint / SHOULD on destructive+bulk; output contract ratified (marker, real outcome shape, validation depth, no key consumption); `Prefer: validate-only` declined on advisory-execution risk | `decisions/baseline-02-api-contracts.decision.md` |
 | A5 · Action verbs (addendum) | 2026-08-09 | **Core registry** (cancel, archive/restore, approve/reject, publish/unpublish, duplicate) + AIP-136 discipline + one-verb-per-meaning; no collection-level actions | `decisions/baseline-02-api-contracts.decision.md` |
 | P4 · Operation discovery on 202 (Phase 4 addendum) | 2026-08-10 | **Two-part rule completing `AC-019`**: `202` body MUST identify the operation (`id`+template or `url`); `Location` SHOULD, denoting the operation never the result, header/body agreeing; `Operation-Location` and `Link` declined | `decisions/baseline-02-api-contracts.decision.md` |
+| `P6-D0` · Deliverable shape (Phase 6) | 2026-08-10 | **Compact normative §13 + informative companion.** Rules stay in the standard so the conformance surface stays single; the companion carries the explanatory body. Rules-in-companion declined | `decisions/baseline-04-streaming.decision.md` |
+| `P6-D1` · Streaming negotiation (Phase 6) | 2026-08-10 | **`Accept`-based selection MUST**, `Vary: Accept`, query parameter forbidden; `stream` reserved with an `R1.9`-style `400` guard. `R4.10` composition beats unanimous vendor body-flag practice; wrapper APIs are nonconformant and must record it | `decisions/baseline-04-streaming.decision.md` |
+| `P6-D2` · Post-commit stream errors (Phase 6) | 2026-08-10 | **Carve-out from `R5.12`, `R5.13` scoped.** In-band `error` frame carries an RFC 9457 problem object with `status` **omitted** — §3.1 makes a disagreeing advisory status a MUST violation; trailers excluded by RFC 9110 §6.5.1; full document restorable from the operation resource | `decisions/baseline-04-streaming.decision.md` |
+| `P6-D3` · `R5.1` streaming scope (Phase 6) | 2026-08-10 | **`R5.1` amended** — status binds to the outcome as known when generated. The "failed operation MUST NOT return 2xx" collision with post-commit stream failure resolved in rule text, not a preamble reading (`R1.7`) | `decisions/baseline-04-streaming.decision.md` |
+| `P6-D4a`/`P6-D4b` · §1.10 additions (Phase 6) | 2026-08-10 | **`text/event-stream` admitted with its unregistered status disclosed** (the table's first unregistered entry, on the `Idempotency-Key`/`RateLimit` pattern); **fifth reserved-name category opened** for stream frame types, first entry `error` | `decisions/baseline-04-streaming.decision.md` |
+| `P6-D5` · Resumption position name (Phase 6) | 2026-08-10 | **New reserved name, not `cursor`** — `R12.5`'s "never construct or modify" and `ST-010`'s monotonic ordering cannot both be true of one name; the §1.10-divergence counterargument recorded | `decisions/baseline-04-streaming.decision.md` |
+| ST batch (15) | 2026-08-10 | Remaining `ST-*` principles ratified en bloc as proposed — 7 normative (`ST-001`, `005`, `006`, `008`, `009`, `011`, `012`), 8 companion (`ST-013`–`ST-020`). **Phase 6 walk complete** | `decisions/baseline-04-streaming.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

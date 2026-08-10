@@ -291,8 +291,8 @@ Step sequence and status:
 | --- | --- | --- |
 | 0 | Scope framing + research prompts (`survey-08-streaming`, `baseline-04-streaming`) | **Done 2026-08-10** |
 | 1a | Descriptive leaf `survey-08-streaming` | **Done 2026-08-10** — 1,747-line report, 44 sources, 14 contested axes; arrival check passed; RFC 8895 correction annotated at §3.0a |
-| 1b | Prescriptive leaf `baseline-04-streaming` | In progress |
-| 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | Pending |
+| 1b | Prescriptive leaf `baseline-04-streaming` | **Done 2026-08-10** — 898-line report, 20 proposed `ST-*` principles, six conflicts with ratified 1.0 rules raised |
+| 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
 | 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | Pending |
 | 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | Pending |
 | 5 | Release v1.1.0 | Pending |
