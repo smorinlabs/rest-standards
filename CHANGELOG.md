@@ -7,6 +7,156 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 1.1.2 — 2026-08-10
+
+Editorial. No rule text, strength, or obligation changes; 139 rules,
+checklist 139/139, fixtures 14/14.
+
+Two review findings that arrived on PR #9 after it merged, fixed here rather
+than left on `main`:
+
+- The 1.1.1 entry's lead-in read "Phase 7 renumbered to Phase 8", which
+  became ambiguous the moment Phase 7 came to mean the skill-apparatus
+  phase — a reader could take it as saying *that* phase was renumbered. It
+  now names the streaming deferred-work phase explicitly and says the skill
+  phase is unaffected.
+- A missing preposition in the Part II map row for the Tier B deferral
+  ("renumbered v1.1.1" → "renumbered in v1.1.1").
+
+*Process note:* PR #9 was merged on CodeRabbit's green check before Copilot
+had posted, and Copilot then found both items. The lesson is recorded rather
+than the finding alone — a clean check from one reviewer is not the same as
+the review wave having settled.
+
+## 1.1.1 — 2026-08-10
+
+Editorial. No rule text, strength, or obligation changes; the standard stands
+at 139 rules, checklist 139/139, fixtures 14/14.
+
+**The streaming deferred-work phase is renumbered from 7 to 8.** Phase 7 now
+means the skill-apparatus phase, which is a different body of work and is
+unaffected by this release. Version 1.1.0 opened a phase for
+streaming's five unresolved interactions and numbered it 7. That number was
+already claimed: a skill-apparatus phase had been declared as Phase 7
+twenty-nine minutes earlier, on a branch that had not yet merged and was not
+visible to the streaming work. The streaming phase merged first and so
+reached released text first, but it was declared second — and merge order is
+a poor way to settle a claim in a repository whose discipline is that the
+record decides. The streaming phase therefore yields the number.
+
+Renumbered here rather than on the unmerged branch because the alternative
+would have rewarded merge order over declaration order, and because the
+skill-apparatus phase carries a defined acceptance gate (Gate F) while this
+one is a register of deferred work with no gate.
+
+Corrected in `PLAN.md`, §13.4 and the Part II map of
+[`rest-api-standard.md`](rest-api-standard.md), and
+[`streaming-profile.md`](streaming-profile.md). The 1.1.0 entry below carries
+its pointer corrected in place with a note, rather than being silently
+rewritten — two sections briefly held the same phase number in released text,
+and that is worth being able to see.
+
+## 1.1.0 — 2026-08-10
+
+Adds **§13, streaming responses** — Server-Sent Events, long-polling, and
+streaming HTTP bodies. A MINOR bump: rules are added and nine existing rules
+are scoped, none strengthened, removed, or re-meant. The standard now carries
+**139 rules** (from 127); checklist 139/139; conformance fixtures 14/14.
+
+**WebSockets are a stated non-goal**, not a further deferral: after a `101`
+upgrade the exchange is no longer HTTP request/response, so none of this
+standard's status-code, media-type, `Problem Details`, or applicability-switch
+machinery reaches it. §1.2 now says so with its reason.
+
+### Added
+
+- **§13** (`R13.1`–`R13.11`) — response shape and negotiation, frame typing
+  and termination, the post-commit error contract, composition with the
+  `R10.9` operation resource, resumption, and long-polling.
+- **`R12.10`** — the client half, placed in §12 with the other client
+  obligations rather than in §13.
+- **`streaming` applicability switch** (§1.8), plus three scoping principles
+  Phase 6 forced into the open: where a rule's scope is stated, that a rule
+  may require two switches, and that a switch never waives a guard.
+- **§1.10 reserved names** — `stream` and `stream_position` request
+  modifiers; `text/event-stream` as the table's first unregistered media type,
+  with the registration gap disclosed in the row; a new **reserved stream
+  members** category (`operation_id`, `operation_url`, `operation_state`,
+  `retry_after`); and a
+  new **reserved stream frame types** category, first entry `error`.
+- **[`streaming-profile.md`](streaming-profile.md)** — an informative
+  companion carrying the explanatory body, so §13 itself stays short for the
+  majority of APIs that do not stream.
+- Appendix D OpenAPI rows, Appendix E worked example **E.11**, six Appendix G
+  live-probe rows, and two Spectral rules (`rs-r13-1-no-streaming-202`,
+  `rs-r13-2-stream-negotiation-vary`).
+
+### Changed — existing rules scoped for streaming
+
+Each of these was a ratified `MUST` that a conforming streaming API could not
+satisfy, because a committed `200` leaves no status code available:
+
+- **`R5.1`** — the status binds to the outcome *as known when it is
+  generated*; a post-commit stream failure reports under `R13.7`.
+- **`R5.12`** — a second named carve-out, for post-commit stream errors.
+- **`R5.13`** — the required member set is scoped to response-carried problem
+  documents, so an in-band object omits `status`. RFC 9457 §3.1 permits either
+  omitting `status` or setting it to the status actually sent, and forbids
+  only a `status` that disagrees; omission is this standard's policy choice,
+  because `status: 200` on a document describing a failure is accurate about
+  the response and misleading about the outcome.
+- **`R11.2`, `R11.5`** — the `429` + `Retry-After` obligation binds while a
+  status can still be generated; mid-stream quota exhaustion reports under
+  `R13.7` with a `retry_after` member.
+- **`R2.11`** — a long-running action returns `202` where it does not stream,
+  and `200` plus a stream media type where it does.
+- **`R6.1`** — a streamed collection carries continuation state on its
+  terminal frame in place of the envelope.
+- **`R6.2`** — an empty streamed collection is zero item frames followed by
+  the terminal frame, since there is no items array to be empty.
+- **`R6.4`** — pagination state lives in the body *representation* — the
+  envelope, or the terminal frame when streamed. The `Link`-header
+  prohibition binds streamed collections identically.
+
+Also: §1.5's namespace extended from twelve normative sections to thirteen;
+`R1.3`'s frozen-series list gains `ST-001`–`ST-020`; §1.9's conformance-note
+template gains the `streaming` switch; §1.11 defines *stream*, *frame*,
+*terminal frame*, *self-delimiting stream media type*, and *status committed*.
+
+### Known gaps, recorded rather than left to be found
+
+**§13.4** registers five interactions between streaming and the rest of the
+standard that are recognized and not yet ruled — frame-vocabulary versioning,
+stream authorization lifetime, caching posture, idempotency-key replay, and
+stream resource ceilings. `PLAN.md` **Phase 8** — numbered 7 when this
+release shipped and renumbered in 1.1.1, see below — is open to rule them with the
+same evidence discipline that produced §13. The versioning item carries the
+sharpest known failure and an interim posture: treat frame-type names and
+which types are terminal as frozen surface, because `R12.10`'s
+ignore-unknown-types tolerance would otherwise turn a rename into truncation
+reported on every successful stream.
+
+### Evidence
+
+Two research leaves under the two-series discipline —
+`survey-08-streaming` (descriptive; 14 contested axes) and
+`baseline-04-streaming` (prescriptive; 20 `ST-*` principles) — ratified
+through a six-fork owner walk plus an en-bloc batch, recorded in
+[`research/decisions/baseline-04-streaming.decision.md`](research/decisions/baseline-04-streaming.decision.md).
+
+One finding is load-bearing enough to restate: **`text/event-stream` has no
+IANA registration.** It is absent from the `text/*` subregistry and its
+per-type URL returns `404` against a `text/html` control returning `200`.
+`R13.4` blesses it anyway — the only registered alternative,
+`application/json-seq`, has no HTTP adoption and no browser parser — but
+requires every adopting API to disclose the gap. A dated re-check is
+registered for **2027-02-10**.
+
+Reviewed in four waves — three internal lenses (consistency, ambiguity,
+missing-and-conflicting) and a Codex second lens from a different model
+family on the corrected text — then through the PR bot cycle. Released via
+PR #8; `v1.1.0` is tagged on that PR's merge commit.
+
 ## 1.0.0 — 2026-08-10
 
 First release. 127 rules across twelve normative sections, each carrying

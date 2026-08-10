@@ -264,6 +264,44 @@ destabilizing 1.0. Scope when opened:
   the Part II amendment rule (semantic versioning, atomic five-surface
   updates).
 
+**Opened 2026-08-10 — in progress.** Two owner rulings scope the phase:
+
+1. **Coverage:** SSE, long-polling, and streaming HTTP bodies (chunked
+   NDJSON/JSON Lines). **WebSockets are an explicit non-goal** — after the
+   `101` upgrade the exchange leaves HTTP, so no status-code, media-type,
+   `Problem Details`, or applicability-switch machinery in this standard
+   binds it. §1.2's open deferral is replaced by a stated boundary.
+2. **Deliverable shape:** §13-in-document with the body held in a separate
+   referenced document, for progressive disclosure. The reading recorded
+   here — **confirmed by the owner 2026-08-10 as `P6-D0`** — is
+   the detail split: a **compact normative §13** in
+   `rest-api-standard.md` carrying the `R13.x` rules, paired with a
+   separate **informative companion document** holding the explanatory
+   body (mechanism comparison, wire examples, vendor evidence, client
+   guidance). Progressive disclosure — an API that does not stream
+   declares the `streaming` switch off and never opens the companion —
+   while the conformance surface stays single (one Appendix A checklist,
+   one Part II provenance map, one Spectral ruleset). The exact
+   normative/informative line is set at drafting, once the rule count is
+   known. Additions are a MINOR bump under the amendment rule: **v1.1.0**.
+
+Step sequence and status:
+
+| Step | What | Status |
+| --- | --- | --- |
+| 0 | Scope framing + research prompts (`survey-08-streaming`, `baseline-04-streaming`) | **Done 2026-08-10** |
+| 1a | Descriptive leaf `survey-08-streaming` | **Done 2026-08-10** — 1,747-line report, 44 sources, 14 contested axes; arrival check passed; RFC 8895 correction annotated at §3.0a |
+| 1b | Prescriptive leaf `baseline-04-streaming` | **Done 2026-08-10** — 898-line report, 20 proposed `ST-*` principles, six conflicts with ratified 1.0 rules raised |
+| 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
+| 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | **Done 2026-08-10** — 12 new rules (`R13.1`–`R13.11`, `R12.10`); standard at **139 rules, checklist 139/139, fixture 14/14** |
+| 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | **Done 2026-08-10** — three internal lenses (consistency, ambiguity, missing-and-conflicting) dispositioned; Tier A/B/C ruled by the owner; Codex second lens on the corrected text found a release-blocking §6 gap plus five factual corrections, all fixed; raw-source verification of every new normative citation; fixtures extended to 14/14 |
+| 5 | Release v1.1.0 | Release PR **#8** — changelog written, bot cycle worked (Copilot, Greptile, CodeRabbit). `v1.1.0` is tagged on this PR's merge commit, matching the `v1.0.0`/PR #7 pattern; the tag is applied at merge, so a reader of this branch before merge sees the intent and a reader after sees the fact |
+
+Drafting in Step 3 must also amend §1.5's "the `R<section>` prefix space is
+fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
+deferral, add the `streaming` applicability switch to §1.8, register any
+reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
+
 ### Phase 7: Skill apparatus (post-1.0)
 
 The standard is a document; this phase gives it an applier. `rest-standards`
@@ -292,20 +330,68 @@ Scope:
 - gate the runtime plane: opt-in, non-production only, read-only probes
   first, mutating and quota probes behind a second confirmation (owner
   ruling 2026-08-10); and
-- hand placement, wiring, and the quality gate to the `skill-create` and
-  `skill-quality` pipelines; and
 - add the repository's first `.claude/settings.json` startup announcement,
-  which names the skill and points at `docs/skills/rest-standards.md`. The
-  announcement text is written up front and is **forward-looking until this
-  phase completes** — both the skill and that documentation page are
+  which names the skill and points at `docs/skills/rest-standards.md` — both
   therefore Gate F conditions, not optional follow-ups.
 
+Placement is deliberately **not** part of this phase. The skill exists only
+on this branch until it merges, so a `~/.agents/skills/rest-standards`
+symlink created here would dangle when the worktree is removed. Placement
+follows the merge and the fast-forward pull; the quality gate runs against
+the worktree instead.
+
+**The v1.1.0 rebase — why this phase absorbed §13 mid-flight.** Phase 6
+merged while this work was in progress, and the note left at this heading
+asked for the self-test to be re-run against the extended standard. It was:
+the branch took v1.1.2, and the re-run is the phase's acceptance evidence
+rather than a follow-up. The event also proved the design's central bet in
+both directions. The five skill files read the standard live, so §13 reached
+them with no edit — that half held. But three *hardcoded snapshots* the
+implementation plan had mandated went stale exactly as predicted: a section
+count, a rule count, and a twelve-section sweep list that silently omitted
+§13. They were removed rather than corrected, so the next amendment cannot
+repeat the failure.
+
 **Gate F — skill accepted.** The skill's `audit` mode, run against the
-Appendix E worked example (Bloom Orders API), reproduces that appendix's
-rule-ID annotations and conformance note; `skill-quality` passes; and the
-Spectral ruleset still fires 12/12 when invoked through the skill's own path.
-No rule text changes in this phase — anything the skill exposes as a missing
-rule is an amendment under Part II, not a skill addition.
+Appendix E worked example (Bloom Orders API) at the current standard version,
+reproduces that appendix's rule-ID annotations and conformance note;
+`skillsmith verify` passes on both `claude-code` and `codex`; the Spectral
+ruleset still fires its full fixture count when invoked through the skill's
+own path; and `git diff origin/main...HEAD` shows no change to
+`rest-api-standard.md` or `conformance/`. No rule text changes in this phase
+— anything the skill exposes as a missing rule is an amendment under Part II,
+not a skill addition.
+
+### Phase 8: Streaming's unresolved interactions (post-1.1.0)
+
+Opened 2026-08-10 by the Phase 6 review walk. **Numbered 7 at creation and
+renumbered to 8 in version 1.1.1**: the skill-apparatus phase had claimed
+Phase 7 twenty-nine minutes earlier on a branch not yet merged, so this
+phase — which merged first but was declared second — yields the number. The
+renumber is recorded rather than silently applied because two sections
+briefly carried the same phase number in released text. The three internal review
+lenses over the drafted §13 found that streaming disturbs more of the 1.0
+standard than the research leaves had been pointed at. Collisions where a
+ratified MUST became unsatisfiable were fixed inside Phase 6 (Tier A:
+`R11.2`, `R11.5`, `R2.11`, `R6.1`). **Five interactions where the standard is
+merely silent were deliberately deferred here** rather than ruled without
+evidence — the same reasoning that declined the single-lighter-leaf option
+at the phase opening.
+
+The register lives in **§13.4** of `rest-api-standard.md`, so a reader who
+hits one of these knows the silence is a decision. Scope when opened:
+
+| Item | The unresolved question |
+| --- | --- |
+| Frame-vocabulary versioning (§9.3) | `R9.4` does not classify frame-type names. Renaming a terminal frame reads as compatible, while `R12.10` makes every deployed client ignore it and report truncation on every success. **Sharpest known failure; interim posture recorded in §13.4.** |
+| Stream authorization lifetime (§8) | `R8.6` authorizes a request; a stream is one request that can outlive the credential that opened it. |
+| Caching posture for streams (§7) | `R7.3` tier 1 revalidates via strong `ETag`, which a stream cannot supply. |
+| Idempotency-key replay of a streaming request (§3) | `R3.9`'s "stored response" is undefined for a stream, and overlaps `R13.10` resumption. |
+| Resource ceilings for streams (§11) | `R11.1`'s published maxima cover page size, expansion depth, and bulk count — not stream duration or per-principal concurrency. |
+
+Method when opened: a research leaf per cluster under the two-series
+discipline, a ratification walk, then amendments under the Part II amendment
+rule. Some items may prove to need no rule; that verdict is itself recorded.
 
 ## Planned artifacts
 
@@ -318,12 +404,16 @@ rule is an amendment under Part II, not a skill addition.
 | `research/prompts/baseline-*.framing.md` | Prompt provenance and shaping record | Phase 0 | Done |
 | `research/prompts/baseline-*.prompt.md` | Prescriptive research tasks | Phase 0 | Done |
 | `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
-| `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
-| `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
+| `research/reports/survey-*.report.*.md` | Descriptive evidence — ten runs in Phase 1; `survey-08` adds an eleventh in Phase 6 | Phase 1 | Done |
+| `research/reports/baseline-*.report.*.md` | Proposed normative baselines — 66 principles in Phase 1 (`HS-*`, `AC-*`, `OP-*`); `baseline-04` adds `ST-001`–`ST-020` in Phase 6, for 86 | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | **Gate E-approved version 1.0 candidate (2026-08-10)** — drafted and Gate D-approved 2026-08-09; Phase 4 review complete. `rest-api-standard.md`: §1–§12 (127 rules, each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
+| Normative standard | Stable rules and rationale | Phase 3 (extended in Phase 6) | **Released 1.0.0 2026-08-10** (Gate E-approved; drafted and Gate D-approved 2026-08-09; Phase 4 review complete) — §1–§12, 127 rules. **Extended to 1.1.0 in Phase 6** with §13 streaming: `rest-api-standard.md` now carries **139 rules**, each with provenance, classification, and confidence, plus Part II Decision Log (provenance map + apparatus register), Appendices A–G, the Spectral ruleset (`conformance/spectral.yaml`, re-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 14/14), and the informative companion `streaming-profile.md` |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
-| `.claude/skills/rest-standards/` | Agent skill applying the standard in four modes | Phase 7 | **Designed 2026-08-10** (`docs/specs/2026-08-10-rest-standards-skill-design.md`); authoring pending |
+| `.claude/skills/rest-standards/` + `docs/skills/rest-standards.md` | Agent skill applying the standard in four modes, and its documentation page | Phase 7 | Designed 2026-08-10 (`docs/specs/2026-08-10-rest-standards-skill-design.md`), authored and self-tested the same day. Five files: `SKILL.md` plus four procedure references. Acceptance evidence in `docs/reviews/2026-08-10-phase-7-skill-self-test.md` |
+| `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Done 2026-08-10** — both leaves framed, prompted, and run |
+| `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | **Done 2026-08-10** — descriptive run 1,747 lines / 44 sources / 14 contested axes (carries a dated §3.0a correction: RFC 8895); prescriptive run 898 lines / 20 `ST-*` principles |
+| `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc; indexed in `research/README.md` |
+| §13 of `rest-api-standard.md` + `streaming-profile.md` | The v1.1.0 extension: compact `R13.x` rules plus the informative explanatory body | Phase 6 | **Done 2026-08-10** — `R13.1`–`R13.11` + `R12.10`; **nine** existing rules scoped for streaming (`R5.1`, `R5.12`, `R5.13`, `R11.2`, `R11.5`, `R2.11`, `R6.1`, `R6.2`, `R6.4`); §1.2, §1.5, §1.8, §1.9, §1.10, §1.11 amended; Appendix A, C, D, E, and G plus Part II rows landed atomically. Released via PR **#8** |
 
 ## Definition of done for version 1.0
 
