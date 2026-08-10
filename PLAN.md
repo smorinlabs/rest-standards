@@ -202,8 +202,12 @@ ambiguity / domain-gap) is complete — 22 findings, recorded in
 fixes landed on the Phase 4 branch. The Codex second lens ran 2026-08-10
 against the corrected text (10 findings, all dispositioned — same review
 doc), followed by a raw-RFC classification sweep of every
-protocol-requirement label. Remaining before Gate E: the owner walk for
-the four decision-touching items and the closing structural pass.
+protocol-requirement label. The owner walk ruled all four
+decision-touching items 2026-08-10 (switches pruned; `cancel` broadened;
+R4.16 path placeholders; R10.9 operation discovery, backed by the
+`baseline-02i` research leaf and a filed decision record), and the
+closing structural pass ran clean (126 rules, checklist 126/126,
+fixture 12/12). **Phase 4 is complete; Gate E is the next action.**
 
 Run the recovered `cli-standards` review pattern:
 

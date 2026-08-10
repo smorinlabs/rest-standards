@@ -164,14 +164,13 @@ CORS-safelisted, and the standard never mentions
 `Access-Control-Expose-Headers`; cross-origin browser clients cannot
 read them without it.
 
-## Process after fixes
+## Process after fixes — all discharged
 
-- Re-run structural check suite (IDs, cross-refs, keywords, checklist count —
-  checklist rows must track any rule-text changes; Part II rows likewise;
-  worked example per amendment rule's five surfaces).
+- Structural check suite — **run clean 2026-08-10** (126 rule IDs, no
+  duplicates or gaps, no dangling references, checklist 126/126,
+  appendix keyword scan clean, fixture 12/12).
 - Codex adversarial pass (different model family) on the corrected
   text — **done 2026-08-10**, dispositions above.
-- Owner walk for any item that changes a ratified decision's meaning (MC-1,
-  MC-2 restorations are fidelity fixes, not decision changes; AM-1 switch
-  pruning and cancel-scope broadening are owner calls).
-- Then Gate E.
+- Owner walk — **done 2026-08-10**, all four rulings above.
+- Gate E is the next action; the CORS header-exposure item goes to it
+  as a decidable option pair.
