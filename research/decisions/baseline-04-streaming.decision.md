@@ -385,7 +385,9 @@ provenance row · Appendix A checklist row · Appendix E worked example).
 | `R1.3` | `ST-*` named in the frozen-series list once ratified, so the freeze list stays complete | Phase 6 framing |
 | §1.2 | The streaming deferral is replaced by a pointer to §13 plus the stated WebSockets non-goal and its reason | Phase 6 scope ruling |
 | §1.5 | The "`R<section>` prefix space is fixed at twelve normative sections" declaration is amended | `P6-D0` |
-| §1.8 | New `streaming` applicability switch, gating the `ST-*` rules as marked | `ST-001`–`ST-012` |
+| §1.8 | New `streaming` applicability switch, gating the `ST-*` rules as marked; plus three scoping principles Phase 6 forced into the open — where a rule's scope is stated, that a rule may require two switches, and that a switch never waives a guard | `ST-001`–`ST-012` |
+| §1.9 | The conformance-note template gains a `streaming` switch line in the same on-or-off form as the other three, without which an API following the template verbatim cannot satisfy `R1.6` | `P6-D0` (found in the Phase 6 review wave) |
+| §1.11 | The **Reserved name** definition gains the fifth category; new entries for *stream*, *frame*, *terminal frame*, *self-delimiting stream media type*, and *status committed* | `P6-D4b` and the Phase 6 review wave |
 | §1.10 | `stream` reserved query-parameter/body-modifier row; `text/event-stream` media-type row with disclosure; new fifth category for reserved stream frame types, first entry `error`; new reserved name for the resumption position | `P6-D1`, `P6-D4a`, `P6-D4b`, `P6-D5` |
 | §12 | `ST-012` drafts as `R12.x` client obligations alongside `R12.1`–`R12.9`, not as `R13.x` | Drafting call, recorded |
 

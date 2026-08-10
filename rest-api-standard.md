@@ -76,11 +76,10 @@ standard's apparatus reaches it. An API offering a WebSocket surface is
 neither conformant nor nonconformant on it; the surface is simply outside
 what this document specifies.
 
-> Provenance: Phase 6 scope ruling (2026-08-10),
-> `research/decisions/baseline-04-streaming.decision.md` · project policy.
-
-> Provenance: `PLAN.md` scope; Gate A · SSE deferral ruled by the owner
-> at Gate D (2026-08-09).
+> Provenance: `PLAN.md` scope; Gate A. The Gate D streaming deferral
+> (2026-08-09) was discharged by the Phase 6 scope ruling (2026-08-10),
+> `research/decisions/baseline-04-streaming.decision.md`, which also made
+> WebSockets a stated non-goal · project policy.
 
 ### 1.3 URI ownership — the BCP 190 scope reading
 
@@ -208,18 +207,34 @@ note (the N/A-with-reason discipline): "N/A" with no reason is a deviation,
 not an exemption.
 
 The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
-`streaming`. Every switch controls at least one rule, and each rule's home
-section names its scope (§10 for the first three, §13 for `streaming`); the
-vocabulary grows only when a new rule needs a switch, so a declaration
-never exists that waives nothing. Capability facts with no rule attached
-— tenancy model, PII handling, client audience — belong in the
-conformance note's free text, not here.
+`streaming`. Every switch controls at least one rule; the vocabulary grows
+only when a new rule needs a switch, so a declaration never exists that
+waives nothing. Capability facts with no rule attached — tenancy model, PII
+handling, client audience — belong in the conformance note's free text, not
+here.
+
+**Where a rule's scope is stated.** A switch-scoped rule declares its scope
+in its own provenance line, and the section that owns the capability
+summarizes the scoping for its rules: §10 for `webhooks`,
+`async-operations`, and `bulk-operations`; §13 for `streaming`. A rule may
+live outside the section that summarizes its switch — R12.10 is scoped by
+`streaming` but belongs in §12 with the other client obligations — so the
+provenance line, not the section, is authoritative for scope.
+
+**A rule may require two switches.** Where a rule governs the meeting of two
+capabilities, it binds only when both are on and says so: R13.9 binds only
+where `streaming` and `async-operations` are both on. An API with either
+switch off takes it as not applicable, with the reason its own off-switch
+declaration already gives.
 
 **A switch never waives a guard.** A rule whose whole purpose is to define
 what an API without the capability must do is not scoped by that
-capability's switch — scoping it there would delete it for exactly the APIs
-it binds. Two such rules exist, and each says so in its own text: `R1.9`
-(the `dry_run` rejection guard) and `R13.3` (the `stream` rejection guard).
+capability's switch — scoping it there would delete it for exactly the
+endpoints it binds. Two such rules exist, and each says so in its own text:
+`R1.9` (the `dry_run` rejection guard) and `R13.3` (the `stream` rejection
+guard). Both bind **per endpoint**, not per API: an API that streams on some
+endpoints still owes the guard on every endpoint that does not.
+
 
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8.
 
@@ -239,7 +254,7 @@ note using this template:
 Standard: rest-api-standard v<version>
 Tier: internal | partner | public
 Switches: webhooks=<on|off>, async-operations=<on|off>,
-  bulk-operations=<on|off>
+  bulk-operations=<on|off>, streaming=<on|off>
   (every switch declared off carries a one-line reason)
 Context: <free text — tenancy model, PII handling, client audience,
   and other capability facts no rule attaches to>
@@ -294,7 +309,7 @@ ratification.)
 | `limit` | Requested page size | Request-side name; each collection documents its default and maximum (`OP-009`) | Addendum A2.3 `[POLICY]` |
 | `dry_run` | Rehearse a mutation without executing it | Support is MAY per endpoint, SHOULD for destructive and bulk operations; unsupported ⇒ `400` per R1.9; full output contract in R3.12 | Addendum A4 `[POLICY]` |
 | `stream` | Request incremental delivery of this response | Reserved as a request modifier in **either** carriage — query parameter or request-body member. It never selects the response media type (R13.2 puts that on `Accept`); an endpoint that does not stream and receives it ⇒ `400` per R13.3 | `P6-D1` (`ST-003`) `[POLICY]` |
-| `stream_position` | A stream's monotonically ordered position, for resumption | Request-side name when resuming; the same name carries the position on every frame. Distinct from `cursor`: a stream position has visible ordering, where a cursor is opaque and non-constructable (R12.5). Clients echo it and never compute one | `P6-D5` (`ST-010`) `[POLICY]` |
+| `stream_position` | A stream's strictly increasing position, for resumption | Reserved in **either** carriage when resuming — query parameter or request-body member, matching how the stream itself is requested — and the same name carries the position on every frame. Distinct from `cursor`: a stream position has visible ordering, where a cursor is opaque and non-constructable (R12.5). Clients echo it and never compute one | `P6-D5` (`ST-010`) `[POLICY]` |
 | `<field>[gte]`, `<field>[gt]`, `<field>[lte]`, `<field>[lt]` | Range filters on collection lists | The only permitted bracketed query-parameter forms; AND-combined; base name obeys the `AC-007` grammar | Walked decision "Filter grammar" (`baseline-02` decisions) `[POLICY]` |
 
 #### Reserved headers
@@ -368,7 +383,12 @@ its own (R13.5).
 | **Action** | A non-CRUD operation on a resource, expressed as `POST /{collection}/{id}/{action}`. |
 | **Mutating request** | Any request whose success changes server state. |
 | **Destructive operation** | A mutating request that removes data or irreversibly ends a process: DELETE, and any action verb registered as irreversible (`cancel`). Reversible-visibility actions (`archive`) are not destructive. |
-| **Reserved name** | A query parameter, header, media type, or action verb registered in §1.10. |
+| **Reserved name** | A query parameter, header, media type, action verb, or stream frame type registered in §1.10. |
+| **Stream** | A response delivered incrementally over a single HTTP request, as a sequence of frames (§13). |
+| **Frame** | One self-delimited unit of a stream, carrying a type (R13.5) and a payload. |
+| **Terminal frame** | The frame that ends a stream and carries its final outcome (R13.6); its absence means the stream was truncated. |
+| **Self-delimiting stream media type** | A media type whose own specification lets a parser find each frame's boundaries from the body alone, without relying on `Content-Length` or on the connection closing. `text/event-stream` and `application/x-ndjson` qualify; `application/json` over concatenated documents does not. |
+| **Status committed** | The moment the application has issued the response status line and headers to the HTTP layer. Commitment is judged at that point regardless of downstream buffering, so a proxy holding bytes does not move the boundary between R13.8 and R13.7. |
 | **Conformance note** | The per-API document required by R1.7. |
 | **Tier / switch** | The declarations required by R1.5 and R1.6. |
 | **Problem document** | An error body per RFC 9457 (`application/problem+json`). |
@@ -923,11 +943,11 @@ reverse proxies, CDNs, WAFs, rate limiters, load balancers terminating
 before application code — which MUST be documented as such.
 **Second exception (named carve-out):** an error raised after a streaming
 response's status was committed, which cannot be served as a response at all
-and is delivered in-band under R13.7 instead. That carve-out preserves the
-machine identity this rule exists to guarantee — `type`, `code`, and the
-R5.16 catalog entry all still apply — and surrenders only the media-type
-label and the advisory `status` member, both structurally unavailable once
-the status is on the wire. Nothing in
+and is delivered in-band under R13.7 instead. That carve-out preserves
+everything this rule exists to guarantee — `type`, `title`, `code`, and the
+R5.16 catalog entry all still apply — and surrenders exactly two things, the
+media-type label and the advisory `status` member, both structurally
+unavailable once the status is on the wire. Nothing in
 this standard is premised on the IANA HTTP Problem Types registry. A
 provider MAY additionally serve the identical problem body under
 `application/json` when the client's `Accept` asks for it (the Cloudflare
@@ -939,7 +959,9 @@ is R12.7.
 > Provenance: `AC-003` (walked as amended, `baseline-02` decisions +
 > `02d`/`02e`/`02f`) · evidence-backed default resting on a Standards
 > Track RFC · confidence moderate (re-argued: no credible alternative
-> exists).
+> exists). Second carve-out (post-commit stream errors) added in version
+> 1.1.0 by `P6-D2`, `research/decisions/baseline-04-streaming.decision.md`
+> · project policy `[POLICY]` · confidence moderate-high.
 
 **R5.13** Every problem document **carried in an HTTP response** MUST carry
 `type`, `title`, `status`, and a stable machine-readable `code` extension
@@ -982,6 +1004,10 @@ permitted deviations from RFC 9457's defaults, made in writing here.
 > `baseline-02f`) · evidence-backed default (member set) + project policy
 > `[POLICY]` (binding design, `about:blank` ban) · confidence high
 > (members), policy grounded in primary-sourced failure evidence (design).
+> Member set scoped to response-carried documents in version 1.1.0 by
+> `P6-D2`, `research/decisions/baseline-04-streaming.decision.md`, so that
+> an in-band problem object omits `status` as RFC 9457 §3.1 requires ·
+> confidence high.
 
 **R5.14** RFC 7807 MUST NOT be cited — it is obsoleted by RFC 9457.
 **Exception:** historical notes explicitly labeled as such.
@@ -1637,7 +1663,7 @@ explicitly when they want problem documents — many HTTP libraries do not
 treat `application/problem+json` as a subset of `application/json`.
 
 **R12.7** Clients MUST NOT rely on every error being a problem document:
-infrastructure outside the application (R5.12's carve-out) may answer
+infrastructure outside the application (R5.12's first carve-out) may answer
 first, with any shape. Robust error handling branches on the status code
 first and parses the body opportunistically.
 
@@ -1671,11 +1697,17 @@ unordered delivery (R10.5).
 
 **R12.10** A client consuming a streaming response MUST treat a connection
 that closes without the documented terminal frame (R13.6) as **truncated**,
-and MUST NOT treat partial content as a complete result. It MUST ignore
-frame types it does not recognize (the streaming case of R12.4). It MUST
-NOT depend on keep-alive frames arriving on any schedule. It MUST NOT
-recover from truncation by replaying a non-idempotent request without an
-idempotency key (R12.1, R3.9).
+and MUST NOT treat partial content as a complete result — noting that a
+stream-ending `error` frame *is* a terminal frame, so a reported failure is
+a complete result, not a truncation. It MUST tolerate a trailing sentinel
+frame after the terminal frame (R13.6). It MUST ignore
+frame types it does not recognize (the streaming case of R12.4). On an
+`error` frame it MUST treat the operation as failed and MUST branch on the
+frame's `code` and `type` rather than on the response status, which is
+`200`; where an operation resource exists it SHOULD fetch the full problem
+document from it (R13.9). It MUST NOT depend on keep-alive frames arriving
+on any schedule. It MUST NOT recover from truncation by replaying a
+non-idempotent request without an idempotency key (R12.1, R3.9).
 
 > Provenance: `ST-012` · `P6-D0` batch (Phase 6 walk, 2026-08-10),
 > `research/decisions/baseline-04-streaming.decision.md` · evidence-backed
@@ -1698,9 +1730,11 @@ and where it restates a rule the rule governs.
 
 **Switch scope.** Rules R13.1, R13.2, and R13.4–R13.11 are scoped by the
 `streaming` applicability switch (§1.8), as is R12.10. **R13.3 is not** — it
-binds precisely those APIs that declare `streaming` off, and scoping it to
-the switch would delete it for the endpoints it exists to protect. R13.9
-binds only where `streaming` **and** `async-operations` are both on.
+binds **every endpoint that does not implement streaming, whatever the API's
+`streaming` switch says**, because scoping it to the switch would delete it
+for exactly the endpoints it protects. An API that streams on some endpoints
+still owes the guard on the rest. R13.9 binds only where `streaming` **and**
+`async-operations` are both on.
 
 ### 13.1 Shape and negotiation
 
@@ -1738,17 +1772,30 @@ streaming and receives `stream` — as a query parameter or a request-body
 member, with any value — MUST reject the request with `400`, and MUST NOT
 silently answer with a non-streamed response.
 
-**This rule is not scoped by the `streaming` switch.** It binds every
-endpoint that does not stream, which is exactly the set a switch-scoped rule
-would exempt. It is the streaming counterpart of R1.9's `dry_run` guard and
-exists for the identical hazard: silently ignoring an unimplemented request
-modifier leaves a client believing it received what it asked for.
+**This rule is not scoped by the `streaming` switch,** and it binds per
+endpoint rather than per API: every endpoint that does not implement
+streaming owes the guard, including endpoints of an API whose `streaming`
+switch is on. That is exactly the set a switch-scoped rule would exempt. It
+is the streaming counterpart of R1.9's `dry_run` guard and exists for the
+identical hazard: silently ignoring an unimplemented request modifier leaves
+a client believing it received what it asked for.
+
+On an endpoint that **does** implement streaming, `Accept` governs the
+choice (R13.2) and `stream` selects nothing. A `stream` modifier that
+disagrees with the negotiated representation — asking for a stream where
+`Accept` selected the non-streamed form, or the reverse — MUST be rejected
+with `400` rather than silently resolved in either direction.
 
 > Provenance: `ST-003` · `P6-D1` (Phase 6 walk, 2026-08-10) · project
 > policy `[POLICY]`, modeled on R1.9 · confidence high.
 
 **R13.4** Server-Sent Events framing, served as `text/event-stream`, SHOULD
-be the default for incrementally generated content. An API adopting it MUST
+be the framing chosen for incrementally generated content — that is, content
+a client can act on before it is complete. (This is a different sense of
+"default" from R4.10's, which fixes the media type served when a request
+carries no `Accept`; SSE is never served without being asked for.) A large
+finite record set, where a partial answer has no value, is the
+newline-delimited case instead. An API adopting SSE MUST
 document that the media type has no IANA registration, and MUST NOT describe
 it as a registered or standardized media type.
 
@@ -1776,16 +1823,30 @@ must parse every payload to learn what it received, and can neither route,
 ignore, nor count frames. The growth statement is what makes R12.10's
 unknown-type tolerance dischargeable.
 
+**Frame payloads are representations.** §4's representation rules bind them
+unchanged — R4.4's snake_case grammar, R4.5's null-versus-absent discipline,
+R4.6's timestamps, R4.7's money encoding. A frame is not exempt from the
+body conventions merely because the enclosing response is not
+`application/json`.
+
+**Transport filler is not a frame.** Bytes the framing parser discards
+without dispatching — an SSE comment line used as a keep-alive — carry no
+type and are not subject to this rule. Where an API sends a keep-alive as a
+*typed* frame instead, it is a frame and this rule binds it.
+
 > Provenance: `ST-005` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
 > evidence-backed default · confidence high.
 
 **R13.6** A stream MUST end with a documented terminal frame carrying the
 final outcome, so that a client can distinguish normal completion from a
-truncated connection. A trailing sentinel frame MAY follow the terminal
-frame, and clients MUST tolerate one. A stream that is unbounded by design —
-a watch, an event tail — has no normal end; such an API MUST document that
-the stream is unbounded, and the terminal-frame obligation then applies to
-the server-initiated close case only.
+truncated connection. **A stream-ending `error` frame (R13.7) is a terminal
+frame** and satisfies this rule on its own; no further frame is required
+after it, and a client MUST NOT treat a stream ended that way as truncated.
+A trailing sentinel frame MAY follow the terminal frame, and clients MUST
+tolerate one. A stream that is unbounded by design — a watch, an event
+tail — has no normal end; such an API MUST document that the stream is
+unbounded, and the terminal-frame obligation then applies to the
+server-initiated close case only.
 
 > Provenance: `ST-006` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
 > evidence-backed default on the requirement, `[POLICY]` on preferring a
@@ -1799,6 +1860,13 @@ bound by R5.13's `type`/`code` template and listed in the R5.16 catalog,
 with `detail` and extension members permitted exactly as on any other
 problem document. The object MUST omit the `status` member. The frame MUST
 NOT be described as an `application/problem+json` response.
+
+**Scope: this rule governs errors that end the stream.** A per-item failure
+inside a stream that continues — one bad row in an export, one rejected
+item in a batch — is ordinary payload, not an `error` frame, and is carried
+in whatever frame type the API documents for per-item results. An `error`
+frame ends the stream and is its terminal frame (R13.6). An API MUST NOT use
+the reserved `error` type for a failure the stream survives.
 
 Two protocol facts fix this shape. RFC 9457 §3.1: the `status` member "if
 present, is only advisory," and "Generators MUST use the same status code in
@@ -1838,6 +1906,13 @@ the operation resource authoritative; and the full problem document for a
 failed operation — carrying `status`, as `application/problem+json` — MUST
 be retrievable from the operation resource.
 
+**When two endpoints are "one capability."** The test is documentary and
+independent of compliance: a stream and an operation resource are one
+capability when the API documents them as producing the same result from the
+same inputs, such that a client would choose between them rather than use
+both. An API MUST NOT escape this rule by omitting the shared identifier —
+omission is the violation this rule names, not an exit from its scope.
+
 This composes with R10.9 rather than forking it, and it is the out-of-band
 half of R13.7's carve-out: the operation resource is the one place where a
 status code is still available to be generated.
@@ -1849,11 +1924,20 @@ status code is still available to be generated.
 > record. Binds only where `streaming` and `async-operations` are both on.
 
 **R13.10** Where a stream is a view over a retained artifact, the API SHOULD
-offer resumption. An API that offers resumption MUST carry a monotonically
-ordered `stream_position` (§1.10) on every frame, MUST document the
-retention window, and MUST reject a resumption request whose position lies
-outside that window with a defined error rather than silently restarting the
-stream.
+offer resumption. An API that offers resumption MUST carry a **strictly
+increasing** `stream_position` (§1.10) on every frame — no two frames of one
+stream share a position — MUST document the retention window, and MUST
+reject a resumption request whose position lies outside that window with a
+defined error rather than silently restarting the stream.
+
+**"A view over a retained artifact"** means the data the stream reads
+survives independently of any open connection: a stored export, a change log,
+a persisted operation result. Content generated fresh per request, with no
+independently addressable backing store, is not — which is why an API whose
+stream is a live generation owes nothing here, while one streaming a stored
+artifact does. Where an API is unsure, R10.9's operation resource is the
+signal: if the work has an addressable operation resource that outlives the
+connection, the stream is a view over it.
 
 `stream_position` is deliberately not `cursor`: R12.5 requires a client to
 treat a cursor as opaque and never construct or modify one, while this rule
@@ -1869,8 +1953,13 @@ literally true. A client echoes a `stream_position` and never computes one.
 
 **R13.11** A long-polling endpoint MUST document its maximum hold duration.
 An expired hold MUST return `200` with a well-formed empty-result
-representation carrying the position or cursor for the next poll.
-`204 No Content` MUST NOT be used for an expired hold.
+representation carrying the `cursor` for the next poll. `204 No Content`
+MUST NOT be used for an expired hold.
+
+A long poll returns a representation, not a stream, so its continuation
+token is the ordinary opaque `cursor` of §1.10 and R6.3, with R12.5's
+opacity obligation applying unchanged. `stream_position` belongs to
+resumable streams (R13.10) and is not used here.
 
 The `204` prohibition has two independent grounds: R5.7 already binds `204`
 to a successful DELETE, and the WHATWG HTML Living Standard gives `204` a
@@ -2127,7 +2216,7 @@ own maintenance rather than a conforming API.
 | R4.15 | Preferences advisory only; never relied on for safety-relevant behavior |
 | R4.16 | Path placeholders snake_case (body-property grammar) |
 | R4.17 | Cross-origin browser clients: standard-bound headers listed in `Access-Control-Expose-Headers` |
-| R5.1 | Status matches outcome; no 2xx failures |
+| R5.1 | Status matches the outcome as known when it is generated; no 2xx failures; streaming scope stated (a post-commit stream failure reports under R13.7) |
 | R5.2 | Registered status codes only |
 | R5.3 | 422, 409, and 400 used per their distinctions |
 | R5.4 | 410 only with recorded permanence |
@@ -2138,8 +2227,8 @@ own maintenance rather than a conforming API.
 | R5.9 | 401 for unauthenticated, 403 for unauthorized, never conflated |
 | R5.10 | Cross-tenant existence masked with 404 |
 | R5.11 | 405 carries `Allow`; 415 for unsupported media; 428 where a precondition is demanded |
-| R5.12 | Every application error servable as `problem+json`; infrastructure carve-out documented |
-| R5.13 | Problem documents carry `type`/`title`/`status`/`code`; `type` under a provider-controlled domain; template binding; pairs immutable; no `about:blank` |
+| R5.12 | Every application error servable as `problem+json`; both carve-outs documented — infrastructure, and post-commit stream errors (R13.7) |
+| R5.13 | Response-carried problem documents carry `type`/`title`/`status`/`code`; in-band stream frames carry the same members without `status`; `type` under a provider-controlled domain; template binding; pairs immutable; no `about:blank` |
 | R5.14 | RFC 7807 never cited |
 | R5.15 | Validation failures carry `errors[]` with JSON Pointers |
 | R5.16 | Problem `type`/`code` catalog published |
@@ -2203,18 +2292,18 @@ own maintenance rather than a conforming API.
 | R12.7 | Client error handling never assumes a problem document |
 | R12.8 | Consumers verify raw-body-first; window enforced; dedupe; constant-time compare; fail closed |
 | R12.9 | Consumers ack before processing; tolerate at-least-once, unordered delivery |
-| R12.10 | Stream clients treat a missing terminal frame as truncation; ignore unknown frame types; never depend on keep-alive timing; never replay non-idempotent requests without a key |
+| R12.10 | Stream clients treat a missing terminal frame as truncation (an `error` frame is terminal, not truncation); tolerate a trailing sentinel; ignore unknown frame types; never depend on keep-alive timing; never replay non-idempotent requests without a key |
 | R13.1 | Streaming response is `200` with a self-delimiting stream media type; no `202` streaming; concatenated JSON never labeled `application/json` |
 | R13.2 | Streamed-versus-non-streamed chosen by `Accept` with `Vary: Accept`; never by a query parameter; or a distinct always-streaming resource |
-| R13.3 | `stream` on a non-streaming endpoint rejected with `400`, never silently ignored *(binds when the `streaming` switch is off)* |
+| R13.3 | `stream` on a non-streaming endpoint rejected with `400`, never silently ignored; on a streaming endpoint, a `stream` modifier disagreeing with the negotiated representation rejected with `400` *(binds per endpoint, whatever the `streaming` switch says)* |
 | R13.4 | SSE as `text/event-stream` the default for generated content; its lack of IANA registration documented and never described as registered |
 | R13.5 | Every frame carries a documented type; full frame-type vocabulary documented and stated as growable |
-| R13.6 | Documented terminal frame carrying the outcome; trailing sentinel tolerated; unbounded streams documented as unbounded |
-| R13.7 | Post-commit errors delivered in an `error` frame carrying a problem object with `status` omitted; never called an `application/problem+json` response |
+| R13.6 | Documented terminal frame carrying the outcome; a stream-ending `error` frame counts as terminal; trailing sentinel tolerated; unbounded streams documented as unbounded |
+| R13.7 | Stream-ending errors after commit delivered in an `error` frame carrying a problem object with `status` omitted; never called an `application/problem+json` response; `error` never used for a failure the stream survives |
 | R13.8 | Pre-commit errors follow R5.12 unchanged, whatever the request asked to stream |
 | R13.9 | Stream and operation resource share one identity and terminal state, operation resource authoritative; full problem document retrievable there |
-| R13.10 | Resumption offered where the stream views a retained artifact; `stream_position` on every frame; retention window documented; out-of-window resume fails with a defined error |
-| R13.11 | Long-poll maximum hold documented; expired hold returns `200` plus an empty result and next position; never `204` |
+| R13.10 | Resumption offered where the stream views a retained artifact (data outliving the connection); strictly increasing `stream_position` on every frame; retention window documented; out-of-window resume fails with a defined error |
+| R13.11 | Long-poll maximum hold documented; expired hold returns `200` plus an empty result carrying the next `cursor`; never `204` |
 
 ## Appendix B — Exception process
 
@@ -2563,6 +2652,7 @@ request-id: req_004example
 {
   "id": "op_000example",
   "status": "running",
+  "export_id": "exp_000example",
   "created_at": "2026-08-09T17:08:00-07:00",
   "expires_at": "2026-08-16T17:08:00-07:00"
 }
@@ -2659,8 +2749,13 @@ Exercises R13.1, R13.2, R13.4–R13.7, R13.9, R13.10, R5.1, R12.10. This is
 the same export capability as E.7, reached through the streaming channel —
 the pair together is what R13.9 governs.
 
-The client asks for the streamed representation by content negotiation, not
-by a query parameter or a body flag (R13.2):
+`/events` is R13.2's **second limb** — a distinct resource that streams
+unconditionally. It performs no selection, so it emits no `Vary` and R4.10
+does not reach it. (The first limb, one endpoint negotiating both shapes on
+`Accept`, is what `GET /v1/order-exports/{export_id}` itself would use if
+Bloom offered a non-streamed representation of the same events.) The export
+identifier comes from E.7's `202` body, which carries `export_id` alongside
+the operation `id`:
 
 ```http
 GET /v1/order-exports/exp_000example/events HTTP/1.1
@@ -2672,7 +2767,6 @@ Accept: text/event-stream
 ```http
 HTTP/1.1 200 OK
 Content-Type: text/event-stream
-Vary: Accept
 Cache-Control: private, no-store
 request-id: req_010example
 
@@ -2680,7 +2774,7 @@ event: export.started
 data: {"operation_id":"op_000example","stream_position":1,"total_estimate":4820}
 
 event: export.chunk
-data: {"stream_position":2,"rows":500,"url":"https://files.example.com/exp_000example/part-1.csv"}
+data: {"stream_position":2,"rows":500,"part_url":"https://files.example.com/exp_000example/part-1.csv"}
 
 event: export.completed
 data: {"stream_position":3,"status":"succeeded","rows_total":4820}
@@ -2698,11 +2792,13 @@ data:  "stream_position":47}
 ```
 
 The reading. The response is `200` with `text/event-stream`, an accurate
-self-delimiting media type, and it is not a `202` (R13.1, R13.4). `Accept`
-selected it and `Vary: Accept` records that (R13.2). Every frame carries a
-type from Bloom's documented vocabulary (R13.5), and `export.completed` is
-the terminal frame, so a connection that drops before it is truncation
-rather than a short result (R13.6, R12.10).
+self-delimiting media type, and it is not a `202` (R13.1, R13.4). Every
+frame carries a type from Bloom's documented vocabulary (R13.5), and
+`export.completed` is the terminal frame, so a connection that drops before
+it is truncation rather than a short result (R13.6, R12.10). `part_url` is
+deliberately not named `url`: R10.9 gives `url` a registered meaning in an
+operation body, and reusing it for a part file would be the
+same-name-different-concept hazard R2.3 and R1.8 exist to prevent.
 
 The error frame is the second carve-out from R5.12 in action (R13.7): the
 payload is a problem object carrying `type`, `title`, and `code` bound by
