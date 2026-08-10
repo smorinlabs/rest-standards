@@ -329,7 +329,18 @@ would materially strengthen it; this is recorded as the batch's weakest link.
 | --- | --- | --- |
 | `ST-013` | MAY | Newline-delimited JSON for record streams and bulk result sets, as `application/x-ndjson`, with its unregistered status disclosed and RFC 6648's discouragement of new `x-` names noted. `application/json-seq` (RFC 7464) where a registered media type is required, at the cost of no client ecosystem. |
 | `ST-014` | SHOULD | An SSE stream carries each frame's type in both the `event:` field and a payload `type` member. |
-| `ST-015` | SHOULD | Document the streaming contract in media-type terms, not as a `Transfer-Encoding: chunked` requirement — chunked coding exists only in HTTP/1.1 (RFC 9112 §7.1). |
+| `ST-015` | SHOULD | Document the streaming contract in media-type terms, not as a `Transfer-Encoding: chunked` requirement — chunked coding exists only in HTTP/1.1. |
+
+**Citation precision, 2026-08-10 (same-day, pre-release).** `ST-015`'s
+supporting citation was filed as RFC 9112 §7.1. Verified against raw RFC
+text: **§7.1 defines** chunked transfer coding, while **§6.1 scopes** it —
+"Transfer-Encoding was added in HTTP/1.1," and a server "MUST NOT send a
+response containing Transfer-Encoding unless the corresponding request
+indicates HTTP/1.1 (or later minor revisions)." Additionally, **RFC 9113**
+makes the header worse than unused over HTTP/2: it is connection-specific,
+and "Any message containing connection-specific header fields MUST be
+treated as malformed." The ratified guidance is unchanged and strengthened;
+the companion carries the corrected citations.
 | `ST-016` | SHOULD | Document whether keep-alive frames are emitted and in what form; a keep-alive frame carries no application state. **No interval is mandated** — none is citable. |
 | `ST-017` | SHOULD | Per-stream metadata travels in the stream body rather than in response headers, which keeps `R4.17`'s exposed-header list unchanged by Phase 6. |
 | `ST-018` | SHOULD | Browser clients consume streams with a `fetch`-based reader or a first-party relay holding the credential server-side. |

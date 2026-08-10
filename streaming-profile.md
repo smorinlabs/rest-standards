@@ -155,11 +155,19 @@ line-delimited media types exist to correct.
 It is tempting to specify a streaming contract as "the response uses
 `Transfer-Encoding: chunked`." Do not (`ST-015`).
 
-Chunked transfer coding is defined in RFC 9112 and **exists only in
-HTTP/1.1**. HTTP/2 and HTTP/3 have no chunked coding — framing is a transport
-concern handled by DATA frames, and a `Transfer-Encoding` header is not even
-legal. Guidance phrased in chunked terms is therefore silently inapplicable
-over the transports most streaming APIs actually run on.
+Chunked transfer coding is defined in RFC 9112 §7.1, and RFC 9112 §6.1
+scopes the mechanism that carries it: "Transfer-Encoding was added in
+HTTP/1.1," and "A server `MUST NOT` send a response containing
+Transfer-Encoding unless the corresponding request indicates HTTP/1.1 (or
+later minor revisions)."
+
+Over HTTP/2 it is not merely unused but forbidden. RFC 9113 lists
+`Transfer-Encoding` among the connection-specific header fields, and "Any
+message containing connection-specific header fields `MUST` be treated as
+malformed." HTTP/2 and HTTP/3 frame the body themselves, with DATA frames.
+
+Guidance phrased in chunked terms is therefore silently inapplicable — or
+actively wrong — over the transports most streaming APIs actually run on.
 
 The version-neutral observable properties are the **media type** and the
 **absence of `Content-Length`**. Those hold on every HTTP version, which is
