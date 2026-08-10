@@ -2478,7 +2478,7 @@ How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
 | R2.4, R2.5 | Path keys: kebab-case segments, at most three resources |
 | R4.4 | Schema property keys and parameter names satisfy the pinned patterns (lintable — Appendix G) |
 | R5.6 | `responses` for create operations declare `201` with a `Location` header object |
-| R5.12, R5.13 | A shared problem schema under `components.schemas`; 4xx/5xx responses declare `application/problem+json` content |
+| R5.12, R5.13 | A shared problem schema under `components.schemas`; 4xx/5xx responses declare `application/problem+json` content. **Two variants are needed:** the response-carried schema requires `status`, and a second variant for in-band stream frames omits it (R13.7), so the frame payload cannot reference the response schema |
 | R3.7 | PATCH `requestBody.content` keyed by `application/merge-patch+json` (and `application/json-patch+json` only where R3.7's JSON Patch option is exercised) |
 | R3.9 | A shared `components.parameters` header parameter for `Idempotency-Key`, referenced by every non-idempotent mutation |
 | R6.1, R6.5 | A shared collection envelope schema (`items` + continuation member); shared `cursor`/`limit` query parameters with documented default and maximum |
@@ -2487,6 +2487,12 @@ How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
 | R8.3, R8.4 | `components.securitySchemes` for OAuth flows and server-to-server keys; per-operation `security` |
 | R10.7 | The OpenAPI 3.1 `webhooks` object documents deliveries, envelope headers, and event schemas |
 | R11.2, R11.5 | Shared `429`/`503` responses declaring the `Retry-After` header |
+| R13.1, R13.4 | Stream operations declare `responses.200.content` keyed by the stream media type (`text/event-stream`, or the NDJSON type where R13.4's record-set case applies); never `application/json` for a concatenated-document body; never a stream media type under `202` |
+| R13.2 | One operation declaring both `application/json` and the stream media type under `200`, plus a declared `Vary` response header — or, for R13.2's second limb, a distinct always-streaming path with the stream media type alone and no `Vary` |
+| R13.5 | **Not expressible in OpenAPI 3.1** — the specification has no construct for "the body is a sequence of items each matching this schema", so the frame-type vocabulary and its growth statement live in `description` prose. OpenAPI 3.2's item schema covers it where R4.1's verified-toolchain clause is met |
+| R13.7 | The `status`-omitting problem variant described in the R5.12/R5.13 row, referenced from the frame-payload documentation — never the shared 4xx/5xx response schema |
+| R13.9 | The `operation_id` or `operation_url` member documented on stream frames, referencing the same `components.schemas` entry the R10.9 `202` body uses |
+| R13.10 | `stream_position` as a shared `components.parameters` entry, documented in both carriages, with the retention window in its description |
 
 ## Appendix E — Worked example
 
@@ -2927,10 +2933,20 @@ description. It is execution-verified: run 2026-08-10 with
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
 (a deliberately violating OpenAPI document covering each rule, both
 header directions, POST and PUT creates, and a `$ref`-only envelope
-schema the ruleset deliberately does not traverse), all twelve expected
-findings fired. The rules are conservative heuristics: each description
+schema the ruleset deliberately does not traverse), all fourteen expected
+findings fired — the twelve of version 1.0.0 plus the two §13 rules added
+in 1.1.0. The rules are conservative heuristics: each description
 states its known false-positive and false-negative limits, and
 warn-severity rules exist to be reviewed, not blindly enforced.
+
+**What §13 can and cannot be checked for statically.** `R13.1`'s
+`202`-never-streams prohibition and `R13.2`'s negotiation-implies-`Vary`
+obligation are contract-level and are in the ruleset. The rest are not, and
+the reason is worth stating: OpenAPI 3.1 has no construct for "the body is a
+sequence of items, each matching this schema," so `R13.5`'s frame-type
+vocabulary cannot be expressed in the contract document that R4.1 names as
+the source of truth — it lives in prose, and only a live probe can check it.
+`R13.7`'s frame payload is likewise a body-level fact no contract asserts.
 
 Live probes — each row is one request against a deployed API and the
 response that conformance predicts:
@@ -2950,3 +2966,9 @@ response that conformance predicts:
 | Correlation | Any request | `request-id` present on the response | R11.7 |
 | 202 discovery | Start an async operation | Body carries `id` or `url`; any `Location` is the operation's absolute URI and agrees with the body | R10.9 |
 | Cache posture | Authenticated GET | `Cache-Control: private, no-cache` (or stricter) | R7.1–R7.3 |
+| Stream guard | `stream=true` to an endpoint without streaming | 400, never a silently non-streamed 200 | R13.3 |
+| Stream negotiation | `Accept: text/event-stream` on an endpoint offering both shapes | `200` + `text/event-stream` + `Vary: Accept` | R13.2, R4.11 |
+| Stream termination | Consume a stream to completion | A documented terminal frame arrives before close | R13.6 |
+| Stream identity | Stream a capability that also has an operation resource | Frames carry `operation_id` or `operation_url`; terminal state matches the operation resource | R13.9 |
+| Resume window | Resume with a `stream_position` older than the documented window | A defined error, never a silent restart from the beginning | R13.10 |
+| Long-poll expiry | Hold past the documented maximum | `200` + empty result + next `cursor`; never `204` | R13.11 |

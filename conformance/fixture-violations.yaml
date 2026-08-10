@@ -1,10 +1,13 @@
 # Verification fixture for spectral.yaml — a deliberately violating OpenAPI
-# document. Expected: 12 findings (7 errors, 5 warnings): camelCase query
+# document. Expected: 14 findings (8 errors, 6 warnings): camelCase query
 # param, body property, and path parameter, non-kebab path segment, X-
 # header in all three positions (request parameter, inline response header,
 # components.headers), POST 201 and PUT 201 each without Location, a 202
-# without Location, and two schemas with neither $ref nor type.
-# The $ref-only envelope schema on GET /v1/orders 200 must NOT be flagged.
+# without Location, two schemas with neither $ref nor type, and — added in
+# v1.1.0 with §13 — a streaming 202 and a both-representations 200 with no
+# Vary. The $ref-only envelope schema on GET /v1/orders 200 must NOT be
+# flagged. Each streaming case is isolated: the streaming 202 declares a
+# Location so it trips R13.1 alone rather than R10.9 as well.
 openapi: 3.1.0
 info:
   title: Fixture API (deliberate violations for ruleset verification)
@@ -56,6 +59,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/operation"
+  /v1/order-exports/{export_id}/stream:
+    get:
+      responses:
+        "202":
+          description: a streaming 202 (should error R13.1 only) — Location is present so R10.9 stays quiet and this case isolates the R13.1 violation
+          headers:
+            Location:
+              schema:
+                type: string
+          content:
+            text/event-stream:
+              schema:
+                type: object
+  /v1/order-exports/{export_id}/events:
+    get:
+      responses:
+        "200":
+          description: offers both representations but declares no Vary (should warn R13.2)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/order_collection"
+            text/event-stream:
+              schema:
+                type: object
   /v1/widgets/{widgetId}:
     get:
       parameters:

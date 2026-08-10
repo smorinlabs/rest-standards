@@ -3,8 +3,9 @@
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
 # in each description cite the standard.
 # Status: execution-verified 2026-08-10 with @stoplight/spectral-cli 6.16.3
-# against fixture-violations.yaml in this directory — all twelve expected
-# findings fired (7 errors, 5 warnings); the $ref-only envelope schema is
+# against fixture-violations.yaml in this directory — all fourteen expected
+# findings fired (8 errors, 6 warnings), twelve from v1.0.0 plus the two §13
+# rules added in v1.1.0; the $ref-only envelope schema is
 # deliberately not traversed (see per-rule descriptions for known
 # limits). Command:
 #   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
@@ -82,6 +83,21 @@ rules:
         function: pattern
         functionOptions:
           match: "^object$"
+  rs-r13-1-no-streaming-202:
+    description: "R13.1 - a 202 response never carries a streaming representation: 202 is bound to an operation resource by R10.1, so a streaming 202 forks that contract. Checks for a stream media type declared under a 202. Known limit: a vendor stream media type this pattern does not name will not fire"
+    severity: error
+    given: "$.paths[*][*].responses['202'].content[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "^(text/event-stream|application/(x-ndjson|jsonl|json-seq))$"
+  rs-r13-2-stream-negotiation-vary:
+    description: "R13.2 / R4.11 - a response offering both a JSON and a stream representation selects between them on Accept, and so declares Vary. Applies to any status code, since R4.11 binds every header-selected response. Heuristic at warn severity: the header key is matched case-sensitively as 'Vary', and a $ref'd Response Object will warn spuriously - suppress per instance with a Spectral override"
+    severity: warn
+    given: "$.paths[*][*].responses[?(@.content && @.content['application/json'] && (@.content['text/event-stream'] || @.content['application/x-ndjson']))]"
+    then:
+      field: "headers.Vary"
+      function: truthy
   rs-r5-13-problem-code-grammar:
     description: "R5.13 - problem code const values match ^[a-z][a-z0-9_]*$ (snake_case, hyphens excluded). Spot-check heuristic: only const-declared codes are inspected (enum/pattern/$ref forms are not), and an unrelated schema with a code const may warn"
     severity: warn
