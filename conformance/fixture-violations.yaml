@@ -1,0 +1,84 @@
+# Verification fixture for spectral.yaml — a deliberately violating OpenAPI
+# document. Expected: 10 findings (6 errors, 4 warnings): camelCase query
+# param and body property, non-kebab path segment, X- header in all three
+# positions (request parameter, inline response header, components.headers),
+# POST 201 and PUT 201 each without Location, and two schemas with neither
+# $ref nor type.
+# The $ref-only envelope schema on GET /v1/orders 200 must NOT be flagged.
+openapi: 3.1.0
+info:
+  title: Fixture API (deliberate violations for ruleset verification)
+  version: 0.0.1
+paths:
+  /v1/orders:
+    get:
+      parameters:
+        - name: goodParamNo
+          in: query
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: envelope by ref (should pass top-level-object via $ref)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/order_collection"
+    post:
+      responses:
+        "201":
+          description: created but no Location header (should warn R5.6)
+          content:
+            application/json:
+              schema:
+                properties:
+                  badCamelCase:
+                    type: string
+  /v1/settings/{setting_id}:
+    put:
+      responses:
+        "201":
+          description: PUT create with client-supplied ID but no Location (should warn R5.6)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/order_collection"
+  /v1/BadSegment/{order_id}/items:
+    get:
+      parameters:
+        - name: X-Legacy-Header
+          in: header
+          schema:
+            type: string
+      responses:
+        "200":
+          description: inline schema missing type (should warn xor) and X- response header
+          headers:
+            X-Trace-Debug:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                properties:
+                  ok:
+                    type: boolean
+components:
+  headers:
+    X-Reusable-Bad:
+      schema:
+        type: string
+  schemas:
+    order_collection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+        next_cursor:
+          type: string

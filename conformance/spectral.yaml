@@ -1,0 +1,76 @@
+# Spectral ruleset — rest-api-standard conformance fixtures (Phase 3 draft).
+#
+# Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
+# in each description cite the standard.
+# Status: execution-verified 2026-08-09 with @stoplight/spectral-cli 6.16.3
+# against fixture-violations.yaml in this directory — all ten expected
+# findings fired (6 errors, 4 warnings) and the $ref-only envelope schema
+# correctly passed. Command:
+#   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
+#     conformance/fixture-violations.yaml
+extends: []
+rules:
+  rs-r2-4-path-segments-kebab-case:
+    description: "R2.4 - path segments are kebab-case (^[a-z][a-z\\-0-9]*$); {parameter} segments exempt"
+    severity: error
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(/([a-z][a-z\\-0-9]*|\\{[^}]+\\}))+$"
+  rs-r4-4-body-properties-snake-case:
+    description: "R4.4 - body property names match ^[a-z_][a-z_0-9]*$"
+    severity: error
+    given: "$..properties[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z_][a-z_0-9]*$"
+  rs-r4-4-query-parameters-snake-case:
+    description: "R4.4 / R6.8 - query parameter names match ^[a-z][_a-z0-9]*$, plus only the enumerated bracket range suffixes [gte] [gt] [lte] [lt]"
+    severity: error
+    given: "$..parameters[?(@.in == 'query')].name"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
+  rs-s1-10-no-new-x-headers:
+    description: "Section 1.10 - no new X- prefixed header fields (RFC 6648); covers request header parameters, inline response headers, and reusable components.headers"
+    severity: error
+    given:
+      - "$..parameters[?(@.in == 'header')].name"
+      - "$.paths[*][*].responses[*].headers[*]~"
+      - "$.components.headers[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        notMatch: "^[Xx]-"
+  rs-r5-6-create-returns-location:
+    description: "R5.6 - 201 responses declare a Location header (POST creates and PUT creates with client-supplied IDs alike)"
+    severity: warn
+    given:
+      - "$.paths[*].post.responses['201']"
+      - "$.paths[*].put.responses['201']"
+    then:
+      field: "headers.Location"
+      function: truthy
+  rs-r4-3-top-level-object:
+    description: "R4.3 / R6.1 - every application/json response schema is either a $ref or declares type object; referenced schema contents are not traversed by this rule"
+    severity: warn
+    given: "$.paths[*][*].responses[*].content['application/json'].schema"
+    then:
+      - function: xor
+        functionOptions:
+          properties: ["$ref", "type"]
+      - field: "type"
+        function: pattern
+        functionOptions:
+          match: "^object$"
+  rs-r5-13-problem-code-grammar:
+    description: "R5.13 - problem code const values match ^[a-z][a-z0-9_]*$ (snake_case, hyphens excluded)"
+    severity: warn
+    given: "$..properties.code.const"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-z0-9_]*$"

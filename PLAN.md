@@ -180,7 +180,19 @@ drafting-plane remainders, mapped onto the outline above:
   conventions appendix; SSE/streaming posture (reaffirm the boundary in
   non-goals or open a decision item).
 
-**Gate D:** Approve the draft for systematic review.
+**Gate D — passed 2026-08-09.** The owner approved the draft (Parts
+I–III of `rest-api-standard.md` plus `conformance/spectral.yaml`) for
+Phase 4 systematic review. Rulings recorded at the gate:
+
+- The 18 apparatus provisions (Part II register) are **ratified en
+  bloc**; the register is their ratification record. The path-parameter
+  naming candidate raised during drafting was not ratified and stays
+  open for Phase 4.
+- **SDK/client configuration conventions stay excluded** — the
+  `CONSTRAINTS.md` boundary is upheld for 1.0; revisit after release.
+- **SSE/streaming is a named feature goal, deliberately sequenced after
+  this body of work completes** — added as Phase 6 below; the draft's
+  §1.2 non-goals state the deferral.
 
 ### Phase 4: Decision-focused review
 
@@ -208,6 +220,21 @@ undefined terms, and RFC-keyword consistency.
 - Re-run focused research when underlying specifications or dominant operational
   practice materially change.
 
+### Phase 6: Streaming extension (post-1.0)
+
+Owner ruling at Gate D (2026-08-09): SSE and streaming responses are a
+**feature goal**, deliberately sequenced after the v1.0 body of research
+and publication completes. The original scope exclusion predates streaming
+becoming the default AI-API shape; this phase closes that gap without
+destabilizing 1.0. Scope when opened:
+
+- research the streaming posture (SSE, long-poll, streaming HTTP
+  responses) with the same evidence discipline as the baseline series;
+- ratify a decision through the standard's decision layer; and
+- extend the standard — a new section or an extension document — under
+  the Part II amendment rule (semantic versioning, atomic five-surface
+  updates).
+
 ## Planned artifacts
 
 | Artifact | Purpose | Created in | Status |
@@ -222,8 +249,8 @@ undefined terms, and RFC-keyword consistency.
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | Pending |
-| Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |
+| Normative standard | Stable rules and rationale | Phase 3 | **Complete 2026-08-09 — Gate D passed same day** — `rest-api-standard.md`: §1–§12 (124 rules with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register; the 18 apparatus provisions ratified en bloc at Gate D, marked in place), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-09 against `conformance/fixture-violations.yaml`) |
+| Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
 
 ## Definition of done for version 1.0
 
