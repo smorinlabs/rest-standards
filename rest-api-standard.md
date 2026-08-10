@@ -126,6 +126,11 @@ material labeled project policy MUST never be presented as protocol law:
 | **Project policy** | This organization's choice, stricter than or unaddressed by the underlying standards. Always labeled `[POLICY]`. |
 | **Exception** | A named, bounded carve-out from another rule. |
 
+The Phase 2 vocabulary's fifth class, *unresolved question*, does not
+appear here by construction: an unresolved question cannot be a normative
+rule. Open questions live in `PLAN.md` and the decision layer until
+resolved.
+
 Where individual claims inside a rationale need finer labeling, the decision
 layer's evidence classes are used verbatim: `[FACT]` (primary-sourced),
 `[COMPARATIVE]` (surveyed practice), `[INFERENCE]` (reasoned from evidence),
@@ -158,10 +163,10 @@ states a tier scope. Later sections MAY scope individual rules by tier
 **R1.6** Rules that only make sense for APIs with a given capability are
 scoped by a named **applicability switch**. An API's conformance note
 declares the state of every switch. A rule scoped to a switch binds only
-while that switch is on. Declaring a switch off — and thereby taking its
-rules as not applicable — REQUIRES a stated reason in the conformance note
-(the N/A-with-reason discipline): "N/A" with no reason is a deviation, not
-an exemption.
+while that switch is on. A declaration that a switch is off — taking its
+rules as not applicable — MUST carry a stated reason in the conformance
+note (the N/A-with-reason discipline): "N/A" with no reason is a deviation,
+not an exemption.
 
 The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
 `multi-tenant` · `public-internet` · `handles-pii` · `third-party-clients` ·
@@ -207,6 +212,10 @@ This inventory is the single register of names this standard reserves
 across every conforming API. Later sections define the full behavior behind
 each name; this section fixes the names themselves so that no API assigns
 them a different meaning and no two APIs name the same concept differently.
+Requirement keywords inside the tables below restate obligations defined by
+the cited decision records — and, once drafted, by their home-section
+rules, which are authoritative; the reservation obligations of this section
+itself are R1.8 and R1.9.
 
 **R1.8 — Reservation discipline.** A conforming API MUST NOT use a reserved
 name for any purpose other than the meaning registered here, and when it
@@ -234,7 +243,7 @@ ratification.)
 | `cursor` | Opaque pagination position | Request-side name for cursor pagination; cursors are opaque and non-constructable (`AC-013`) | Addendum A2.3, completing `AC-013`/`AC-014` `[POLICY]` |
 | `limit` | Requested page size | Request-side name; each collection documents its default and maximum (`OP-009`) | Addendum A2.3 `[POLICY]` |
 | `dry_run` | Rehearse a mutation without executing it | Support is MAY per endpoint, SHOULD for destructive and bulk operations; unsupported ⇒ `400` per R1.9; response carries an explicit dry-run marker and MUST NOT consume an `Idempotency-Key` | Addendum A4 `[POLICY]` |
-| `<field>[gte|gt|lte|lt]` | Range filters on collection lists | The only permitted bracketed query-parameter forms; AND-combined; base name obeys the `AC-007` grammar | Walked decision "Filter grammar" (`baseline-02` decisions) `[POLICY]` |
+| `<field>[gte]`, `<field>[gt]`, `<field>[lte]`, `<field>[lt]` | Range filters on collection lists | The only permitted bracketed query-parameter forms; AND-combined; base name obeys the `AC-007` grammar | Walked decision "Filter grammar" (`baseline-02` decisions) `[POLICY]` |
 
 #### Reserved headers
 
