@@ -1,11 +1,13 @@
 # REST API Design Standard
 
-**Version 1.1.0.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
+**Version 1.1.1.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
 and E all passed (decision layer ratified 2026-08-09; draft approved
 2026-08-09 and systematically reviewed through 2026-08-10; review history in
 [`docs/reviews/`](docs/reviews/)). Version 1.1.0 adds **§13, streaming
 responses**, under the Part II amendment rule — a MINOR bump, since it adds
 rules and scopes nine existing ones without strengthening or removing any.
+Version 1.1.1 is editorial only — it renumbers the deferred-work phase from 7
+to 8 wherever this document names it, and changes no rule.
 This document, with
 [`conformance/spectral.yaml`](conformance/spectral.yaml),
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml),
@@ -2050,7 +2052,7 @@ Five interactions between streaming and the rest of this standard are
 be discovered, because a reader who hits one should know the standard is
 silent by decision rather than by oversight. None of them makes a rule in
 this section unsatisfiable; each is scheduled for the phase named in
-`PLAN.md` Phase 7, to be ruled with the same evidence discipline as §13
+`PLAN.md` Phase 8, to be ruled with the same evidence discipline as §13
 itself. Until then an API resolves them as it sees fit and records its
 choice in its conformance note (R1.7).
 
@@ -2227,7 +2229,7 @@ Appendix E worked example where it appears.
 | Phase 6 review walk · Tier A collisions (2026-08-10) | R11.2, R11.5, R2.11, R6.1 (each scoped for streaming) | B4 |
 | Phase 6 review walk · Tier C completions (2026-08-10) | R13.9 (identity member + terminal-state vocabulary); R13.5 (keep-alive disclosure); §1.10 reserved stream members | B4 |
 | Codex second lens (2026-08-10) | R6.2, R6.4 (completing the R6.1 streaming scope); §1.10 `operation_state`; R5.13 and R13.4 provenance corrections | B4 |
-| Phase 6 review walk · Tier B deferral (2026-08-10) | §13.4 known-unresolved register; `PLAN.md` Phase 7 | B4 |
+| Phase 6 review walk · Tier B deferral (2026-08-10) | §13.4 known-unresolved register; `PLAN.md` Phase 8 (numbered 7 in v1.1.0; renumbered v1.1.1) | B4 |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
@@ -2553,7 +2555,7 @@ E.10, it is omitted from the excerpts below for brevity.
 ```markdown
 ## Conformance note — Bloom Orders API
 
-Standard: rest-api-standard v1.1.0
+Standard: rest-api-standard v1.1.1
 Tier: public
 Switches: webhooks=on, async-operations=on, streaming=on,
   bulk-operations=off (imports run through the async export/import

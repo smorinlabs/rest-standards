@@ -302,9 +302,28 @@ fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
 deferral, add the `streaming` applicability switch to §1.8, register any
 reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
 
-### Phase 7: Streaming's unresolved interactions (post-1.1.0)
+### Phase 7: Skill apparatus (post-1.0)
 
-Opened 2026-08-10 by the Phase 6 review walk. The three internal review
+**Declared 2026-08-10, developed outside this document's history.** Phase 7
+builds `rest-standards`, an agent skill that reads `rest-api-standard.md`
+live and applies it in four modes, with **Gate F** as its acceptance
+condition. Its full scope, gate, and design pointer land in this file when
+that work merges; the heading is reserved here so the phase sequence has no
+unexplained gap between 6 and 8.
+
+*Note for whoever picks it up:* that phase's self-test was run against the
+Appendix E worked example **before §13 existed**. The standard has since
+gained 12 rules and scoped 9 more, so the self-test needs re-running against
+1.1.1 regardless of anything else.
+
+### Phase 8: Streaming's unresolved interactions (post-1.1.0)
+
+Opened 2026-08-10 by the Phase 6 review walk. **Numbered 7 at creation and
+renumbered to 8 in version 1.1.1**: the skill-apparatus phase had claimed
+Phase 7 twenty-nine minutes earlier on a branch not yet merged, so this
+phase — which merged first but was declared second — yields the number. The
+renumber is recorded rather than silently applied because two sections
+briefly carried the same phase number in released text. The three internal review
 lenses over the drafted §13 found that streaming disturbs more of the 1.0
 standard than the research leaves had been pointed at. Collisions where a
 ratified MUST became unsatisfiable were fixed inside Phase 6 (Tier A:

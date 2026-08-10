@@ -472,7 +472,7 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 
 §13.4 records five interactions between streaming and the rest of the
 standard that are **recognized and not yet ruled**. They are listed there so
-that silence reads as a decision rather than an oversight, and Phase 7 in
+that silence reads as a decision rather than an oversight, and Phase 8 in
 [`PLAN.md`](PLAN.md) is open to rule them with the same evidence discipline
 that produced §13.
 
@@ -487,7 +487,7 @@ is also a trap: rename your terminal frame and every deployed client
 silently ignores the new name, sees no terminal frame, and reports
 **truncation on every successful stream**. Treat documented frame-type names,
 and which types are terminal, as part of the frozen compatibility surface
-until Phase 7 rules otherwise. Add frame types freely; rename none.
+until Phase 8 rules otherwise. Add frame types freely; rename none.
 
 **A stream can outlive the credential that opened it.** `R8.6` authorizes a
 request, and a stream is one request. A 45-minute stream opened with a
