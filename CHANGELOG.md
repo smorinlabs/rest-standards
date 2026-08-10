@@ -7,6 +7,32 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 1.1.1 — 2026-08-10
+
+Editorial. No rule text, strength, or obligation changes; the standard stands
+at 139 rules, checklist 139/139, fixtures 14/14.
+
+**Phase 7 renumbered to Phase 8.** Version 1.1.0 opened a phase for
+streaming's five unresolved interactions and numbered it 7. That number was
+already claimed: a skill-apparatus phase had been declared as Phase 7
+twenty-nine minutes earlier, on a branch that had not yet merged and was not
+visible to the streaming work. The streaming phase merged first and so
+reached released text first, but it was declared second — and merge order is
+a poor way to settle a claim in a repository whose discipline is that the
+record decides. The streaming phase therefore yields the number.
+
+Renumbered here rather than on the unmerged branch because the alternative
+would have rewarded merge order over declaration order, and because the
+skill-apparatus phase carries a defined acceptance gate (Gate F) while this
+one is a register of deferred work with no gate.
+
+Corrected in `PLAN.md`, §13.4 and the Part II map of
+[`rest-api-standard.md`](rest-api-standard.md), and
+[`streaming-profile.md`](streaming-profile.md). The 1.1.0 entry below carries
+its pointer corrected in place with a note, rather than being silently
+rewritten — two sections briefly held the same phase number in released text,
+and that is worth being able to see.
+
 ## 1.1.0 — 2026-08-10
 
 Adds **§13, streaming responses** — Server-Sent Events, long-polling, and
@@ -79,7 +105,8 @@ template gains the `streaming` switch; §1.11 defines *stream*, *frame*,
 **§13.4** registers five interactions between streaming and the rest of the
 standard that are recognized and not yet ruled — frame-vocabulary versioning,
 stream authorization lifetime, caching posture, idempotency-key replay, and
-stream resource ceilings. `PLAN.md` **Phase 7** is open to rule them with the
+stream resource ceilings. `PLAN.md` **Phase 8** — numbered 7 when this
+release shipped and renumbered in 1.1.1, see below — is open to rule them with the
 same evidence discipline that produced §13. The versioning item carries the
 sharpest known failure and an interim posture: treat frame-type names and
 which types are terminal as frozen surface, because `R12.10`'s
