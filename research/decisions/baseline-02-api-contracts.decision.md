@@ -372,6 +372,173 @@ vendor commits to it) · ≥1 hour (loses overnight-backoff protection).
 
 ---
 
+## Addendum A2 — Sorting, ordering determinism, pagination request names
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, four parts.** Raised by
+the CLI-standards gap review (`docs/reviews/2026-08-09-cli-standards-gap-review.md`);
+sorting was the only `PLAN.md`-scoped topic with no Gate C entry.
+
+1. **Ordering determinism (MUST):** every collection documents a total,
+   stable default order, ties broken by an immutable key (`id`). Required
+   for `AC-013` cursor soundness — a cursor over nondeterministic order
+   silently skips or duplicates rows.
+2. **Sort syntax (MAY offer; fixed when offered):** `sort` query parameter,
+   comma-separated snake_case field names, `-` prefix descending, bare name
+   ascending, multi-key in listed order, restricted to an enumerated
+   sortable-field set (bounded-work per `OP-009`). JSON:API/Zalando
+   convergence; GitHub's two-param form (no multi-key) and AIP's `order_by`
+   mini-DSL declined.
+3. **Pagination request parameters:** **`cursor`** and **`limit`** (with
+   documented default and maximum). Completes `AC-013`/`AC-014`, which
+   fixed only the response envelope. AIP `page_token`/`page_size` and
+   Stripe `starting_after` declined (Stripe's self-documenting object-ID
+   name doesn't transfer to opaque tokens).
+4. **Correlation-ID header (completes `OP-018`):** **`request-id`**,
+   emitted on every response including errors. Stripe's and Anthropic's
+   name; RFC 6648 deprecates new `X-` prefixed fields, ruling out
+   `X-Request-Id` for a greenfield standard; `traceparent`-only declined
+   (ties support lookup to trace infrastructure).
+
+**Classification:** project policy throughout.
+**Confidence:** high (determinism — a soundness requirement) ·
+moderate-high (the three namings — conventions with clear field anchors).
+**Evidence:** `survey-04` (sort syntax table, Zalando reserved names) ·
+`baseline-03e` (request-id practice) · the gap review.
+
+---
+
+## Addendum A1 — PATCH body format (completes HS-008; companion to AC-011)
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED.** PATCH request bodies
+**MUST be JSON Merge Patch (RFC 7396)** sent with
+`Content-Type: application/merge-patch+json`; servers MUST reject
+**unsupported** media types with `415 Unsupported Media Type` and
+advertise **every supported format** in `Accept-Patch` (RFC 5789's
+negotiation surface) — including `application/json-patch+json` wherever
+the JSON Patch MAY below is enabled. **Companion
+rule (load-bearing):** resource representations MUST give `null` and an
+absent property the same meaning — Merge Patch delete semantics are the
+sole exception, and a `null` targeting a non-deletable field MUST return
+`400`. An API whose resources genuinely require value-null distinct from
+absent, per-element array edits, or test-conditioned updates **MAY**
+additionally accept **JSON Patch (RFC 6902)** at
+`application/json-patch+json` on the same resource and MUST document which
+format applies where. RFC 5789's atomicity requirement and its
+conditional-request guidance (pairing with the ratified
+`HS-014`/`HS-015`) apply regardless of format.
+
+**Consequence accepted at ratification:** the null-equivalence rule
+forbids tri-state fields (unset / null / value) across the standard;
+resources needing that distinction model it another way or use the JSON
+Patch path.
+
+**Classification:** evidence-backed default (both formats are Standards
+Track RFCs; RFC 5789 sanctions Content-Type negotiation); the
+null-equivalence companion rule is project policy shared with Azure and
+Zalando, the only surveyed authorities that rule on the question.
+
+**Justification:** Merge Patch is the only standardized format
+implementing `AC-011`'s omission-vs-presence distinction at the wire
+level, and both authorities that rule on the question (Azure, Zalando)
+mandate it with the same companion rule. Among APIs that actually ship
+PATCH the field splits four ways with no majority (merge-mandated /
+plain undeclared JSON at GitHub and Graph / Kubernetes-negotiated /
+Google field masks) — corrected denominator per review: Shopify (PUT),
+Stripe (POST), and Anthropic (POST) are partial-update-style evidence,
+not PATCH-format evidence. Plain JSON's semantics live only in per-API
+prose. Matches the project's `AC-003` posture — standards alignment where
+no majority exists, and Merge Patch polls better than RFC 9457 did.
+
+**Declined:** plain partial JSON with per-field null docs (the Graph
+model — the ecosystem-weighted alternative) · AIP-134 field masks (wins
+only if tri-state fields are genuinely needed) · JSON Patch as MUST
+(verbosity no surveyed vendor imposes).
+
+**Confidence: moderate-high** (format) · **high** (companion rule —
+load-bearing regardless of format). Genuine fork, recorded as such.
+
+**Flip triggers:** tri-state resource-model requirement → field masks or
+JSON-Patch-MUST · array-element mutation becoming common → the MAY
+becomes MUST.
+
+**Evidence:** `baseline-02h` throughout (raw-RFC-verified) · `HS-008` ·
+`AC-011`.
+
+---
+
+## Addendum A4 — Dry-run / validate-only
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, both halves.**
+
+**Transport:** a mutating endpoint that offers a rehearsal accepts
+**`?dry_run=true`** (snake_case per `AC-007`). Support is **MAY** per
+endpoint and **SHOULD** for destructive and bulk operations. Kubernetes
+(`?dryRun=All`) is the precedent. **`Prefer: validate-only` declined
+decisively:** RFC 7240 preferences are advisory by design, so a server
+that does not recognize the token executes the mutation for real — a
+disqualifying failure mode for a safety feature. AIP-163's body field
+declined for the same reason body placement lost the idempotency-key
+decision (control fields pollute every mutating schema).
+
+**Output contract:** a dry-run response MUST carry an explicit dry-run
+marker (no mutation occurred); MUST return the outcome the real call
+would produce — validation errors in the ratified problem+json shape, or
+the would-be representation with the real status semantics (A3's
+`201`+`Location` for creates); MUST declare validation depth (full
+pipeline vs schema-only), so a passing rehearsal is not over-trusted; and
+MUST NOT consume an `Idempotency-Key`.
+
+**Reservation guard (completed 2026-08-09, same session):** `dry_run` is a
+**reserved parameter standard-wide**, and a mutating request carrying it
+to an endpoint that does not implement dry-run **MUST be rejected with
+`400`** — never silently ignored. Without this, the chosen transport
+carries the same silent-real-execution hazard that disqualified
+`Prefer: validate-only`; the guard is what makes the safety argument
+sound. `dry_run` joins the reserved query-parameter inventory (Phase 3
+cheat sheet) alongside `sort`, `fields`, `cursor`, and `limit`.
+
+**Classification:** project policy; the transport-failure analysis is
+evidence-backed (RFC 7240's advisory semantics).
+**Confidence:** moderate-high (transport) · moderate (contract details,
+editable at Phase 3).
+**Evidence:** Kubernetes api-concepts (dryRun) · AIP-163 · RFC 7240 ·
+the gap review (R4.3 + R8.6).
+
+---
+
+## Addendum A5 — Action-verb vocabulary (completes the action-syntax lock)
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, three parts.**
+
+1. **Core verb registry with fixed meanings** — an API using one of these
+   MUST mean: `cancel` (terminal, irreversible stop of an in-flight
+   process) · `archive`/`restore` (reversible visibility — the soft-delete
+   pair the DELETE decision references) · `approve`/`reject` (review
+   outcomes) · `publish`/`unpublish` (consumer visibility) · `duplicate`
+   (copy; returns 201 + `Location` per A3). Kebab-case for multi-word
+   verbs. Registry contents are `[POLICY]`, editable at Phase 3; the
+   structure is not.
+2. **AIP-136 discipline (SHOULD):** prefer a PATCH-able status field or a
+   sub-resource before minting any verb; an action is the escape hatch
+   when state semantics genuinely resist CRUD. Domain verbs beyond the
+   core registry are permitted with a per-API verb registry entry —
+   **one verb per meaning API-wide**.
+3. **No collection-level custom actions** — batch semantics stay with
+   `AC-018` bulk endpoints (per-item outcomes, A3's `200` envelope); a
+   verb-based batch mechanism would fork them.
+
+Response shape rides A3: synchronous actions return `200` with the
+mutated representation; long-running actions return `202` + the `AC-019`
+operation resource.
+
+**Classification:** project policy.
+**Confidence:** moderate — the one-verb-per-meaning rule and the
+discipline are load-bearing; the exact pairs are editable.
+**Evidence:** `survey-02` (actions column) · AIP-136 · the gap review
+(R2.1).
+
+---
+
 ## Batch ratification — the fifteen remaining AC principles
 
 **Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`

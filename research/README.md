@@ -83,11 +83,12 @@ neighbouring `.framing.md` recording its provenance and shaping decisions.
 Sixty-six proposed principles in total. **All are proposals carrying research
 confidence, not ratified policy** — see the series table above.
 
-### Gate B follow-up leaves
+### Follow-up leaves (Gate B and Gate C)
 
 Four narrow leaves run 2026-07-25 to test the weakest links in the baseline
-principles, plus one run 2026-08-09 during Gate C. Each verified its claims
-against primary sources with a two-source minimum.
+principles (Gate B), plus ten run 2026-08-09 during Gate C and its addendum
+(`02d`–`02h`, `03c`–`03g`). Each verified its claims against primary sources
+with a two-source minimum.
 
 | Stem | Question | Runs | Outcome |
 | --- | --- | --- | --- |
@@ -98,6 +99,7 @@ against primary sources with a two-source minimum.
 | `baseline-02e-cloudflare-implementation` | What exactly did Cloudflare ship on 2026-03-11, live-verified? | `2026-08-09` | **Strong precedent for the shape, weak for the obligation.** Supports "capable of returning" wording + carve-out; `type` is a docs affordance, not the identity — stability lives in extension members |
 | `baseline-02f-problem-type-semantics` | What should a greenfield standard mandate for RFC 9457 `type`? | `2026-08-09` | **Split identity from documentation.** Stable `https` `type` 1:1 with `code`, dereference optional, docs in a separate member; `about:blank` ban proposed; IETF back-compat rationale now primary-sourced |
 | `baseline-02g-idempotency-key-practice` | What do OpenAI, Anthropic, and Google do for idempotency keys? | `2026-08-09` | **None of the three AI vendors ships one.** Google's AIP-155 `request_id` is a query param over REST, no fingerprinting; both AI vendors' SDKs carry dormant header-shaped Stainless machinery, switched off |
+| `baseline-02h-patch-format` | Which PATCH body format — Merge Patch, JSON Patch, or plain JSON? | `2026-08-09` | **Merge Patch + null-equivalence rule + JSON Patch MAY.** RFC 5789 mandates no format (Content-Type negotiates); Merge Patch alone implements AC-011's wire semantics; Azure and Zalando both mandate it with the same companion rule; plain JSON is the undeclared field plurality |
 | `baseline-03b-signatures-and-ratelimit` | Do `OP-016` and `OP-010` survive contact with reality? | `2026-07-25` | **Split.** `OP-016` raised; `OP-010` lowered with an expiry contingency |
 | `baseline-03c-webhook-threat-model` | What is webhook signing for, and how do vendor schemes fare against it? | `2026-08-09` | **Purpose confirmed (security).** 13 invariants derived; all documented failures are receiver-side; RFC 9421 alone does not sign the body — needs RFC 9530 pairing |
 | `baseline-03d-webhook-signing-adoption` | What do post-2023 webhook implementations actually sign with? | `2026-08-09` | **Topology split.** Standard Webhooks won product webhooks (OpenAI, Anthropic, Gemini + ~9 verified); RFC 9421 won cross-org protocols (UCP MUST, AdCP removing HMAC in 4.0); Web Bot Auth charter excludes webhooks — `baseline-03b` inference capped |
@@ -157,6 +159,11 @@ the quick-citation index; the files are authoritative.
 | HS batch (20) | 2026-08-09 | `HS-001`–`HS-020` ratified en bloc as proposed | `decisions/baseline-01-http-semantics.decision.md` |
 | AC batch (15) | 2026-08-09 | Remaining AC principles ratified en bloc as proposed | `decisions/baseline-02-api-contracts.decision.md` |
 | OP batch (22) | 2026-08-09 | Remaining OP principles ratified en bloc as proposed — **Gate C pile complete** | `decisions/baseline-03-operational-practice.decision.md` |
+| A2 · Sorting cluster (addendum) | 2026-08-09 | **MUST** documented stable default order (ties by `id`); `sort=-field,other` when offered; `cursor`+`limit` request params; `request-id` correlation header | `decisions/baseline-02-api-contracts.decision.md` |
+| A1 · PATCH format (addendum) | 2026-08-09 | **RFC 7396 Merge Patch MUST** at `application/merge-patch+json` + null ≡ absent companion rule; RFC 6902 as bounded MAY | `decisions/baseline-02-api-contracts.decision.md` |
+| A3 · Status-code rows (addendum) | 2026-08-09 | **201+`Location`** on every create; **200 + envelope** over 207 for partial bulk; **404** masks cross-tenant existence; 405/415/428/401-403/empty-200 rows en bloc | `decisions/baseline-01-http-semantics.decision.md` |
+| A4 · Dry-run (addendum) | 2026-08-09 | **`?dry_run=true`**, MAY per endpoint / SHOULD on destructive+bulk; output contract ratified (marker, real outcome shape, validation depth, no key consumption); `Prefer: validate-only` declined on advisory-execution risk | `decisions/baseline-02-api-contracts.decision.md` |
+| A5 · Action verbs (addendum) | 2026-08-09 | **Core registry** (cancel, archive/restore, approve/reject, publish/unpublish, duplicate) + AIP-136 discipline + one-verb-per-meaning; no collection-level actions | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 

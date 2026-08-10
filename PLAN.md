@@ -147,6 +147,39 @@ rule identifiers. The working outline is:
 Appendices will include a conformance checklist, exception process, compact cheat
 sheet, OpenAPI mapping, and a worked fictional API.
 
+**Drafting items folded in from the CLI-standards gap review
+(`docs/reviews/2026-08-09-cli-standards-gap-review.md`), 2026-08-09** — the
+review's Tier 1 decisions were ratified in the Gate C addendum; these are the
+drafting-plane remainders, mapped onto the outline above:
+
+- §1 (conformance): tier system (`internal`/`partner`/`public`) +
+  applicability switches with N/A-with-reason discipline; the
+  no-silent-deviation clause + per-API conformance-note template; rule-ID
+  mapping policy (provenance IDs ↔ section IDs) settled before section 1 is
+  written.
+- §2/§4: reserved query-parameter and header inventory table (the cheat
+  sheet's core); content-negotiation defaults; noun-naming rules; PII MUST
+  NOT appear in URIs.
+- §5: field-level validation error shape (`errors[]` extension with JSON
+  Pointer targets); problem-type/code catalog obligation.
+- §6: breaking-change taxonomy + frozen-surface enumeration (with §9);
+  empty-collection-is-200 row.
+- §7/§8: destructive-operation guards (mandatory `If-Match` on
+  concurrent DELETE; unfiltered collection-DELETE ban); secret/PII
+  redaction in problem `detail`.
+- §10: polling/cancellation guidance for operation resources
+  (`Retry-After` on 202).
+- §11 + new section: consolidated client-obligations section (OP-012,
+  OP-017, AC-012, AC-013 + client timeouts, honor `Retry-After`, TLS
+  verification, unknown-field tolerance).
+- Appendices: framework/gateway mapping (evidence in baseline-02b/02c/02e/
+  03g); executable conformance fixtures (Spectral ruleset from the ratified
+  regexes + live-probe table); in-document Decision Log (Part II) linking to
+  `research/decisions/`; worked example annotated with rule IDs.
+- Open scope questions carried to Gate D: client/SDK configuration
+  conventions appendix; SSE/streaming posture (reaffirm the boundary in
+  non-goals or open a decision item).
+
 **Gate D:** Approve the draft for systematic review.
 
 ### Phase 4: Decision-focused review
@@ -188,7 +221,7 @@ undefined terms, and RFC-keyword consistency.
 | `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
-| `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches); index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
+| `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 | Pending |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | Pending |
 
