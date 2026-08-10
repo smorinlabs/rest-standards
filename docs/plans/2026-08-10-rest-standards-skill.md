@@ -33,7 +33,11 @@ Every task's requirements implicitly include this section.
 2. **Findings cite `R#.#` only.** `HS-*`, `AC-*`, and `OP-*` are frozen
    research provenance identifiers (R1.3), never rule citations.
 3. **Every cited rule ID must exist.** 127 rule IDs are defined; the
-   extraction command is in every verification step below.
+   extraction command is in every verification step below. Both sides of that
+   command use plain `sort -u`, never `sort -V`: BSD `comm` on macOS assumes
+   lexicographic collation, so version-sorted input (where `R9.7` precedes
+   `R10.1`) makes it report `R10.9`, `R11.2`, and `R11.7` as undefined when
+   all three exist. Verified on this machine during Task 5.
 4. **Read live, never from memory.** The standard is ~2,400 lines. No section
    index, no rule text, and no conformance-note template may be hardcoded into
    the skill (spec §3.3, §3.2).
@@ -256,8 +260,8 @@ placement path `~/.agents/skills/rest-standards` after Task 7 creates it.
 - [ ] **Step 9: Verify every cited rule ID exists**
 
 ```bash
-grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u -V > /tmp/defined.txt
-grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u -V > /tmp/cited.txt
+grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u > /tmp/defined.txt
+grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u > /tmp/cited.txt
 comm -13 /tmp/defined.txt /tmp/cited.txt
 ```
 
@@ -373,8 +377,8 @@ use angle brackets and do not match this pattern.
 - [ ] **Step 4: Verify rule-ID citations**
 
 ```bash
-grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u -V > /tmp/defined.txt
-grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u -V > /tmp/cited.txt
+grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u > /tmp/defined.txt
+grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u > /tmp/cited.txt
 comm -13 /tmp/defined.txt /tmp/cited.txt
 ```
 
@@ -514,8 +518,8 @@ continuing. Clean up: `rm -rf /tmp/rs-plan-check`.
 - [ ] **Step 5: Verify rule-ID citations**
 
 ```bash
-grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u -V > /tmp/defined.txt
-grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u -V > /tmp/cited.txt
+grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u > /tmp/defined.txt
+grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u > /tmp/cited.txt
 comm -13 /tmp/defined.txt /tmp/cited.txt
 ```
 
@@ -622,8 +626,8 @@ review covered, and the standard version reviewed against.
 - [ ] **Step 4: Verify rule-ID citations**
 
 ```bash
-grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u -V > /tmp/defined.txt
-grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u -V > /tmp/cited.txt
+grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u > /tmp/defined.txt
+grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u > /tmp/cited.txt
 comm -13 /tmp/defined.txt /tmp/cited.txt
 ```
 
@@ -796,8 +800,8 @@ in neither list, or in both, is a defect — fix `audit.md` before committing.
 - [ ] **Step 6: Verify rule-ID citations**
 
 ```bash
-grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u -V > /tmp/defined.txt
-grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u -V > /tmp/cited.txt
+grep -oE '^\| R[0-9]+\.[0-9]+ \|' rest-api-standard.md | tr -d '| ' | sort -u > /tmp/defined.txt
+grep -rhoE 'R[0-9]+\.[0-9]+' .claude/skills/rest-standards/ | sort -u > /tmp/cited.txt
 comm -13 /tmp/defined.txt /tmp/cited.txt
 ```
 
@@ -843,7 +847,7 @@ standard finding.
 ```bash
 sed -n '/^## Appendix E/,/^## Appendix F/p' rest-api-standard.md > /tmp/appendix-e.md
 wc -l /tmp/appendix-e.md
-grep -oE 'R[0-9]+\.[0-9]+' /tmp/appendix-e.md | sort -u -V > /tmp/expected-rules.txt
+grep -oE 'R[0-9]+\.[0-9]+' /tmp/appendix-e.md | sort -u > /tmp/expected-rules.txt
 wc -l < /tmp/expected-rules.txt
 ```
 
