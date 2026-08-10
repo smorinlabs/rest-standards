@@ -29,3 +29,6 @@ Produced by the phased process in [`PLAN.md`](PLAN.md):
   placeholders, R10.9 operation discovery via research leaf
   `baseline-02i`), and the Gate E CORS ruling (R4.17); approved as the
   1.0 candidate and landed via PR #6.
+- **Phase 5 release (2026-08-10):** version flipped to 1.0.0, this
+  changelog created, and `v1.0.0` tagged on the merge commit of release
+  PR #7.

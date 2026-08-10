@@ -241,7 +241,7 @@ approval.
 maintenance mode:
 
 - Review through pull requests — the standing practice (every gate landed
-  via a bot-reviewed PR: #3–#6 and the release PR).
+  via a bot-reviewed PR: #3–#6 and release PR #7).
 - Decision log: Part II of the standard + `research/decisions/`;
   changelog: `CHANGELOG.md` under the Part II amendment rule.
 - Re-run focused research when underlying specifications or dominant

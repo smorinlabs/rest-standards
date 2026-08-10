@@ -1,11 +1,12 @@
 # REST API Design Standard
 
 **Version 1.0.0 — released 2026-08-10.** Gates C, D, and E all passed
-(decision layer ratified 2026-08-09; draft approved and systematically
-reviewed 2026-08-09/10; review history in
+(decision layer ratified 2026-08-09; draft approved 2026-08-09 and
+systematically reviewed through 2026-08-10; review history in
 [`docs/reviews/`](docs/reviews/)). This document, with
-[`conformance/spectral.yaml`](conformance/spectral.yaml) and its
-fixture, is the released standard; changes from here follow the Part II
+[`conformance/spectral.yaml`](conformance/spectral.yaml) and
+[`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml),
+is the released standard; changes from here follow the Part II
 amendment rule and are recorded in [`CHANGELOG.md`](CHANGELOG.md).
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
