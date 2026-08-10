@@ -1,8 +1,13 @@
 # Spectral ruleset — rest-api-standard conformance fixtures (Phase 3 draft).
 #
 # Drafted from the pinned patterns in rest-api-standard.md Part I; rule IDs
-# in each description cite the standard. Status: drafted from the ratified
-# regexes; execution-verified during Phase 4 review (see Appendix G).
+# in each description cite the standard.
+# Status: execution-verified 2026-08-09 with @stoplight/spectral-cli 6.16.3
+# against fixture-violations.yaml in this directory — all nine expected
+# findings fired (6 errors, 3 warnings) and the $ref-only envelope schema
+# correctly passed. Command:
+#   npx @stoplight/spectral-cli lint --ruleset conformance/spectral.yaml \
+#     conformance/fixture-violations.yaml
 extends: []
 rules:
   rs-r2-4-path-segments-kebab-case:
@@ -30,9 +35,12 @@ rules:
       functionOptions:
         match: "^[a-z][_a-z0-9]*(\\[(gte|gt|lte|lt)\\])?$"
   rs-s1-10-no-new-x-headers:
-    description: "Section 1.10 - no new X- prefixed header fields (RFC 6648)"
+    description: "Section 1.10 - no new X- prefixed header fields (RFC 6648); covers request header parameters, inline response headers, and reusable components.headers"
     severity: error
-    given: "$..parameters[?(@.in == 'header')].name"
+    given:
+      - "$..parameters[?(@.in == 'header')].name"
+      - "$.paths[*][*].responses[*].headers[*]~"
+      - "$.components.headers[*]~"
     then:
       function: pattern
       functionOptions:
@@ -45,13 +53,17 @@ rules:
       field: "headers.Location"
       function: truthy
   rs-r4-3-top-level-object:
-    description: "R4.3 / R6.1 - JSON response schemas declare type object at the top level (inline schemas only; $ref targets are checked at their definition)"
+    description: "R4.3 / R6.1 - every application/json response schema is either a $ref or declares type object; referenced schema contents are not traversed by this rule"
     severity: warn
-    given: "$.paths[*][*].responses[*].content['application/json'].schema.type"
+    given: "$.paths[*][*].responses[*].content['application/json'].schema"
     then:
-      function: pattern
-      functionOptions:
-        match: "^object$"
+      - function: xor
+        functionOptions:
+          properties: ["$ref", "type"]
+      - field: "type"
+        function: pattern
+        functionOptions:
+          match: "^object$"
   rs-r5-13-problem-code-grammar:
     description: "R5.13 - problem code const values match ^[a-z][a-z0-9_]*$ (snake_case, hyphens excluded)"
     severity: warn

@@ -1532,8 +1532,8 @@ Appendix E worked example where it appears.
 | `HS-010` | R5.1 | B1 |
 | `HS-011` | R5.3 | B1 |
 | `HS-012` | R5.4 | B1 |
-| `HS-013` | R5.5, R2.6 | B1 |
-| `HS-014` | R3.10, R7.3 | B1 |
+| `HS-013` | R5.5 | B1 |
+| `HS-014` | R3.10 | B1 |
 | `HS-015` | R3.11, R7.4 | B1 |
 | `HS-016` | R7.1 | B1 |
 | `HS-017` | R7.2 | B1 |
@@ -2221,7 +2221,12 @@ Two fixtures: a Spectral ruleset over the contract document, and a
 live-probe table over a running API. The ruleset,
 [`conformance/spectral.yaml`](conformance/spectral.yaml), is drafted
 from the pinned patterns in Part I and cites rule IDs in each rule
-description; it is execution-verified during Phase 4 review.
+description. It is execution-verified: run 2026-08-09 with
+`@stoplight/spectral-cli` 6.16.3 against
+[`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml)
+(a deliberately violating OpenAPI document covering each rule, both
+header directions, and a `$ref`-only envelope schema that correctly
+passes), all nine expected findings fired.
 
 Live probes — each row is one request against a deployed API and the
 response that conformance predicts:
