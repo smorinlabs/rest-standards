@@ -103,7 +103,7 @@ Fixed before the sweep, so that the verdicts are reproducible:
 
 ## 3. Conformance summary
 
-    92 applicable MUSTs: 53 pass, 0 fail, 39 unverified
+    92 applicable MUSTs: 52 pass, 0 fail, 40 unverified
 
 This matches the `<N> applicable MUSTs: <P> pass, <F> fail, <U> unverified`
 format required by `references/audit.md` § Report.
@@ -126,9 +126,9 @@ not counted in `N`.
 worked example and its conformance note records `Deviations: none`. A failure
 would have meant the standard contradicts itself.
 
-**`U = 39` is the honest reach of the evidence, not a defect in Bloom.**
+**`U = 40` is the honest reach of the evidence, not a defect in Bloom.**
 Appendix E is a set of excerpts, not a deployed API with published
-documentation. 39 applicable MUSTs have at least one clause that no supplied
+documentation. 40 applicable MUSTs have at least one clause that no supplied
 plane reaches — 11 of them because the runtime plane is absent, the rest
 because Bloom's OpenAPI document, implementation source, and operational
 documentation are outside the appendix.
@@ -171,11 +171,11 @@ corroborate a verdict, not supply a missing one.
 | R7.4 clause 2 | No unfiltered collection-level DELETE is offered | `curl -sSi -X DELETE https://api.example.com/v1/orders -H 'Authorization: Bearer $T'` — **gated**: mutating and destructive precisely when the API fails the check, so it needs `audit.md` §3.4's second confirmation. G's "Destructive guard" row probes clause 1 only | beyond G |
 | R11.4 | Any proprietary quota headers are documented | `curl -sSiD- https://api.example.com/v1/orders -H 'Authorization: Bearer $T'` | beyond G |
 
-The remaining 28 unverified rules need Bloom's OpenAPI document (R4.1, R4.2,
+The remaining 29 unverified rules need Bloom's OpenAPI document (R4.1, R4.2,
 R4.8, R4.9), its implementation source (R8.6–R8.9, R8.11), or its published
 operational and client documentation (R3.1, R3.9, R5.16, R6.5, R10.2, R10.6,
-R11.1, R11.6, R11.8, R12.1, R12.3, R12.4, R12.7, R12.8, and the conditional
-clauses of R3.8, R3.12, R4.15, R8.4, R8.10).
+R11.1, R11.6, R11.8, R12.1, R12.2, R12.3, R12.4, R12.7, R12.8, and the
+conditional clauses of R3.8, R3.12, R4.15, R8.4, R8.10).
 
 ---
 
@@ -245,12 +245,12 @@ The **Count** column marks whether the rule is one of the 92 applicable MUSTs
 | R11.3 | ✔ | E.9: the pinned draft-11 `RateLimit` fields | pass — named as a draft, never as standards-compliant, with the pinned revision cited | agree |
 | R11.5 | ✔ | E.9 "Exercises" header | **unverified** — the `429` clause passes; the `503` clause is never exhibited. The rule is also absent from E.9's reading paragraph (**SF-1**) | consistent (partial) |
 | R11.7 | ✔ | E.2: the response carries the correlation ID | pass — `request-id` on every exhibited response, including all three errors | agree |
-| R12.2 | ✔ | E.9 "Exercises" header | pass — the provider surfaces the obligation in the problem `detail` ("Retry after the interval in `Retry-After`"), which is what §12's preamble requires | agree |
+| R12.2 | ✔ | E.9 "Exercises" header | **unverified** — two independent grounds. (a) The only candidate evidence is a problem `detail` string ("Retry after the interval in `Retry-After`"), which is a response body, not the documentation §12's preamble requires the provider to surface the obligation in; R12.1, R12.3, R12.4 and R12.7 are `unverified` for exactly that missing plane, and E.9 has no reading paragraph, so evidence policy 1 never engages. (b) Even granting the string, it reaches only the `429` half — no `503` appears anywhere in Appendix E | consistent (partial) |
 | R12.5 | ✔ | E.4: the cursor is opaque | pass — documented non-constructable | agree |
 | R12.8 | ✔ | E.8: verify over the raw body before parsing, enforce the timestamp window, dedupe on `webhook-id`, compare in constant time | **unverified** — four of the five clauses are named and pass; the fifth, "MUST fail closed on a missing, empty, or default secret at configuration load," is a configuration-time obligation the appendix never exhibits | consistent (partial) |
 | R12.9 | ✔ | E.8: acks before processing | pass — with at-least-once, unordered delivery acknowledged | agree |
 
-**Totals:** 50 answer-key rules — **40 agree**, **10 consistent (partial
+**Totals:** 50 answer-key rules — **39 agree**, **11 consistent (partial
 evidence)**, **0 disagree**.
 
 ---
@@ -331,11 +331,28 @@ scored `pass` on the strength of the four webhook-consumer clauses E.8 names,
 with its fifth — "MUST fail closed on a missing, empty, or default secret at
 configuration load" — waved through as covered by the same reading. That is
 exactly the inferred pass the fix forbids, and applying the fix caught it.
-R12.8 is now `unverified`, and the summary line moved from
-`54 pass, 0 fail, 38 unverified` to **`53 pass, 0 fail, 39 unverified`**;
-this document reports the corrected figures throughout. The error was in the
-audit, not in Bloom — nothing suggests Bloom fails the clause, only that
-Appendix E never exhibits it.
+R12.8 is now `unverified`, moving the summary from `54 pass, 0 fail, 38
+unverified` to `53 pass, 0 fail, 39 unverified`.
+
+**A subsequent independent review caught a second instance of the same
+class**, which is worth recording because it says something about the failure
+mode rather than about one rule. **R12.2** — clients MUST honor `Retry-After`
+on `429` *and* `503` — had been scored `pass` on the strength of E.9's problem
+`detail` string, "Retry after the interval in `Retry-After`". Two grounds each
+independently force `unverified`: that string is a *response body*, not the
+documentation §12's preamble obliges the provider to surface the obligation in
+— the same missing plane that put R12.1, R12.3, R12.4 and R12.7 in
+`unverified`; and even granting it, it reaches only the `429` half, since no
+`503` appears anywhere in Appendix E. R12.2 is now `unverified`, giving the
+figures this document reports throughout: **`52 pass, 0 fail, 40
+unverified`**.
+
+The lesson is that the inferred pass is a *systemic* pull, not a one-off slip:
+it recurred twice in one audit, both times on a rule whose demonstrated clauses
+outnumbered its unreached ones, and both times the reasoning felt like fair
+reading rather than a shortcut. The SD-2 fix caught the first mechanically;
+the second needed a second reader. Neither error was in Bloom — nothing
+suggests Bloom fails either clause, only that Appendix E never exhibits them.
 
 ### Standard findings (proposed, not applied)
 
@@ -374,8 +391,8 @@ line to Appendix E's preamble saying so. Editorial; no normative rule changes.
 Appendix E's preamble states: "Every block is annotated with the rules it
 exercises." Read naturally, that claims the annotations are complete.
 
-They are not, and the gap is large. This audit scored **53 applicable MUSTs as
-`pass`** on the appendix's own evidence. **23 of those 53 are never annotated
+They are not, and the gap is large. This audit scored **52 applicable MUSTs as
+`pass`** on the appendix's own evidence. **23 of those 52 are never annotated
 anywhere in Appendix E**, despite being plainly demonstrated by it:
 
 | Section | Demonstrated but unannotated |
@@ -461,7 +478,7 @@ correct.
 ## 7. Verdict
 
 The skill reproduced Appendix E's reading with no rule-level contradiction, and
-its plane discipline did real work: it forced 39 applicable MUSTs to
+its plane discipline did real work: it forced 40 applicable MUSTs to
 `unverified` where a less disciplined sweep would have inferred passes from an
 excerpt, and `references/review.md`'s cross-cutting traps caught the
 standard-wide R1.9 `dry_run` guard and the R6.6 default-sort-order soundness
@@ -473,5 +490,5 @@ statistic with no definition behind it. Both are fixed in
 `.claude/skills/rest-standards/references/`, and the corrected procedure
 reproduces this document's results.
 
-**Gate F evidence:** `92 applicable MUSTs: 53 pass, 0 fail, 39 unverified`
+**Gate F evidence:** `92 applicable MUSTs: 52 pass, 0 fail, 40 unverified`
 against `rest-api-standard.md` v1.0.0, on the contract and source planes.
