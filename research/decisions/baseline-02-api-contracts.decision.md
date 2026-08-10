@@ -460,6 +460,70 @@ becomes MUST.
 
 ---
 
+## Addendum A4 — Dry-run / validate-only
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, both halves.**
+
+**Transport:** a mutating endpoint that offers a rehearsal accepts
+**`?dry_run=true`** (snake_case per `AC-007`). Support is **MAY** per
+endpoint and **SHOULD** for destructive and bulk operations. Kubernetes
+(`?dryRun=All`) is the precedent. **`Prefer: validate-only` declined
+decisively:** RFC 7240 preferences are advisory by design, so a server
+that does not recognize the token executes the mutation for real — a
+disqualifying failure mode for a safety feature. AIP-163's body field
+declined for the same reason body placement lost the idempotency-key
+decision (control fields pollute every mutating schema).
+
+**Output contract:** a dry-run response MUST carry an explicit dry-run
+marker (no mutation occurred); MUST return the outcome the real call
+would produce — validation errors in the ratified problem+json shape, or
+the would-be representation with the real status semantics (A3's
+`201`+`Location` for creates); MUST declare validation depth (full
+pipeline vs schema-only), so a passing rehearsal is not over-trusted; and
+MUST NOT consume an `Idempotency-Key`.
+
+**Classification:** project policy; the transport-failure analysis is
+evidence-backed (RFC 7240's advisory semantics).
+**Confidence:** moderate-high (transport) · moderate (contract details,
+editable at Phase 3).
+**Evidence:** Kubernetes api-concepts (dryRun) · AIP-163 · RFC 7240 ·
+the gap review (R4.3 + R8.6).
+
+---
+
+## Addendum A5 — Action-verb vocabulary (completes the action-syntax lock)
+
+**Decision (2026-08-09, Gate C addendum): RATIFIED, three parts.**
+
+1. **Core verb registry with fixed meanings** — an API using one of these
+   MUST mean: `cancel` (terminal, irreversible stop of an in-flight
+   process) · `archive`/`restore` (reversible visibility — the soft-delete
+   pair the DELETE decision references) · `approve`/`reject` (review
+   outcomes) · `publish`/`unpublish` (consumer visibility) · `duplicate`
+   (copy; returns 201 + `Location` per A3). Kebab-case for multi-word
+   verbs. Registry contents are `[POLICY]`, editable at Phase 3; the
+   structure is not.
+2. **AIP-136 discipline (SHOULD):** prefer a PATCH-able status field or a
+   sub-resource before minting any verb; an action is the escape hatch
+   when state semantics genuinely resist CRUD. Domain verbs beyond the
+   core registry are permitted with a per-API verb registry entry —
+   **one verb per meaning API-wide**.
+3. **No collection-level custom actions** — batch semantics stay with
+   `AC-018` bulk endpoints (per-item outcomes, A3's `200` envelope); a
+   verb-based batch mechanism would fork them.
+
+Response shape rides A3: synchronous actions return `200` with the
+mutated representation; long-running actions return `202` + the `AC-019`
+operation resource.
+
+**Classification:** project policy.
+**Confidence:** moderate — the one-verb-per-meaning rule and the
+discipline are load-bearing; the exact pairs are editable.
+**Evidence:** `survey-02` (actions column) · AIP-136 · the gap review
+(R2.1).
+
+---
+
 ## Batch ratification — the fifteen remaining AC principles
 
 **Decision (2026-08-09): RATIFIED en bloc, as proposed** in `baseline-02`

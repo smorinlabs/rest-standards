@@ -160,6 +160,9 @@ the quick-citation index; the files are authoritative.
 | OP batch (22) | 2026-08-09 | Remaining OP principles ratified en bloc as proposed — **Gate C pile complete** | `decisions/baseline-03-operational-practice.decision.md` |
 | A2 · Sorting cluster (addendum) | 2026-08-09 | **MUST** documented stable default order (ties by `id`); `sort=-field,other` when offered; `cursor`+`limit` request params; `request-id` correlation header | `decisions/baseline-02-api-contracts.decision.md` |
 | A1 · PATCH format (addendum) | 2026-08-09 | **RFC 7396 Merge Patch MUST** at `application/merge-patch+json` + null ≡ absent companion rule; RFC 6902 as bounded MAY | `decisions/baseline-02-api-contracts.decision.md` |
+| A3 · Status-code rows (addendum) | 2026-08-09 | **201+`Location`** on every create; **200 + envelope** over 207 for partial bulk; **404** masks cross-tenant existence; 405/415/428/401-403/empty-200 rows en bloc | `decisions/baseline-01-http-semantics.decision.md` |
+| A4 · Dry-run (addendum) | 2026-08-09 | **`?dry_run=true`**, MAY per endpoint / SHOULD on destructive+bulk; output contract ratified (marker, real outcome shape, validation depth, no key consumption); `Prefer: validate-only` declined on advisory-execution risk | `decisions/baseline-02-api-contracts.decision.md` |
+| A5 · Action verbs (addendum) | 2026-08-09 | **Core registry** (cancel, archive/restore, approve/reject, publish/unpublish, duplicate) + AIP-136 discipline + one-verb-per-meaning; no collection-level actions | `decisions/baseline-02-api-contracts.decision.md` |
 
 ## Currency corrections — read before citing a `survey` report
 
