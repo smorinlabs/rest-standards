@@ -1,8 +1,9 @@
 # CLI Design Standard → REST Standard: Gap Review
 
 *Run 2026-08-09, immediately after Gate C closed (PR #3). Compares the CLI
-Design Standard v1.4.14 (`~/c/cli-standards/cli-design-standard.md`, Parts
-I–III + Appendices A–E, plus its skill apparatus) against this repo's
+Design Standard v1.4.14 (the `cli-design-standard.md` document in the
+maintainer's separate `cli-standards` repository — Parts I–III +
+Appendices A–E, plus its skill apparatus) against this repo's
 ratified decision index, decision files, and `PLAN.md` Phase 3 outline.
 Nothing here re-litigates a ratified decision; every item is additive.
 Produced by a commissioned review agent; sources read in full are listed in

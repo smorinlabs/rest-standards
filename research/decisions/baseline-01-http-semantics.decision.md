@@ -287,9 +287,10 @@ and it is absent · `401`-vs-`403` discipline (401 = unauthenticated,
 403 = unauthorized) · empty collection = `200` with an empty array,
 never `404`.
 
-**Classification:** protocol requirements where RFC 9110/9457 semantics
-decide (create/201, 405+Allow, 415, 428, 401/403); project policy for the
-existence-masking default and the 207 declination.
+**Classification:** protocol requirements where published HTTP semantics
+decide — RFC 9110 for 201, 405+`Allow`, 415, and the 401/403 distinction;
+RFC 6585 for 428 — with project policy for the existence-masking default
+and the 207 declination.
 
 **Evidence:** `survey-02` finding 5 (Stripe 200-on-create outlier) ·
 RFC 9110 §15.3 · RFC 4918 (207's WebDAV definition) · Zalando 207 rule ·
