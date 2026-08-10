@@ -48,7 +48,7 @@ Two requirements the standard inherits:
 Header states `Obsoletes: 7386`. Null-means-remove, from the normative
 pseudocode (§2):
 
-```
+```text
 define MergePatch(Target, Patch):
   if Patch is an Object:
     if Target is not an Object:
@@ -209,9 +209,11 @@ merge patch demonstrably cannot serve.
 ### Proposed rule wording
 
 > **PATCH request bodies MUST be JSON Merge Patch (RFC 7396) sent with
-> `Content-Type: application/merge-patch+json`; servers MUST reject other
-> media types with `415 Unsupported Media Type` and advertise supported
-> formats in `Accept-Patch`.** Because Merge Patch overloads `null` to mean
+> `Content-Type: application/merge-patch+json`; servers MUST reject
+> unsupported media types with `415 Unsupported Media Type` and advertise
+> every supported format in `Accept-Patch` — including
+> `application/json-patch+json` wherever the JSON Patch option below is
+> enabled.** Because Merge Patch overloads `null` to mean
 > "remove this member," resource representations MUST give `null` and an
 > absent property the same meaning — Merge Patch delete semantics are the
 > sole exception to this equivalence, and a `null` targeting a field that
@@ -226,14 +228,20 @@ merge patch demonstrably cannot serve.
 **Moderate-high** on the format; **high** on the companion null rule
 (load-bearing regardless of which format wins).
 
-**A genuine fork.** Plain-JSON partial bodies are the field plurality
-(GitHub, Graph, Shopify, Stripe-via-POST); only Azure mandates the media
-type. Graph is the strongest counter-case — AC-011-compliant with plain
-JSON plus per-field nullability docs, from the same vendor whose Azure
-guidelines mandate merge patch. A reviewer weighting ecosystem
-compatibility could reasonably choose plain JSON. The recommendation
-matches the project's demonstrated posture: `AC-003` was ratified at
-1-of-8 adoption; Merge Patch has strictly better adoption than that.
+**A genuine fork.** *(Denominator corrected 2026-08-09 in review: only
+PATCH implementations count as PATCH-format evidence.)* Among surveyed
+APIs that actually ship PATCH, the split is: merge patch mandated (Azure
+guidelines; Zalando guideline), plain undeclared JSON (GitHub, Microsoft
+Graph), both-by-negotiation (Kubernetes), field mask (Google AIP-134) —
+**no format holds a majority even there**. Shopify (PUT), Stripe (POST),
+and Anthropic (POST) are evidence about partial-update *styles*, adjacent
+but not PATCH-format datapoints. Graph is the strongest counter-case —
+AC-011-compliant with plain JSON plus per-field nullability docs, from the
+same vendor whose Azure guidelines mandate merge patch. A reviewer
+weighting ecosystem compatibility could reasonably choose plain JSON. The
+recommendation matches the project's demonstrated posture: `AC-003` was
+ratified at 1-of-8 adoption; Merge Patch — the only standardized,
+guideline-mandated option in the split — polls better than that.
 
 ### What flips it
 
@@ -256,8 +264,25 @@ matches the project's demonstrated posture: `AC-003` was ratified at
 
 ## Sources
 
-RFC 5789 · RFC 7396 · RFC 6902 · RFC 6901 (rfc-editor.org raw text) ·
-Azure API Guidelines (raw `Guidelines.md`) · Microsoft Graph user-update ·
-Kubernetes `api-concepts.md` (raw) · Google AIP-134 · GitHub REST repos ·
-Stripe update-customer · Shopify Admin REST · Anthropic managed-agents
-memory (live) · OpenAPI 3.1.1 (raw) · Zalando RESTful API Guidelines.
+All accessed **2026-08-09**. Authority classes: **standards** (IETF/OAI
+primary text) · **vendor-primary** (the vendor's own docs or repo) ·
+**guideline** (a published design guideline, primary for its own rules).
+Each table row and quoted claim above traces to the row naming its
+subject.
+
+| Source | URL | Class | Claims it carries |
+|---|---|---|---|
+| RFC 5789 (raw) | https://www.rfc-editor.org/rfc/rfc5789.txt | standards | no-default-format; `Accept-Patch`; 415; atomicity; conditional-request guidance |
+| RFC 7396 (raw) | https://www.rfc-editor.org/rfc/rfc7396.txt | standards | MergePatch pseudocode; null-means-remove; array limitation; Appendix A null-target case |
+| RFC 6902 (raw) | https://www.rfc-editor.org/rfc/rfc6902.txt | standards | op/path/value; `test`; atomicity |
+| RFC 6901 (raw) | https://www.rfc-editor.org/rfc/rfc6901.txt | standards | JSON Pointer escaping and decode order |
+| Azure REST API Guidelines (raw Guidelines.md) | https://raw.githubusercontent.com/microsoft/api-guidelines/vNext/azure/Guidelines.md | guideline | merge-patch mandate; null ≡ absent; 400-on-undeletable; array caution; no-LRO-PATCH; all-fields-optional schema policy |
+| Microsoft Graph user-update | https://learn.microsoft.com/en-us/graph/api/user-update?view=graph-rest-1.0 | vendor-primary | plain `application/json`; per-field nullability; `employeeOrgData` deviation |
+| Kubernetes api-concepts (raw) | https://raw.githubusercontent.com/kubernetes/website/main/content/en/docs/reference/using-api/api-concepts.md | vendor-primary | four Content-Type-negotiated formats; JSON Patch conditional writes; stale RFC 7386 citation |
+| Google AIP-134 | https://google.aip.dev/134 | guideline | `update_mask` contract (summarizer-mediated, flagged) |
+| GitHub REST repos | https://docs.github.com/en/rest/repos/repos?apiVersion=2022-11-28 | vendor-primary | PATCH with plain JSON |
+| Stripe update-customer | https://docs.stripe.com/api/customers/update | vendor-primary | POST updates; empty-string unset sentinel |
+| Shopify Admin REST product | https://shopify.dev/docs/api/admin-rest/latest/resources/product | vendor-primary | PUT updates, plain JSON |
+| Anthropic managed-agents memory (live) | https://platform.claude.com/docs/en/managed-agents/memory.md | vendor-primary | POST-for-update; the cached-table PATCH conflict resolution |
+| OpenAPI 3.1.1 (raw) | https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/versions/3.1.1.md | standards | media-type-keyed `requestBody` (dual-format expressible) |
+| Zalando RESTful API Guidelines | https://opensource.zalando.com/restful-api-guidelines/ | guideline | rule 123 null ≡ absent with the merge-patch exception (summarizer-mediated, flagged) |

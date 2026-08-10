@@ -411,9 +411,11 @@ moderate-high (the three namings — conventions with clear field anchors).
 
 **Decision (2026-08-09, Gate C addendum): RATIFIED.** PATCH request bodies
 **MUST be JSON Merge Patch (RFC 7396)** sent with
-`Content-Type: application/merge-patch+json`; servers MUST reject other
-media types with `415 Unsupported Media Type` and advertise supported
-formats in `Accept-Patch` (RFC 5789's negotiation surface). **Companion
+`Content-Type: application/merge-patch+json`; servers MUST reject
+**unsupported** media types with `415 Unsupported Media Type` and
+advertise **every supported format** in `Accept-Patch` (RFC 5789's
+negotiation surface) — including `application/json-patch+json` wherever
+the JSON Patch MAY below is enabled. **Companion
 rule (load-bearing):** resource representations MUST give `null` and an
 absent property the same meaning — Merge Patch delete semantics are the
 sole exception, and a `null` targeting a non-deletable field MUST return
@@ -437,11 +439,15 @@ Zalando, the only surveyed authorities that rule on the question.
 
 **Justification:** Merge Patch is the only standardized format
 implementing `AC-011`'s omission-vs-presence distinction at the wire
-level; both mandating authorities ship the same companion rule; the
-plain-JSON field plurality (GitHub, Graph, Shopify; Stripe/Anthropic via
-POST) defines its semantics only in per-API prose. Matches the project's
-`AC-003` posture — standards alignment over incumbent plurality, and
-Merge Patch polls strictly better than RFC 9457 did.
+level, and both authorities that rule on the question (Azure, Zalando)
+mandate it with the same companion rule. Among APIs that actually ship
+PATCH the field splits four ways with no majority (merge-mandated /
+plain undeclared JSON at GitHub and Graph / Kubernetes-negotiated /
+Google field masks) — corrected denominator per review: Shopify (PUT),
+Stripe (POST), and Anthropic (POST) are partial-update-style evidence,
+not PATCH-format evidence. Plain JSON's semantics live only in per-API
+prose. Matches the project's `AC-003` posture — standards alignment where
+no majority exists, and Merge Patch polls better than RFC 9457 did.
 
 **Declined:** plain partial JSON with per-field null docs (the Graph
 model — the ecosystem-weighted alternative) · AIP-134 field masks (wins

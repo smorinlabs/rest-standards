@@ -261,11 +261,14 @@ plus five drafting rows.** Raised by the gap review's closed
 status-code-table finding; the full "which codes, when" table is Phase 3
 drafting, anchored by these rulings.
 
-1. **Create responses:** every create returns **`201 Created` with a
-   `Location` header** to the new resource — via POST or
-   PUT-with-client-supplied-ID alike (RFC 9110 semantics); updates return
-   `200` with the representation. Stripe's flat-200 declined as the
-   documented outlier. Confidence high.
+1. **Create responses:** every **single-resource** create returns
+   **`201 Created` with a `Location` header** to the new resource — via
+   POST or PUT-with-client-supplied-ID alike (RFC 9110 semantics); updates
+   return `200` with the representation. Stripe's flat-200 declined as the
+   documented outlier. **Bulk creation is governed by row 2, not this
+   row:** an `AC-018` bulk endpoint returns the `200` envelope, and each
+   per-item outcome carries its own created-resource URI (the
+   `Location`-equivalent) and per-item status. Confidence high.
 2. **Partial-bulk status (completes `AC-018`):** **`200` with the
    per-item outcome envelope**; `207 Multi-Status` declined — WebDAV
    (RFC 4918) baggage, poor generator support, Zalando's
