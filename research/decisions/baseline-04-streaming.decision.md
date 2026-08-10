@@ -442,6 +442,68 @@ names and terminality as frozen surface.
 No new rule identifiers were minted for any of the above: every change scopes
 an existing rule or adds a clause to one, so the standard stands at 139 rules.
 
+### Codex second-lens corrections — dated annotation, 2026-08-10
+
+A different-model-family review of the corrected text found defects the three
+internal lenses did not. Recorded here rather than silently absorbed, because
+two of them correct claims this record itself asserted.
+
+1. **The Tier A `R6.1` resolution was incomplete, and this record said it was
+   complete.** The scoping above states that "all other §6 rules bind
+   unchanged." Two of them cannot: `R6.2` requires an empty collection to
+   carry "an empty items array," which a streamed collection has no place to
+   put, and `R6.4` said pagination state "lives only in the body envelope,"
+   which the terminal-frame carriage contradicts. **Both are now scoped in
+   their own text** — an empty streamed collection is zero item frames plus
+   the terminal frame; `R6.4` reads "body representation — the envelope, or
+   the terminal frame where the collection is streamed," with its `Link`-header
+   prohibition binding streamed collections identically. This was a
+   release-blocking defect: without it the standard was unsatisfiable for
+   ordinary empty and paginated streamed collections.
+2. **The Tier C terminal-state completion created an obligation the `error`
+   frame could not discharge.** `R13.9` required the terminal frame to carry
+   the operation's terminal-state value, while `R13.7` forbids a `status`
+   member on that frame's problem object — so a failure terminal frame had no
+   conforming way to carry `failed`. Resolved by reserving **`operation_state`**
+   in §1.10 and using it on both success and error terminal frames, so one
+   member name carries the comparison in both directions.
+3. **`R5.13`'s provenance over-attributed to RFC 9457.** It said an in-band
+   object omits `status` "as RFC 9457 §3.1 requires." RFC 9457 permits either
+   omitting `status` or setting it to the status actually sent; what it forbids
+   is a `status` that disagrees. Omission is **this standard's policy choice**,
+   made because `status: 200` on a document describing a failure is accurate
+   about the response and misleading about the outcome. `R13.7` had labeled it
+   `[POLICY]` correctly; the `R5.13` provenance now does too.
+4. **"Registered" and "standardized" were conflated.** `R13.4` forbade
+   describing `text/event-stream` as "a registered or standardized media type."
+   It is not IANA-registered — that finding stands and was re-verified — but it
+   **is** standardized, by the WHATWG HTML Living Standard, which normatively
+   defines the format and names the media type. The prohibition is now scoped
+   to the IANA claim.
+5. **`ST-018`'s browser-authentication conclusion rested on a false premise.**
+   This record and the companion stated that `EventSource`'s "only native
+   credential is a cookie" and that a browser-direct connection "cannot be
+   authenticated under this standard." The Fetch Standard defines credentials
+   as cookies, TLS client certificates, **and** HTTP-authentication entries,
+   and `withCredentials` sends them. The accurate statement, now carried in the
+   companion: an `EventSource` connection cannot use **caller-supplied header**
+   credentials under this standard, and must rely on ambient credentials where
+   the deployment permits them. `ST-018`'s guidance is unchanged; its
+   justification is corrected.
+6. **Smaller corrections:** the W3C Recommendation's status is **Retired**
+   (2021-01-28), W3C's own term, not "obsolete" · absence of `Content-Length`
+   is common for streams but not universal, since RFC 9110 §8.6 has a server
+   send it when the length is known in advance · `R13.5` cited `R4.5`
+   (identifiers as strings) for the null-versus-absent discipline, which is
+   `R4.8` · the release preamble said three rules were scoped when seven were ·
+   §1.11's **Reserved name** definition omitted the new stream-member category ·
+   Appendix D described `stream_position` as a `components.parameters` entry,
+   which cannot express a body or frame member.
+
+Codex confirmed the remaining quotations from RFC 9110, RFC 9112, RFC 9113,
+RFC 8895, and the WHATWG SSE text, and all four IANA registration findings,
+as accurate.
+
 ---
 
 ## Re-check trigger — added to the register in `research/README.md`

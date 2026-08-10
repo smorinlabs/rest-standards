@@ -5,7 +5,7 @@ and E all passed (decision layer ratified 2026-08-09; draft approved
 2026-08-09 and systematically reviewed through 2026-08-10; review history in
 [`docs/reviews/`](docs/reviews/)). Version 1.1.0 adds **§13, streaming
 responses**, under the Part II amendment rule — a MINOR bump, since it adds
-rules and scopes three existing ones without strengthening or removing any.
+rules and scopes seven existing ones without strengthening or removing any.
 This document, with
 [`conformance/spectral.yaml`](conformance/spectral.yaml),
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml),
@@ -341,7 +341,7 @@ reserves or emits a new `X-` prefixed field name.
 | `application/problem+json` | Every API MUST be capable of returning every application-generated error in this shape (RFC 9457; infrastructure carve-out applies) | `AC-003` |
 | `application/merge-patch+json` | The MUST PATCH format (RFC 7396) | Addendum A1 |
 | `application/json-patch+json` | The bounded MAY PATCH format (RFC 6902), for resources needing value-null-distinct-from-absent, per-element array edits, or test-conditioned updates | Addendum A1 |
-| `text/event-stream` | Server-Sent Events framing; the default for incrementally generated content (R13.4). `[POLICY]` — **this media type has no IANA registration**: it is absent from the `text/*` subregistry and its per-type registry URL returns `404` (probed 2026-08-10). The WHATWG text carries a registration template that has never been submitted. It MUST NOT be described as a registered or standardized media type | `P6-D4a` (`ST-004`) |
+| `text/event-stream` | Server-Sent Events framing; the default for incrementally generated content (R13.4). `[POLICY]` — **this media type has no IANA registration**: it is absent from the `text/*` subregistry and its per-type registry URL returns `404` (probed 2026-08-10). The WHATWG text carries a registration template that has never been submitted. It MUST NOT be described as IANA-registered — it **is** standardized by the WHATWG HTML Living Standard, which is a separate claim | `P6-D4a` (`ST-004`) |
 
 #### Reserved action verbs (path segments)
 
@@ -367,6 +367,7 @@ a client reading two APIs find the same concept under the same name.
 | --- | --- | --- | --- |
 | `operation_id` | Any frame of a stream that has an operation resource | The identifier R10.9 binds into the `202` body, where the API uses R10.9's `id` form. Carrying it is what makes R13.9's one-identity obligation checkable | `P6-D0` batch (`ST-009`) `[POLICY]` |
 | `operation_url` | Same | The absolute URI of the operation resource, where the API uses R10.9's `url` form instead of `id`. Exactly one of the two is carried, matching whichever form the `202` body uses | `P6-D0` batch (`ST-009`) `[POLICY]` |
+| `operation_state` | A terminal frame | The operation's terminal-state value, drawn from the vocabulary R10.1 requires the operation resource to document (`succeeded`, `failed`, `canceled`, …). This is the member R13.9 compares across the two channels. Deliberately **not** named `status`: R13.7 forbids a `status` member on an `error` frame's problem object, and one name for the terminal state across both success and failure frames is what makes the comparison mechanical | Phase 6 review walk `[POLICY]` |
 | `retry_after` | An `error` frame | Seconds a client should wait before retrying, carrying the pacing hint that the `Retry-After` header would have carried had a status still been available (R11.2 streaming scope). Same semantics and units as `Retry-After`'s delay-seconds form | Phase 6 review walk `[POLICY]` |
 
 #### Reserved stream frame types
@@ -394,7 +395,7 @@ its own (R13.5).
 | **Action** | A non-CRUD operation on a resource, expressed as `POST /{collection}/{id}/{action}`. |
 | **Mutating request** | Any request whose success changes server state. |
 | **Destructive operation** | A mutating request that removes data or irreversibly ends a process: DELETE, and any action verb registered as irreversible (`cancel`). Reversible-visibility actions (`archive`) are not destructive. |
-| **Reserved name** | A query parameter, header, media type, action verb, or stream frame type registered in §1.10. |
+| **Reserved name** | A query parameter, header, media type, action verb, stream member, or stream frame type registered in §1.10. |
 | **Stream** | A response delivered incrementally over a single HTTP request, as a sequence of frames (§13). |
 | **Frame** | One self-delimited unit of a stream, carrying a type (R13.5) and a payload. |
 | **Terminal frame** | The frame that ends a stream and carries its final outcome (R13.6); its absence means the stream was truncated. |
@@ -1018,9 +1019,12 @@ permitted deviations from RFC 9457's defaults, made in writing here.
 > `[POLICY]` (binding design, `about:blank` ban) · confidence high
 > (members), policy grounded in primary-sourced failure evidence (design).
 > Member set scoped to response-carried documents in version 1.1.0 by
-> `P6-D2`, `research/decisions/baseline-04-streaming.decision.md`, so that
-> an in-band problem object omits `status` as RFC 9457 §3.1 requires ·
-> confidence high.
+> `P6-D2`, `research/decisions/baseline-04-streaming.decision.md` · project
+> policy `[POLICY]` · confidence high. RFC 9457 §3.1 permits either omitting
+> `status` or setting it to the status actually sent; what it forbids is a
+> `status` that disagrees. This standard chooses omission, because a `status`
+> of `200` on a document describing a failure is accurate about the response
+> and misleading about the outcome.
 
 **R5.14** RFC 7807 MUST NOT be cited — it is obsoleted by RFC 9457.
 **Exception:** historical notes explicitly labeled as such.
@@ -1065,9 +1069,12 @@ metadata can be added without a breaking change.
 construction: its frames are the items. It satisfies this rule by carrying
 the continuation state on the terminal frame (R13.6) instead, which
 preserves what the envelope exists to protect — a place to add metadata
-without a breaking change. Every other §6 rule binds unchanged; in
-particular a streamed collection still owes R6.6's documented stable total
-order, and owes it more strictly, since R13.10's resumption depends on it.
+without a breaking change. R6.2 and R6.4 carry the matching streamed forms
+in their own text — an empty streamed collection is zero item frames plus
+the terminal frame, and pagination state stays in the body, never a header.
+Every other §6 rule binds unchanged; in particular a streamed collection
+still owes R6.6's documented stable total order, and owes it more strictly,
+since R13.10's resumption depends on it.
 
 > Provenance: `AC-014` (batch, `baseline-02` §7) · evidence-backed
 > default · confidence high. Streaming scope added in version 1.1.0 by the
@@ -1076,7 +1083,11 @@ order, and owes it more strictly, since R13.10's resumption depends on it.
 > `[POLICY]`.
 
 **R6.2** An empty collection returns `200 OK` with an empty items array —
-never `404 Not Found`.
+never `404 Not Found`. A **streamed** empty collection returns `200 OK` with
+zero item frames followed by the terminal frame R13.6 requires: the empty
+result is signaled by the terminal frame arriving with nothing before it,
+which is the streamed form of the same guarantee — a client can tell "no
+results" from "something went wrong."
 
 > Provenance: addendum A3 drafting row (`baseline-01` decisions) ·
 > evidence-backed default — the registered semantics of 200 and 404
@@ -1095,9 +1106,12 @@ obligation not to construct or modify cursors is R12.5.
 > Provenance: `AC-013` (batch, `baseline-02` §7) · evidence-backed
 > default · confidence high.
 
-**R6.4** Pagination state lives only in the body envelope (R6.1). RFC 8288
-`Link` headers MUST NOT be emitted for pagination — dual emission creates
-two places a cursor can live, which drift under maintenance.
+**R6.4** Pagination state lives only in the body representation — the
+envelope (R6.1), or the terminal frame where the collection is streamed.
+RFC 8288 `Link` headers MUST NOT be emitted for pagination — dual emission
+creates two places a cursor can live, which drift under maintenance. The
+prohibition is what this rule is for, and it binds streamed collections
+identically: one place, in the body, never a header.
 
 > Provenance: walked decision "Pagination links" (`baseline-02` decisions)
 > · project policy · confidence moderate-high.
@@ -1836,13 +1850,17 @@ carries no `Accept`; SSE is never served without being asked for.) A large
 finite record set, where a partial answer has no value, is the
 newline-delimited case instead. An API adopting SSE MUST
 document that the media type has no IANA registration, and MUST NOT describe
-it as a registered or standardized media type.
+it as an IANA-registered media type. (It **is** standardized — the WHATWG
+HTML Living Standard normatively defines the format and names the media
+type. What it lacks is a registry entry, which is a different claim; do not
+conflate them in either direction.)
 
 The registration gap is disclosed rather than worked around: `text/event-stream`
 is absent from the IANA `text/*` subregistry and its per-type registry URL
 returns `404` (probed 2026-08-10). The specification that defines it is the
 WHATWG HTML Living Standard, not an RFC, and the W3C Recommendation that
-IETF documents cite for it has been marked obsolete. The one registered
+IETF documents cite for it was **Retired** by W3C on 2021-01-28. The one
+registered
 alternative, `application/json-seq` (RFC 7464), has no HTTP adoption among
 surveyed APIs and no browser parser — which is why this rule blesses the
 unregistered type while §1.10 records what it is.
@@ -1863,8 +1881,9 @@ ignore, nor count frames. The growth statement is what makes R12.10's
 unknown-type tolerance dischargeable.
 
 **Frame payloads are representations.** §4's representation rules bind them
-unchanged — R4.4's snake_case grammar, R4.5's null-versus-absent discipline,
-R4.6's timestamps, R4.7's money encoding. A frame is not exempt from the
+unchanged — R4.4's snake_case grammar, R4.8's null-versus-absent discipline
+(fixed by R3.8), R4.6's timestamps, R4.7's money encoding. A frame is not
+exempt from the
 body conventions merely because the enclosing response is not
 `application/json`.
 
@@ -1950,9 +1969,13 @@ operation resource (R10.9), the two MUST be one capability with one
 identity: the stream MUST carry the operation's identity in the reserved
 member matching the form R10.9's `202` body uses — `operation_id` for the
 `id` form, `operation_url` for the `url` form (§1.10); both channels MUST
-report the same terminal state, **the terminal frame carrying the value from
-the operation resource's documented terminal-state vocabulary (R10.1)** so
-that the two are comparable, with the operation resource authoritative; and
+report the same terminal state, **the terminal frame carrying that value in
+the reserved `operation_state` member (§1.10), drawn from the vocabulary
+R10.1 requires the operation resource to document**, so that the two are
+comparable — this applies to an `error` terminal frame exactly as to a
+success one, which is why the member is not named `status` (R13.7 forbids
+`status` on the problem object) — with the operation resource
+authoritative; and
 the full problem document for a failed operation — carrying `status`, as
 `application/problem+json` — MUST be retrievable from the operation
 resource.
@@ -2307,9 +2330,9 @@ own maintenance rather than a conforming API.
 | R5.16 | Problem `type`/`code` catalog published |
 | R5.17 | No internal implementation detail in any response body |
 | R6.1 | Collection responses use the items-plus-continuation envelope; a streamed collection carries continuation state on its terminal frame instead |
-| R6.2 | Empty collections return 200 with an empty array |
+| R6.2 | Empty collections return 200 with an empty array; streamed form is zero item frames followed by the terminal frame |
 | R6.3 | Cursor pagination (recommendation-strength, with documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
-| R6.4 | No `Link` headers for pagination |
+| R6.4 | No `Link` headers for pagination; state in the body representation — envelope, or terminal frame when streamed |
 | R6.5 | `cursor` and `limit` names; default and maximum documented |
 | R6.6 | Total stable default order documented; `id` tiebreak |
 | R6.7 | Sort syntax fixed when offered; sortable set enumerated |
@@ -2374,7 +2397,7 @@ own maintenance rather than a conforming API.
 | R13.6 | Documented terminal frame carrying the outcome; a stream-ending `error` frame counts as terminal; trailing sentinel tolerated; unbounded streams documented as unbounded |
 | R13.7 | Stream-ending errors after commit delivered in an `error` frame carrying a problem object with `status` omitted; never called an `application/problem+json` response; `error` never used for a failure the stream survives |
 | R13.8 | Pre-commit errors follow R5.12 unchanged, whatever the request asked to stream |
-| R13.9 | Stream carries `operation_id` or `operation_url` matching R10.9's form; terminal frame carries the operation's terminal-state value from R10.1's vocabulary; operation resource authoritative; full problem document retrievable there |
+| R13.9 | Stream carries `operation_id` or `operation_url` matching R10.9's form; terminal frame carries `operation_state` from R10.1's vocabulary, on error frames as well as success ones; operation resource authoritative; full problem document retrievable there |
 | R13.10 | Resumption offered where the stream views a retained artifact (data outliving the connection); strictly increasing `stream_position` on every frame; retention window documented; out-of-window resume fails with a defined error |
 | R13.11 | Long-poll maximum hold documented; expired hold returns `200` plus an empty result carrying the next `cursor`; never `204` |
 
@@ -2491,8 +2514,8 @@ How Part I lands in an OpenAPI 3.1 document (R4.1). Informative.
 | R13.2 | One operation declaring both `application/json` and the stream media type under `200`, plus a declared `Vary` response header — or, for R13.2's second limb, a distinct always-streaming path with the stream media type alone and no `Vary` |
 | R13.5 | **Not expressible in OpenAPI 3.1** — the specification has no construct for "the body is a sequence of items each matching this schema", so the frame-type vocabulary and its growth statement live in `description` prose. OpenAPI 3.2's item schema covers it where R4.1's verified-toolchain clause is met |
 | R13.7 | The `status`-omitting problem variant described in the R5.12/R5.13 row, referenced from the frame-payload documentation — never the shared 4xx/5xx response schema |
-| R13.9 | The `operation_id` or `operation_url` member documented on stream frames, referencing the same `components.schemas` entry the R10.9 `202` body uses |
-| R13.10 | `stream_position` as a shared `components.parameters` entry, documented in both carriages, with the retention window in its description |
+| R13.9 | The `operation_id` or `operation_url` member documented on stream frames, referencing the same `components.schemas` entry the R10.9 `202` body uses; `operation_state` on the terminal frame declared with the same enumeration as the operation resource's state member |
+| R13.10 | `stream_position` needs two expressions, because an OpenAPI Parameter Object permits only `query`, `header`, `path`, and `cookie` and so cannot describe a body or frame member: a `components.parameters` entry for the query carriage, plus a shared `components.schemas` scalar that the request-body property and the frame-payload property both reference. Retention window in the description |
 
 ## Appendix E — Worked example
 
@@ -2857,7 +2880,7 @@ event: export.chunk
 data: {"stream_position":2,"rows":500,"part_url":"https://files.example.com/exp_000example/part-1.csv"}
 
 event: export.completed
-data: {"stream_position":3,"status":"succeeded","rows_total":4820,"next_cursor":null}
+data: {"stream_position":3,"operation_state":"succeeded","rows_total":4820,"next_cursor":null}
 ```
 
 The failure case, on a stream that had already committed `200`:
@@ -2868,6 +2891,7 @@ data: {"type":"https://problems.example.com/export-source-unavailable",
 data:  "title":"The order source became unavailable mid-export",
 data:  "code":"export_source_unavailable",
 data:  "operation_id":"op_000example",
+data:  "operation_state":"failed",
 data:  "stream_position":47}
 ```
 
@@ -2892,12 +2916,15 @@ was generated.
 `operation_id` is the reserved member (§1.10) carrying the identifier R10.9
 binds into E.7's `202` body — Bloom uses R10.9's `id` form, so it carries
 `operation_id` rather than `operation_url`. That is what makes the stream and
-the operation resource one capability with one identity (R13.9). The terminal
-frame's `"status": "succeeded"` is a value from the operation resource's own
-terminal-state vocabulary (R10.1), so the two channels are comparable rather
-than merely both present. `GET /v1/operations/op_000example` remains
-authoritative and serves the full problem document — with `status` — as a
-real `application/problem+json` response.
+the operation resource one capability with one identity (R13.9). Both terminal
+frames carry `operation_state` — `succeeded` on the completion frame, `failed`
+on the `error` frame — drawn from the operation resource's own vocabulary
+(R10.1), so the two channels are comparable rather than merely both present.
+The member is not called `status`, because R13.7 forbids `status` on the
+problem object and one name across both outcomes is what makes the comparison
+mechanical. `GET /v1/operations/op_000example` remains authoritative and
+serves the full problem document — with `status` — as a real
+`application/problem+json` response.
 
 `stream_position` increases monotonically and is what a client echoes to
 resume (R13.10); Bloom documents a 30-minute retention window, and a resume

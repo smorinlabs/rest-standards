@@ -170,10 +170,15 @@ malformed." HTTP/2 and HTTP/3 frame the body themselves, with DATA frames.
 Guidance phrased in chunked terms is therefore silently inapplicable — or
 actively wrong — over the transports most streaming APIs actually run on.
 
-The version-neutral observable properties are the **media type** and the
-**absence of `Content-Length`**. Those hold on every HTTP version, which is
-why R13.1 is written about the media type and says nothing about transfer
-coding.
+The version-neutral observable property is the **media type**, which is why
+R13.1 is written about it and says nothing about transfer coding.
+
+Absence of `Content-Length` is a common companion signal, not a rule.
+RFC 9110 §8.6 has an origin server send `Content-Length` when the content
+length is known before the headers go out — and a finite, precomputed
+artifact can have a known length and still be delivered incrementally. So
+treat a missing `Content-Length` as usual for dynamically generated streams,
+and never as the test for whether a response is one.
 
 ## 5. Why the error rules are shaped the way they are
 
@@ -258,19 +263,32 @@ a failure signal is building on something no provider promised.
 `EventSource` is the browser's native SSE client. It reconnects
 automatically, handles `Last-Event-ID`, and dispatches per-type listeners.
 It also **cannot set request headers** — no `Authorization`, no API key
-header. Its only native credential is a cookie.
+header. That is the constraint; be precise about what follows from it.
 
-The field's workaround is a token in the query string. **The standard already
-forbids that**: `R8.2` says access tokens `MUST NOT` be accepted or emitted in
-URI query parameters, on BCP 240 grounds. The consequence is stated rather
-than engineered around: **a browser-direct `EventSource` connection cannot be
-authenticated under this standard.**
+What `EventSource` *can* do is send **ambient credentials**, via
+`withCredentials`. The Fetch Standard defines credentials as cookies, TLS
+client certificates, and HTTP-authentication entries — not cookies alone. So
+a browser-direct `EventSource` connection can be authenticated, provided the
+deployment authenticates by something the user agent attaches on its own
+rather than something the caller supplies per request.
+
+What it cannot do is carry a **caller-supplied** authorization header. The
+field's workaround for that is a token in the query string, and **the standard
+forbids it**: `R8.2` says access tokens `MUST NOT` be accepted or emitted in
+URI query parameters, on BCP 240 grounds. So the accurate statement is: *an
+`EventSource` connection cannot use caller-supplied header credentials under
+this standard, and must rely on ambient credentials if the deployment permits
+them.*
+
+If you go the ambient route, note what comes with it: cookie-backed sessions
+put you in CSRF territory, which §8 does not currently address — see §13's
+known-gaps register and Phase 7.
 
 A query-string token is not merely inelegant. It lands in server access logs,
 browser history, `Referer` headers on any outbound link, and any URL a user
 copies and shares.
 
-Two paths remain (`ST-018`):
+Where caller-supplied credentials are required, two paths remain (`ST-018`):
 
 - **A `fetch`-based reader.** `fetch` sets headers freely, so `Authorization`
   works. The cost is implementing SSE parsing — splitting on blank lines,
@@ -420,7 +438,8 @@ backwards:
   defines. The conflict is recorded rather than smoothed over.
 
 A third: RFC 8895's normative reference for SSE is the **W3C Recommendation
-of February 2015**, which W3C has since marked obsolete; its URL now redirects
+of February 2015**, which W3C **Retired** on 2021-01-28 — that is W3C's own
+status term, and the page carries an obsolescence banner; its URL now redirects
 to the WHATWG HTML standard. Any citation of "the SSE specification" should
 name which document it means. This one means the WHATWG HTML Living Standard.
 
