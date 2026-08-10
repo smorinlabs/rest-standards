@@ -1854,7 +1854,9 @@ disagrees with the negotiated representation — asking for a stream where
 with `400` rather than silently resolved in either direction.
 
 > Provenance: `ST-003` · `P6-D1` (Phase 6 walk, 2026-08-10) · project
-> policy `[POLICY]`, modeled on R1.9 · confidence high.
+> policy `[POLICY]`, modeled on R1.9 · confidence high. The
+> conflicting-modifier clause and the per-endpoint scope were ratified as a
+> `P6-D1` amendment at the Phase 6 review walk (2026-08-10).
 
 **R13.4** Server-Sent Events framing, served as `text/event-stream`, SHOULD
 be the framing chosen for incrementally generated content — that is, content
@@ -2217,7 +2219,7 @@ Appendix E worked example where it appears.
 | `ST-012` | R12.10 | B4 |
 | `ST-013`–`ST-020` | none — informative, `streaming-profile.md` | B4 |
 | `P6-D0` · Deliverable shape (Phase 6 walk) | §13 as a compact normative section; §1.5 namespace extended to thirteen | B4 |
-| `P6-D1` · Streaming negotiation (walked) | R13.2, R13.3 | B4 |
+| `P6-D1` · Streaming negotiation (walked; amended at the review walk for the conflicting-modifier case) | R13.2, R13.3 | B4 |
 | `P6-D2` · Post-commit stream errors (walked) | R13.7; R5.12, R5.13 (amended) | B4 |
 | `P6-D3` · `R5.1` streaming scope (walked) | R5.1 (amended) | B4 |
 | `P6-D4a`/`P6-D4b` · §1.10 additions (walked) | §1.10 media-type row; §1.10 stream frame types | B4 |

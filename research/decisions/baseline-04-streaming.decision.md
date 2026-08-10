@@ -66,8 +66,34 @@ reach it.
 `stream` is reserved as a request-modifier name. An endpoint that does not
 implement streaming and receives `stream` — query parameter or body member,
 any value — **MUST** reject with `400`, never silently answer with a
-non-streamed response. This guard binds endpoints with the `streaming` switch
-**off** as well as on.
+non-streamed response. **The guard binds per endpoint, not per API:** every
+endpoint that does not implement streaming owes it, including endpoints of an
+API whose `streaming` switch is on.
+
+**Amendment ratified 2026-08-10 (Phase 6 review walk) — the conflicting-modifier
+case.** As originally ratified this decision covered only an endpoint that
+does *not* stream, leaving the streaming-capable case unruled. The internal
+review rated that gap critical, and it is not an edge: a body-flag
+`"stream": true` alongside `Accept` negotiation is the shape every surveyed
+AI provider ships, so it arises on ordinary traffic. Three answers were each
+defensible and mutually exclusive — honor the flag (forbidden, `R13.2` puts
+selection on `Accept`), ignore it (the silent-ignore hazard this guard exists
+to prevent), or reject it (unauthorized). **Ratified:** on an endpoint that
+does implement streaming, `Accept` governs and `stream` selects nothing; a
+`stream` modifier disagreeing with the negotiated representation — asking for
+a stream where `Accept` selected the non-streamed form, or the reverse —
+**MUST** be rejected with `400` rather than silently resolved in either
+direction.
+
+*Process note, recorded because the discipline matters more than the rule:*
+this requirement was written into `R13.3` during the review fix pass before
+being ratified here — drafting inventing policy, which the decision layer
+exists to prevent. It was caught by the PR review reading the standard
+against this record, and ratified on 2026-08-10 rather than quietly kept.
+Declined at ratification: a weaker form requiring only that the API
+*document* its behavior, which would mandate rejection in the easy case (the
+endpoint does not stream at all) and merely ask for documentation in the hard
+one.
 
 ### Justification
 
