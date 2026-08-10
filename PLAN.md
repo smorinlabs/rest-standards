@@ -236,11 +236,18 @@ approval.
 
 ### Phase 5: Publish and maintain
 
-- Review through pull requests.
-- Tag the accepted first release.
-- Maintain an explicit decision log and changelog.
-- Re-run focused research when underlying specifications or dominant operational
-  practice materially change.
+**Release executed 2026-08-10:** version flipped to 1.0.0,
+`CHANGELOG.md` created, `v1.0.0` tagged on the release merge. Ongoing
+maintenance mode:
+
+- Review through pull requests — the standing practice (every gate landed
+  via a bot-reviewed PR: #3–#6 and release PR #7).
+- Decision log: Part II of the standard + `research/decisions/`;
+  changelog: `CHANGELOG.md` under the Part II amendment rule.
+- Re-run focused research when underlying specifications or dominant
+  operational practice materially change — the dated re-check register
+  lives in `research/README.md` (next scheduled: `OP-010` semi-annual,
+  2027-02-09).
 
 ### Phase 6: Streaming extension (post-1.0)
 
