@@ -1,15 +1,16 @@
 # REST API Design Standard
 
-**Status:** Phase 3 working draft — not approved. Gate D (approval for
-systematic review) has not run. Part I (§1–§12), Part II (the Decision
-Log), and Appendices A–G are drafted; Gate D is the next gate per
-[`PLAN.md`](PLAN.md).
+**Status:** **Gate D passed 2026-08-09** — the owner approved this draft
+(Parts I–III and [`conformance/spectral.yaml`](conformance/spectral.yaml))
+for Phase 4 systematic review per [`PLAN.md`](PLAN.md). Not yet a 1.0
+release; Gate E approves the release candidate after Phase 4.
 
 **Provenance model:** this document transcribes decisions ratified at Gate C
 and its addendum (recorded in [`research/decisions/`](research/decisions/));
-it does not make policy. Where a provision has no Gate C record — the
-document's own conformance apparatus — it is marked **Apparatus (Gate D)**
-and becomes binding only when Gate D approves this document.
+it does not make policy. Provisions with no Gate C record — the document's
+own conformance apparatus — are marked **Apparatus** and were ratified en
+bloc at Gate D (2026-08-09); the Part II apparatus register is their
+ratification record.
 
 ---
 
@@ -53,9 +54,13 @@ prevailing sense — resource-oriented HTTP — not Fielding's.
 implementation-language guide, or a general distributed-systems handbook.
 GraphQL, RPC protocols, event streaming, and messaging systems are
 considered only where a boundary or interoperability question with a
-resource-oriented HTTP API must be settled.
+resource-oriented HTTP API must be settled. Streaming responses — SSE,
+long-polling, and similar — are out of scope for this version by owner
+ruling at Gate D: they are a recorded feature goal, scheduled as a
+dedicated phase after this document reaches 1.0 (`PLAN.md` Phase 6).
 
-> Provenance: `PLAN.md` scope; Gate A.
+> Provenance: `PLAN.md` scope; Gate A · SSE deferral ruled by the owner
+> at Gate D (2026-08-09).
 
 ### 1.3 URI ownership — the BCP 190 scope reading
 
@@ -112,7 +117,7 @@ deprecation · 10 asynchronous work, bulk, webhooks · 11 rate limits,
 retries, observability · 12 client obligations. Reserving the numbering
 here keeps section-prefixed rule IDs stable while sections are drafted.
 
-> Provenance: Apparatus (Gate D) — rule-ID mapping policy delegated to
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — rule-ID mapping policy delegated to
 > Phase 3 drafting by `PLAN.md` and the gap review (item B.13).
 
 ### 1.6 Classification and evidence labels
@@ -156,7 +161,7 @@ states a tier scope. Later sections MAY scope individual rules by tier
 (for example, a rule that binds at `public` but relaxes to SHOULD at
 `internal`); absence of a tier annotation means uniform applicability.
 
-> Provenance: Apparatus (Gate D) — gap review item B.8, adapted from the
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8, adapted from the
 > CLI Design Standard's tier system.
 
 ### 1.8 Applicability switches
@@ -173,7 +178,7 @@ The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
 `multi-tenant` · `public-internet` · `handles-pii` · `third-party-clients` ·
 `file-upload`.
 
-> Provenance: Apparatus (Gate D) — gap review item B.8.
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8.
 
 ### 1.9 Deviations and the conformance note
 
@@ -203,7 +208,7 @@ N/A declarations:
 - <rule ID or switch> · why it cannot apply
 ```
 
-> Provenance: Apparatus (Gate D) — gap review item B.12 (no-silent-deviation
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.12 (no-silent-deviation
 > clause and conformance-note template, structure carried from the CLI
 > Design Standard).
 
@@ -343,7 +348,7 @@ The same concept MUST carry the same name wherever it appears — path,
 query parameter, body field, header — differing only by the casing rules
 of each surface (R2.4, R4.4).
 
-> Provenance: Apparatus (Gate D) — gap review items R2.2/R3.8 (noun naming,
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R2.2/R3.8 (noun naming,
 > same-concept-same-name parity), extending R1.8.
 
 **R2.4** Path segments MUST use kebab-case (`/sales-order-items`), pattern
@@ -393,14 +398,14 @@ operation. Filtering, sorting, pagination, field selection, and rehearsal
 (`dry_run`) MUST travel as query parameters, and an operation modifier
 MUST NOT be encoded as a path segment.
 
-> Provenance: Apparatus (Gate D) — gap review item R2.3, grounded in
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R2.3, grounded in
 > `HS-004` and the ratified filter grammar (§6).
 
 **R2.10** Personally identifiable information MUST NOT appear in any URI —
 path or query string. URIs land in access logs, browser history, referrer
 headers, and URL-keyed caches by default. Identify people by opaque IDs.
 
-> Provenance: Apparatus (Gate D) — gap review item R9.7, adjacent to
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R9.7, adjacent to
 > `OP-002` (which bans tokens in query strings).
 
 ### 2.4 Actions — operations that resist CRUD
@@ -656,7 +661,7 @@ parameter. A request whose `Accept` header excludes every representation
 the endpoint supports SHOULD receive `406 Not Acceptable` rather than a
 silently substituted type.
 
-> Provenance: Apparatus (Gate D) — gap review item R4.2
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R4.2
 > (content-negotiation defaults).
 
 **R4.11** Every response whose content was selected by a request header
@@ -848,13 +853,13 @@ whose entries each carry a JSON Pointer to the offending input location
 (`pointer`), a stable machine-readable `code`, and a human-readable
 `detail`.
 
-> Provenance: Apparatus (Gate D) — gap review item B.21 (Zalando/Belgif
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.21 (Zalando/Belgif
 > field-error shapes); extends R5.13.
 
 **R5.16** An API MUST publish a catalog of every problem `type`/`code`
 pair it can return.
 
-> Provenance: Apparatus (Gate D) — gap review item R7.12; the pair
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R7.12; the pair
 > stability it catalogs is ratified (R5.13.2).
 
 **R5.17** No response body may expose stack traces, query fragments,
@@ -1007,7 +1012,7 @@ R3.10/R3.11. This section tightens it for destructive operations:
    destructive operation MUST require an explicit filter or explicit
    item list.
 
-> Provenance: Apparatus (Gate D) — gap review item R8.1 (destructive
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R8.1 (destructive
 > guards); a `[POLICY]` tightening of the ratified `HS-015` SHOULD.
 
 ---
@@ -1120,7 +1125,7 @@ validated and restricted against internal address ranges.
 (R5.17 bans internal implementation detail; this rule bans sensitive
 caller data.)
 
-> Provenance: Apparatus (Gate D) — gap review item R5.6.
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item R5.6.
 
 ---
 
@@ -1181,7 +1186,7 @@ input required · tightening validation on existing inputs · changing
 defaults, including the default sort order · repurposing a status code ·
 removing or narrowing an authentication mechanism.
 
-> Provenance: Apparatus (Gate D) — gap review items R7.2/R9.3 (breaking
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R7.2/R9.3 (breaking
 > change taxonomy + frozen-surface enumeration), anchored in ratified
 > rules `AC-012`, A2.1, R5.13.2, and `OP-015`'s
 > compatible-evolution-first posture.
@@ -1234,7 +1239,7 @@ MUST state the expected polling cadence. Where an in-flight operation can
 be abandoned, cancellation is expressed as the `cancel` action (§1.10) on
 the operation resource.
 
-> Provenance: Apparatus (Gate D) — gap review items R7.4/R10.4
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review items R7.4/R10.4
 > (polling/cancellation guidance), riding `AC-019` and addendum A5.
 
 **R10.3** An API MAY accept `Prefer: respond-async` (R4.15) to request
@@ -1425,14 +1430,14 @@ non-idempotent request without an idempotency key (R3.9).
 **R12.2** Clients MUST honor `Retry-After` on `429` and `503` responses
 rather than retrying on their own schedule.
 
-> Provenance: Apparatus (Gate D) — client half of `OP-011`, named as new
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — client half of `OP-011`, named as new
 > §12 content by the gap review (item B.9).
 
 **R12.3** Clients MUST set explicit request timeouts, and MUST NOT
 disable TLS certificate verification in any environment that reaches a
 real API host.
 
-> Provenance: Apparatus (Gate D) — gap review item B.9 (client timeouts,
+> Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.9 (client timeouts,
 > TLS verification).
 
 ### 12.2 Tolerant reading
@@ -1442,7 +1447,7 @@ values (R4.9): ignore what you do not recognize, never fail on it. This
 is what makes additive evolution (R9.4) non-breaking in practice.
 
 > Provenance: `AC-012` (batch, `baseline-02` §7; client half) +
-> Apparatus (Gate D) for the unknown-field generalization · confidence
+> Apparatus — ratified at Gate D 2026-08-09 for the unknown-field generalization · confidence
 > moderate.
 
 **R12.5** Clients MUST treat cursors (R6.3) as opaque: never construct,
@@ -1503,7 +1508,7 @@ abbreviated:
 **B2** = `research/decisions/baseline-02-api-contracts.decision.md` ·
 **B3** = `research/decisions/baseline-03-operational-practice.decision.md`.
 
-**Amendment rule (Apparatus, Gate D).** This document is versioned with
+**Amendment rule (Apparatus — ratified at Gate D 2026-08-09).** This document is versioned with
 semantic versioning once approved: editorial changes bump patch; added
 rules, appendices, or relaxations bump minor; strengthened, removed, or
 re-meant rules bump major. A change to any rule is atomic across five
@@ -1606,11 +1611,14 @@ Appendix E worked example where it appears.
 | A4 · Dry-run | R1.9, R3.12 | B2 |
 | A5 · Action verbs | R2.11, R2.12, R2.13; §1.10 verb registry | B2 |
 
-### II.2 Apparatus register — provisions pending Gate D
+### II.2 Apparatus register — provisions ratified at Gate D
 
-Every provision marked **Apparatus (Gate D)** in Part I, in one place.
-These have no Gate C decision record; they become binding when Gate D
-approves this document. This register is the Gate D walk list.
+Every provision marked **Apparatus** in this document, in one place.
+These have no Gate C decision record; they were ratified en bloc at
+Gate D (2026-08-09) when the owner approved this draft, and this
+register is their ratification record. The final row — the
+path-parameter naming candidate — was raised during drafting, is not a
+provision, and was not ratified; it remains an open Phase 4 item.
 
 | Item | Where | Origin |
 | --- | --- | --- |
@@ -1776,8 +1784,8 @@ own maintenance rather than a conforming API.
 
 ## Appendix B — Exception process
 
-*Apparatus (Gate D). This appendix describes process; the normative
-anchor is R1.7 (no silent deviation).*
+*Apparatus, ratified at Gate D 2026-08-09. This appendix describes
+process; the normative anchor is R1.7 (no silent deviation).*
 
 An API that cannot meet a rule follows these steps, in order:
 

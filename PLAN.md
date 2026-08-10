@@ -180,7 +180,19 @@ drafting-plane remainders, mapped onto the outline above:
   conventions appendix; SSE/streaming posture (reaffirm the boundary in
   non-goals or open a decision item).
 
-**Gate D:** Approve the draft for systematic review.
+**Gate D — passed 2026-08-09.** The owner approved the draft (Parts
+I–III of `rest-api-standard.md` plus `conformance/spectral.yaml`) for
+Phase 4 systematic review. Rulings recorded at the gate:
+
+- The 18 apparatus provisions (Part II register) are **ratified en
+  bloc**; the register is their ratification record. The path-parameter
+  naming candidate raised during drafting was not ratified and stays
+  open for Phase 4.
+- **SDK/client configuration conventions stay excluded** — the
+  `CONSTRAINTS.md` boundary is upheld for 1.0; revisit after release.
+- **SSE/streaming is a named feature goal, deliberately sequenced after
+  this body of work completes** — added as Phase 6 below; the draft's
+  §1.2 non-goals state the deferral.
 
 ### Phase 4: Decision-focused review
 
@@ -207,6 +219,21 @@ undefined terms, and RFC-keyword consistency.
 - Maintain an explicit decision log and changelog.
 - Re-run focused research when underlying specifications or dominant operational
   practice materially change.
+
+### Phase 6: Streaming extension (post-1.0)
+
+Owner ruling at Gate D (2026-08-09): SSE and streaming responses are a
+**feature goal**, deliberately sequenced after the v1.0 body of research
+and publication completes. The original scope exclusion predates streaming
+becoming the default AI-API shape; this phase closes that gap without
+destabilizing 1.0. Scope when opened:
+
+- research the streaming posture (SSE, long-poll, streaming HTTP
+  responses) with the same evidence discipline as the baseline series;
+- ratify a decision through the standard's decision layer; and
+- extend the standard — a new section or an extension document — under
+  the Part II amendment rule (semantic versioning, atomic five-surface
+  updates).
 
 ## Planned artifacts
 
