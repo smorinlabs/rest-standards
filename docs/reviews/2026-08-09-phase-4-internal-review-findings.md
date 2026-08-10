@@ -67,6 +67,28 @@ different-model-family second lens) runs AFTER these fixes, before Gate E.
 21. Carried: path-parameter naming candidate (Part II register, open item) —
     decide snake_case rule or record deliberate silence.
 
+## Disposition (2026-08-09, `worktree-docs+phase-4-review`)
+
+Fixed in the fix-pass commit: MC-1 (R12.8 decoupled from the replay axis;
+firewall sentence added to R8.10's row), MC-2 (provider-controlled-domain
+constraint restored to R5.13.1), MC-3 (`Location` register row reframed to
+bind 201 without restricting RFC-sanctioned uses; E.7 unchanged), MC-4 (A5
+response shape added to R2.11 + checklist), MC-5 (R4.15's unratified MUST
+NOT demoted to rationale prose), MC-6 (R1.9 covers any `dry_run` value),
+MC-7 (Appendix C shows 404-default masking), MC-8/AM-6 (Retry-After row
+states MUST 429+503, SHOULD 202), MC-9 partial (R5.7 now references
+`archive`/`restore`), AM-3 (destructive operation defined in §1.11), AM-4
+(gap-review citations prefixed `CLI-`), AM-5 (R8.10 keywords), AM-7 (R2.5
+counting rule + boundary example), AM-8 (R3.10/R3.11 same-class entailment
+stated), AM-9 (R2.3 split checkable MUST / judgment SHOULD), AM-10
+(archive-vs-publish boundary stated), AM-11 (single-trust criterion),
+AM-12 (R6.3 exception documentation requirement), GA-1 (mirroring pattern
+explicitly permitted-not-required).
+
+To the owner walk: AM-1 (five switches gate no rule — prune vs tie), AM-2
+(`cancel` scope vs E.6's order usage), the path-parameter naming
+candidate, and optionally ratifying `Location`-on-202 as a SHOULD.
+
 ## Process after fixes
 
 - Re-run structural check suite (IDs, cross-refs, keywords, checklist count —
