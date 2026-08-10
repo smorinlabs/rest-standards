@@ -273,7 +273,7 @@ destabilizing 1.0. Scope when opened:
    binds it. §1.2's open deferral is replaced by a stated boundary.
 2. **Deliverable shape:** §13-in-document with the body held in a separate
    referenced document, for progressive disclosure. The reading recorded
-   here — **pending explicit owner confirmation before Step 3 drafts** — is
+   here — **confirmed by the owner 2026-08-10 as `P6-D0`** — is
    the detail split: a **compact normative §13** in
    `rest-api-standard.md` carrying the `R13.x` rules, paired with a
    separate **informative companion document** holding the explanatory
@@ -295,7 +295,7 @@ Step sequence and status:
 | 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
 | 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | **Done 2026-08-10** — 12 new rules (`R13.1`–`R13.11`, `R12.10`); standard at **139 rules, checklist 139/139, fixture 14/14** |
 | 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | **Done 2026-08-10** — three internal lenses (consistency, ambiguity, missing-and-conflicting) dispositioned; Tier A/B/C ruled by the owner; Codex second lens on the corrected text found a release-blocking §6 gap plus five factual corrections, all fixed; raw-source verification of every new normative citation; fixtures extended to 14/14 |
-| 5 | Release v1.1.0 | In progress — changelog written, release PR **#8** open; bot cycle and tag outstanding |
+| 5 | Release v1.1.0 | Release PR **#8** — changelog written, bot cycle worked (Copilot, Greptile, CodeRabbit). `v1.1.0` is tagged on this PR's merge commit, matching the `v1.0.0`/PR #7 pattern; the tag is applied at merge, so a reader of this branch before merge sees the intent and a reader after sees the fact |
 
 Drafting in Step 3 must also amend §1.5's "the `R<section>` prefix space is
 fixed at twelve normative sections" declaration, rewrite the §1.2 streaming
@@ -339,15 +339,15 @@ rule. Some items may prove to need no rule; that verdict is itself recorded.
 | `research/prompts/baseline-*.framing.md` | Prompt provenance and shaping record | Phase 0 | Done |
 | `research/prompts/baseline-*.prompt.md` | Prescriptive research tasks | Phase 0 | Done |
 | `research/prompts/survey-*.prompt.md` | Descriptive research tasks | Phase 1 | Done |
-| `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
-| `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
+| `research/reports/survey-*.report.*.md` | Descriptive evidence — ten runs in Phase 1; `survey-08` adds an eleventh in Phase 6 | Phase 1 | Done |
+| `research/reports/baseline-*.report.*.md` | Proposed normative baselines — 66 principles in Phase 1 (`HS-*`, `AC-*`, `OP-*`); `baseline-04` adds `ST-001`–`ST-020` in Phase 6, for 86 | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 (extended in Phase 6) | **Released 1.0.0 2026-08-10** (Gate E-approved; drafted and Gate D-approved 2026-08-09; Phase 4 review complete) — §1–§12, 127 rules. **Extended to 1.1.0 in Phase 6** with §13 streaming: `rest-api-standard.md` now carries **139 rules**, each with provenance, classification, and confidence, plus Part II Decision Log (provenance map + apparatus register), Appendices A–G, the Spectral ruleset (`conformance/spectral.yaml`, re-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 14/14), and the informative companion `streaming-profile.md` |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
 | `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Done 2026-08-10** — both leaves framed, prompted, and run |
 | `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | **Done 2026-08-10** — descriptive run 1,747 lines / 44 sources / 14 contested axes (carries a dated §3.0a correction: RFC 8895); prescriptive run 898 lines / 20 `ST-*` principles |
 | `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc; indexed in `research/README.md` |
-| §13 of `rest-api-standard.md` + `streaming-profile.md` | The v1.1.0 extension: compact `R13.x` rules plus the informative explanatory body | Phase 6 | **Done 2026-08-10** — `R13.1`–`R13.11` + `R12.10`; `R5.1`, `R5.12`, `R5.13` scoped; §1.2, §1.5, §1.8, §1.10 amended; Appendix A rows, Part II rows, and worked example E.11 landed atomically |
+| §13 of `rest-api-standard.md` + `streaming-profile.md` | The v1.1.0 extension: compact `R13.x` rules plus the informative explanatory body | Phase 6 | **Done 2026-08-10** — `R13.1`–`R13.11` + `R12.10`; **nine** existing rules scoped for streaming (`R5.1`, `R5.12`, `R5.13`, `R11.2`, `R11.5`, `R2.11`, `R6.1`, `R6.2`, `R6.4`); §1.2, §1.5, §1.8, §1.9, §1.10, §1.11 amended; Appendix A, C, D, E, and G plus Part II rows landed atomically. Released via PR **#8** |
 
 ## Definition of done for version 1.0
 

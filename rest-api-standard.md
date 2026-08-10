@@ -958,9 +958,11 @@ when the client requests it. **Exception (named carve-out):** errors
 emitted by infrastructure components outside application control —
 reverse proxies, CDNs, WAFs, rate limiters, load balancers terminating
 before application code — which MUST be documented as such.
-**Second exception (named carve-out):** an error raised after a streaming
-response's status was committed, which cannot be served as a response at all
-and is delivered in-band under R13.7 instead. That carve-out preserves
+**Second exception (named carve-out):** a **stream-ending** error raised
+after a streaming response's status was committed, which cannot be served as
+a response at all and is delivered in-band under R13.7 instead. A per-item
+failure inside a stream that continues is ordinary payload, not an error
+response, and this rule never reached it. That carve-out preserves
 everything this rule exists to guarantee — `type`, `title`, `code`, and the
 R5.16 catalog entry all still apply — and surrenders exactly two things, the
 media-type label and the advisory `status` member, both structurally
@@ -1920,8 +1922,12 @@ final outcome, so that a client can distinguish normal completion from a
 truncated connection. **A stream-ending `error` frame (R13.7) is a terminal
 frame** and satisfies this rule on its own; no further frame is required
 after it, and a client MUST NOT treat a stream ended that way as truncated.
-A trailing sentinel frame MAY follow the terminal frame, and clients MUST
-tolerate one. A stream that is unbounded by design — a watch, an event
+A trailing **sentinel** MAY follow the terminal frame, and clients MUST
+tolerate one. A sentinel is a bare end-of-stream marker carrying no type and
+no payload — the widely shipped `data: [DONE]` is the example — so it is
+transport filler rather than a frame, and R13.5's typing obligation does not
+reach it. An API MUST NOT carry outcome information in a sentinel; that is
+the terminal frame's job. A stream that is unbounded by design — a watch, an event
 tail — has no normal end; such an API MUST document that the stream is
 unbounded, and the terminal-frame obligation then applies to the
 server-initiated close case only.

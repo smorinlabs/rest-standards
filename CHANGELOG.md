@@ -104,8 +104,8 @@ registered for **2027-02-10**.
 
 Reviewed in four waves — three internal lenses (consistency, ambiguity,
 missing-and-conflicting) and a Codex second lens from a different model
-family on the corrected text — then released via PR #8, with `v1.1.0` tagged
-on its merge commit.
+family on the corrected text — then through the PR bot cycle. Released via
+PR #8; `v1.1.0` is tagged on that PR's merge commit.
 
 ## 1.0.0 — 2026-08-10
 

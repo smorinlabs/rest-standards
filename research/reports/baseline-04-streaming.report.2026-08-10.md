@@ -894,5 +894,31 @@ additional instances change no proposed principle.
 
 ---
 
+## Annotation — evidence chaining, 2026-08-10
+
+*Raised in the PR #8 review: the source-and-currency matrix cites vendor
+evidence by pointing at `survey-08` sections rather than repeating each
+vendor's URL, authority class, and access date, so a principle resting on
+vendor practice — `ST-009` is the clearest case — carries its metadata one
+hop away rather than inline.*
+
+Recorded rather than rewritten, because the chaining is deliberate and the
+metadata is not missing. This leaf's prompt asked for "evidence URLs **and**
+the `survey-08` register rows relied on," and the descriptive leaf is the
+designated home for vendor evidence: `survey-08`'s own standards-and-currency
+matrix and Examples Appendix carry the direct URL, authority class, and
+retrieval date for every vendor claim, which is exactly the two-series
+division of labour `research/CONSTRAINTS.md` sets up — `survey` documents the
+field, `baseline` argues from it.
+
+**What a reader should do:** to audit a vendor-grounded principle here, follow
+its cited `survey-08` §-reference and register row; the primary metadata is
+there. **What a future leaf should do differently:** repeat the URL and access
+date inline for any principle whose strength turns on a single vendor
+exemplar, so the audit needs no hop. `ST-009` is precisely that case — it
+rests on one shipped exemplar, a weakness the decision record already names.
+
+---
+
 *End of report. Proposals only — nothing here binds `rest-api-standard.md`
 until ratified in `research/decisions/baseline-04-streaming.decision.md`.*

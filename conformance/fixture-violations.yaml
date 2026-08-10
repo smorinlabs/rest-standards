@@ -63,7 +63,7 @@ paths:
     get:
       responses:
         "202":
-          description: a streaming 202 (should error R13.1 only) — Location is present so R10.9 stays quiet and this case isolates the R13.1 violation
+          description: a streaming 202 (should error R13.1 only) — Location is present and the body reuses the conforming operation schema, so R10.9 stays quiet in both its header and body clauses and this case isolates the R13.1 violation
           headers:
             Location:
               schema:
@@ -71,7 +71,7 @@ paths:
           content:
             text/event-stream:
               schema:
-                type: object
+                $ref: "#/components/schemas/operation"
   /v1/order-exports/{export_id}/events:
     get:
       responses:

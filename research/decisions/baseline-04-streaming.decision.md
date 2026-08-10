@@ -329,9 +329,14 @@ would materially strengthen it; this is recorded as the batch's weakest link.
 | --- | --- | --- |
 | `ST-013` | MAY | Newline-delimited JSON for record streams and bulk result sets, as `application/x-ndjson`, with its unregistered status disclosed and RFC 6648's discouragement of new `x-` names noted. `application/json-seq` (RFC 7464) where a registered media type is required, at the cost of no client ecosystem. |
 | `ST-014` | SHOULD | An SSE stream carries each frame's type in both the `event:` field and a payload `type` member. |
-| `ST-015` | SHOULD | Document the streaming contract in media-type terms, not as a `Transfer-Encoding: chunked` requirement — chunked coding exists only in HTTP/1.1. |
+| `ST-015` | SHOULD | Document the streaming contract in media-type terms, not as a `Transfer-Encoding: chunked` requirement — chunked coding exists only in HTTP/1.1. See the citation-precision note below. |
+| `ST-016` | SHOULD | Document whether keep-alive frames are emitted and in what form; a keep-alive frame carries no application state. **No interval is mandated** — none is citable. |
+| `ST-017` | SHOULD | Per-stream metadata travels in the stream body rather than in response headers, which keeps `R4.17`'s exposed-header list unchanged by Phase 6. |
+| `ST-018` | SHOULD | Browser clients consume streams with a `fetch`-based reader or a first-party relay holding the credential server-side. |
+| `ST-019` | SHOULD | Deployment guidance on intermediary buffering, compression, and idle timeouts. |
+| `ST-020` | MAY | Frame padding where frame sizes could reveal sensitive information to an on-path observer, with the behavior and any opt-out documented. |
 
-**Citation precision, 2026-08-10 (same-day, pre-release).** `ST-015`'s
+**Citation precision — `ST-015`, 2026-08-10 (same-day, pre-release).** The
 supporting citation was filed as RFC 9112 §7.1. Verified against raw RFC
 text: **§7.1 defines** chunked transfer coding, while **§6.1 scopes** it —
 "Transfer-Encoding was added in HTTP/1.1," and a server "MUST NOT send a
@@ -341,13 +346,13 @@ makes the header worse than unused over HTTP/2: it is connection-specific,
 and "Any message containing connection-specific header fields MUST be
 treated as malformed." The ratified guidance is unchanged and strengthened;
 the companion carries the corrected citations.
-| `ST-016` | SHOULD | Document whether keep-alive frames are emitted and in what form; a keep-alive frame carries no application state. **No interval is mandated** — none is citable. |
-| `ST-017` | SHOULD | Per-stream metadata travels in the stream body rather than in response headers, which keeps `R4.17`'s exposed-header list unchanged by Phase 6. |
-| `ST-018` | SHOULD | Browser clients consume streams with a `fetch`-based reader or a first-party relay holding the credential server-side. |
-| `ST-019` | SHOULD | Deployment guidance on intermediary buffering, compression, and idle timeouts. |
-| `ST-020` | MAY | Frame padding where frame sizes could reveal sensitive information to an on-path observer, with the behavior and any opt-out documented. |
 
 **`ST-018` records a capability consequence rather than creating a rule.**
+*(The factual premise below was corrected by the Codex second lens — see item
+5 of the dated annotation at the end of this record. `EventSource` can send
+ambient credentials, including TLS client certificates and HTTP-authentication
+entries, not cookies alone; what it cannot carry is a caller-supplied header.
+The guidance is unchanged.)*
 `EventSource` cannot set request headers, so it cannot send `Authorization`; its
 only native credential is a cookie. The field's one workaround is a
 query-parameter key, which ratified `R8.2` already forbids on BCP 240 grounds.

@@ -9,10 +9,13 @@ authoritative rationale, evidence, and declined options are in
 [`research/decisions/baseline-04-streaming.decision.md`](research/decisions/baseline-04-streaming.decision.md).
 
 This document exists so §13 can stay short. Most APIs do not stream; those
-that declare the `streaming` applicability switch off never need to read
-past §13's first paragraph. Everything an implementer actually needs — how
-the mechanisms differ, what the wire looks like, why the rules landed where
-they did, and what to do about proxies — is here.
+that declare the `streaming` applicability switch off can skip §13's
+streaming obligations entirely — **with one exception they cannot skip**:
+`R13.3`'s rejection guard binds every endpoint that does not implement
+streaming, whatever the switch says, so an API that streams nowhere still
+owes a `400` to any request carrying `stream`. Everything else an
+implementer needs — how the mechanisms differ, what the wire looks like, why
+the rules landed where they did, and what to do about proxies — is here.
 
 **Version 1.1.0**, added with §13. Evidence current as of **2026-08-10**.
 
@@ -67,7 +70,7 @@ SSE is defined in the WHATWG HTML Living Standard, not in an RFC. A stream is
 a sequence of records separated by blank lines; each record is a set of
 `field: value` lines.
 
-```
+```text
 event: export.chunk
 id: 42
 data: {"rows":500}
@@ -113,7 +116,9 @@ everything?" cannot be answered from connection close alone. A terminal typed
 frame carries the outcome. A bare sentinel such as `data: [DONE]` carries
 none and is not valid JSON, so a uniform `JSON.parse` over `data:` lines
 throws on it. Because at least one shipped API emits a terminal event **and
-then** a sentinel, R13.6 permits a trailing sentinel and requires clients to
+then** a sentinel, R13.6 permits a trailing sentinel — classified as
+transport filler rather than a frame, so R13.5's typing obligation does not
+reach it and it may carry no outcome — and requires clients to
 tolerate one — a rule demanding exactly one terminal frame would outlaw a
 working design for no benefit.
 
@@ -124,7 +129,7 @@ framing beyond the newline. NDJSON has no `event:` field, so `R13.5`'s frame
 type travels in the payload — and `R13.6`'s terminal record is what tells the
 client the set is complete rather than cut short:
 
-```
+```jsonl
 {"type":"order","id":"ord_1","total":4599}
 {"type":"order","id":"ord_2","total":1250}
 {"type":"result.completed","operation_state":"succeeded","rows_total":2,"next_cursor":null}
@@ -248,7 +253,7 @@ minutes at a time needs traffic to survive.
 SSE offers the cheapest mechanism: a comment line, which every parser
 discards.
 
-```
+```text
 : keep-alive
 
 ```
@@ -292,8 +297,12 @@ this standard, and must rely on ambient credentials if the deployment permits
 them.*
 
 If you go the ambient route, note what comes with it: cookie-backed sessions
-put you in CSRF territory, which §8 does not currently address — see §13's
-known-gaps register and Phase 7.
+put you in CSRF territory, and §8 does not address CSRF at all. That gap
+predates streaming and is **not** one of the five interactions §13.4
+registers — it is an unregistered gap in §8, surfaced here because streaming
+is what makes ambient credentials the browser-native path and so makes the
+gap load-bearing. Handle it in your own design; do not expect the standard
+to have covered it.
 
 A query-string token is not merely inelegant. It lands in server access logs,
 browser history, `Referer` headers on any outbound link, and any URL a user
