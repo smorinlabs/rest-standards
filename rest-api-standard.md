@@ -1,20 +1,26 @@
 # REST API Design Standard
 
-**Version 1.0.0 — released 2026-08-10.** Gates C, D, and E all passed
-(decision layer ratified 2026-08-09; draft approved 2026-08-09 and
-systematically reviewed through 2026-08-10; review history in
-[`docs/reviews/`](docs/reviews/)). This document, with
-[`conformance/spectral.yaml`](conformance/spectral.yaml) and
+**Version 1.1.0.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
+and E all passed (decision layer ratified 2026-08-09; draft approved
+2026-08-09 and systematically reviewed through 2026-08-10; review history in
+[`docs/reviews/`](docs/reviews/)). Version 1.1.0 adds **§13, streaming
+responses**, under the Part II amendment rule — a MINOR bump, since it adds
+rules and scopes three existing ones without strengthening or removing any.
+This document, with
+[`conformance/spectral.yaml`](conformance/spectral.yaml),
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml),
-is the released standard; changes from here follow the Part II
-amendment rule and are recorded in [`CHANGELOG.md`](CHANGELOG.md).
+and the informative companion
+[`streaming-profile.md`](streaming-profile.md), is the released standard;
+changes follow the Part II amendment rule and are recorded in
+[`CHANGELOG.md`](CHANGELOG.md).
 
-**Provenance model:** this document transcribes decisions ratified at Gate C
-and its addendum (recorded in [`research/decisions/`](research/decisions/));
-it does not make policy. Provisions with no Gate C record — the document's
-own conformance apparatus — are marked **Apparatus** and were ratified en
-bloc at Gate D (2026-08-09); the Part II apparatus register is their
-ratification record.
+**Provenance model:** this document transcribes decisions ratified in the
+decision layer (recorded in [`research/decisions/`](research/decisions/));
+it does not make policy. Gate C and its addendum ratified §1–§12; the
+Phase 6 streaming walk (2026-08-10) ratified §13. Provisions with no
+decision record — the document's own conformance apparatus — are marked
+**Apparatus** and were ratified en bloc at Gate D (2026-08-09), with Phase 6
+additions recorded in the same Part II apparatus register.
 
 ---
 
@@ -58,10 +64,20 @@ prevailing sense — resource-oriented HTTP — not Fielding's.
 implementation-language guide, or a general distributed-systems handbook.
 GraphQL, RPC protocols, event streaming, and messaging systems are
 considered only where a boundary or interoperability question with a
-resource-oriented HTTP API must be settled. Streaming responses — SSE,
-long-polling, and similar — are out of scope for this version by owner
-ruling at Gate D: they are a recorded feature goal, scheduled as a
-dedicated phase after this document reaches 1.0 (`PLAN.md` Phase 6).
+resource-oriented HTTP API must be settled. Streaming responses — Server-Sent
+Events, long-polling, and streaming HTTP bodies — were out of scope for
+version 1.0 and are governed by **§13** as of version 1.1.0.
+
+**WebSockets are a stated non-goal**, not a deferral. After a `101 Switching
+Protocols` upgrade the exchange is no longer HTTP request/response: there is
+no status code, no response media type, and no request to which a conditional
+header, a problem document, or an idempotency key could attach. None of this
+standard's apparatus reaches it. An API offering a WebSocket surface is
+neither conformant nor nonconformant on it; the surface is simply outside
+what this document specifies.
+
+> Provenance: Phase 6 scope ruling (2026-08-10),
+> `research/decisions/baseline-04-streaming.decision.md` · project policy.
 
 > Provenance: `PLAN.md` scope; Gate A · SSE deferral ruled by the owner
 > at Gate D (2026-08-09).
@@ -102,8 +118,10 @@ next unused sequence number in their section regardless of where they sit
 in the prose.
 
 **R1.3 — The research series are frozen.** The identifiers `HS-001`–`HS-020`,
-`AC-001`–`AC-021`, and `OP-001`–`OP-025` are **research-provenance keys**
-from the Gate C decision layer. They are cited in provenance lines
+`AC-001`–`AC-021`, `OP-001`–`OP-025`, and `ST-001`–`ST-020` are
+**research-provenance keys** from the decision layer — the first three from
+Gate C (2026-08-09), `ST-*` from the Phase 6 streaming walk (2026-08-10).
+They are cited in provenance lines
 throughout this document and remain the keys into
 [`research/decisions/`](research/decisions/). No new identifier is ever
 minted in those series: a drafted rule that had no proposed principle would
@@ -114,18 +132,26 @@ gap review's own rule numbers carry a `CLI-` prefix (for example
 `CLI-R4.3`); those identifiers belong to the CLI Design Standard's
 coverage table, never to this document's rule-ID namespace.
 
-**Section namespace.** The `R<section>` prefix space is fixed at twelve
+**Section namespace.** The `R<section>` prefix space is fixed at thirteen
 normative sections, in this order: 1 purpose/conformance · 2 resources and
 URI modeling · 3 methods, safety, idempotency, conditionals · 4 requests,
 representations, negotiation, schemas · 5 status codes and errors ·
 6 collections, pagination, filtering, sorting · 7 caching and concurrency ·
 8 authentication, authorization, security · 9 lifecycle, versioning,
 deprecation · 10 asynchronous work, bulk, webhooks · 11 rate limits,
-retries, observability · 12 client obligations. Reserving the numbering
-here keeps section-prefixed rule IDs stable while sections are drafted.
+retries, observability · 12 client obligations · 13 streaming responses.
+Reserving the numbering here keeps section-prefixed rule IDs stable while
+sections are drafted.
+
+The space was declared at twelve in version 1.0.0 and extended to thirteen
+in version 1.1.0 when §13 was added under the amendment rule. Extending it
+is a MINOR change: no existing identifier moves, and `R1.2`'s guarantee that
+an identifier is never renumbered or reused is unaffected.
 
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — rule-ID mapping policy delegated to
-> Phase 3 drafting by `PLAN.md` and the gap review (item B.13).
+> Phase 3 drafting by `PLAN.md` and the gap review (item B.13). Extended to
+> thirteen sections by the Phase 6 deliverable-shape ruling `P6-D0`
+> (2026-08-10), `research/decisions/baseline-04-streaming.decision.md`.
 
 ### 1.6 Classification and evidence labels
 
@@ -181,12 +207,19 @@ rules as not applicable — MUST carry a stated reason in the conformance
 note (the N/A-with-reason discipline): "N/A" with no reason is a deviation,
 not an exemption.
 
-The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations`.
-Every switch controls at least one rule (§10 names each scope); the
+The switch vocabulary: `webhooks` · `async-operations` · `bulk-operations` ·
+`streaming`. Every switch controls at least one rule, and each rule's home
+section names its scope (§10 for the first three, §13 for `streaming`); the
 vocabulary grows only when a new rule needs a switch, so a declaration
 never exists that waives nothing. Capability facts with no rule attached
 — tenancy model, PII handling, client audience — belong in the
 conformance note's free text, not here.
+
+**A switch never waives a guard.** A rule whose whole purpose is to define
+what an API without the capability must do is not scoped by that
+capability's switch — scoping it there would delete it for exactly the APIs
+it binds. Two such rules exist, and each says so in its own text: `R1.9`
+(the `dry_run` rejection guard) and `R13.3` (the `stream` rejection guard).
 
 > Provenance: Apparatus — ratified at Gate D 2026-08-09 — gap review item B.8.
 
@@ -260,6 +293,8 @@ ratification.)
 | `cursor` | Opaque pagination position | Request-side name for cursor pagination; cursors are opaque and non-constructable (`AC-013`) | Addendum A2.3, completing `AC-013`/`AC-014` `[POLICY]` |
 | `limit` | Requested page size | Request-side name; each collection documents its default and maximum (`OP-009`) | Addendum A2.3 `[POLICY]` |
 | `dry_run` | Rehearse a mutation without executing it | Support is MAY per endpoint, SHOULD for destructive and bulk operations; unsupported ⇒ `400` per R1.9; full output contract in R3.12 | Addendum A4 `[POLICY]` |
+| `stream` | Request incremental delivery of this response | Reserved as a request modifier in **either** carriage — query parameter or request-body member. It never selects the response media type (R13.2 puts that on `Accept`); an endpoint that does not stream and receives it ⇒ `400` per R13.3 | `P6-D1` (`ST-003`) `[POLICY]` |
+| `stream_position` | A stream's monotonically ordered position, for resumption | Request-side name when resuming; the same name carries the position on every frame. Distinct from `cursor`: a stream position has visible ordering, where a cursor is opaque and non-constructable (R12.5). Clients echo it and never compute one | `P6-D5` (`ST-010`) `[POLICY]` |
 | `<field>[gte]`, `<field>[gt]`, `<field>[lte]`, `<field>[lt]` | Range filters on collection lists | The only permitted bracketed query-parameter forms; AND-combined; base name obeys the `AC-007` grammar | Walked decision "Filter grammar" (`baseline-02` decisions) `[POLICY]` |
 
 #### Reserved headers
@@ -291,6 +326,7 @@ reserves or emits a new `X-` prefixed field name.
 | `application/problem+json` | Every API MUST be capable of returning every application-generated error in this shape (RFC 9457; infrastructure carve-out applies) | `AC-003` |
 | `application/merge-patch+json` | The MUST PATCH format (RFC 7396) | Addendum A1 |
 | `application/json-patch+json` | The bounded MAY PATCH format (RFC 6902), for resources needing value-null-distinct-from-absent, per-element array edits, or test-conditioned updates | Addendum A1 |
+| `text/event-stream` | Server-Sent Events framing; the default for incrementally generated content (R13.4). `[POLICY]` — **this media type has no IANA registration**: it is absent from the `text/*` subregistry and its per-type registry URL returns `404` (probed 2026-08-10). The WHATWG text carries a registration template that has never been submitted. It MUST NOT be described as a registered or standardized media type | `P6-D4a` (`ST-004`) |
 
 #### Reserved action verbs (path segments)
 
@@ -306,6 +342,19 @@ API-wide; kebab-case for multi-word verbs.
 | `approve` / `reject` | Review outcomes | Addendum A5 `[POLICY]` |
 | `publish` / `unpublish` | Consumer-visibility pair — controls whether an otherwise-existing resource is visible to external consumers | Addendum A5 `[POLICY]` |
 | `duplicate` | Copy; returns `201` + `Location` | Addendum A5 `[POLICY]` |
+
+#### Reserved stream frame types
+
+Frame-type names carry the same "same concept, same name" obligation as the
+categories above: a client — or generic tooling that never read the API's
+documentation — must be able to recognize these frames by name alone. An API
+that streams MUST use the registered name for the registered meaning, and
+MUST NOT give it another. The API's own frame-type vocabulary is otherwise
+its own (R13.5).
+
+| Frame type | Registered meaning | Provenance |
+| --- | --- | --- |
+| `error` | The frame carrying an error raised after the response status was committed. Its payload is a problem details object with `status` omitted, per R13.7 | `P6-D4b` (`ST-007`) `[POLICY]` |
 
 ### 1.11 Terminology
 
@@ -764,10 +813,22 @@ semantics.
 ### 5.1 Status-code discipline
 
 **R5.1** The status code MUST match the registered semantics of the
-outcome. A failed operation MUST NOT return 2xx.
+outcome **as that outcome is known when the status is generated**. A failed
+operation MUST NOT return 2xx.
+
+**Streaming scope.** In a streaming response the status is committed before
+the outcome exists, so a stream that begins successfully and later fails has
+already sent `200`. That is not a violation of this rule: the status was
+correct for the outcome known when it was generated. The failure is reported
+in-band under R13.7, and the full problem document — carrying `status` — is
+retrievable from the operation resource under R13.9 where one exists. This
+scope is stated here, rather than only in §13, because a reader of §5 alone
+would otherwise conclude that §13 contradicts this rule.
 
 > Provenance: `HS-010` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9205) · confidence high.
+> (RFC 9205) · confidence high. Streaming scope added in version 1.1.0 by
+> `P6-D3`, `research/decisions/baseline-04-streaming.decision.md` ·
+> project policy `[POLICY]` · confidence high.
 
 **R5.2** Unregistered status codes MUST NOT be defined or used.
 
@@ -859,7 +920,14 @@ application itself generates as `application/problem+json` (RFC 9457)
 when the client requests it. **Exception (named carve-out):** errors
 emitted by infrastructure components outside application control —
 reverse proxies, CDNs, WAFs, rate limiters, load balancers terminating
-before application code — which MUST be documented as such. Nothing in
+before application code — which MUST be documented as such.
+**Second exception (named carve-out):** an error raised after a streaming
+response's status was committed, which cannot be served as a response at all
+and is delivered in-band under R13.7 instead. That carve-out preserves the
+machine identity this rule exists to guarantee — `type`, `code`, and the
+R5.16 catalog entry all still apply — and surrenders only the media-type
+label and the advisory `status` member, both structurally unavailable once
+the status is on the wire. Nothing in
 this standard is premised on the IANA HTTP Problem Types registry. A
 provider MAY additionally serve the identical problem body under
 `application/json` when the client's `Accept` asks for it (the Cloudflare
@@ -873,8 +941,13 @@ is R12.7.
 > Track RFC · confidence moderate (re-argued: no credible alternative
 > exists).
 
-**R5.13** Every problem document MUST carry `type`, `title`, `status`,
-and a stable machine-readable `code` extension member, bound as follows:
+**R5.13** Every problem document **carried in an HTTP response** MUST carry
+`type`, `title`, `status`, and a stable machine-readable `code` extension
+member, bound as follows. (A problem object delivered in-band inside a
+stream frame carries the same members **except `status`**, which R13.7
+requires to be omitted; RFC 9457 §3.1 makes a `status` that disagrees with
+the actual response status a violation, and the actual status there is
+`200`. Every other binding below applies unchanged.)
 
 1. `type` is the normative identifier; `code` is its short form. `type`
    is a stable absolute `https` URI **under a domain the provider
@@ -1596,6 +1669,220 @@ unordered delivery (R10.5).
 > Provenance: `OP-022` (batch, `baseline-03` §7; consumer half) ·
 > evidence-backed default · confidence high.
 
+**R12.10** A client consuming a streaming response MUST treat a connection
+that closes without the documented terminal frame (R13.6) as **truncated**,
+and MUST NOT treat partial content as a complete result. It MUST ignore
+frame types it does not recognize (the streaming case of R12.4). It MUST
+NOT depend on keep-alive frames arriving on any schedule. It MUST NOT
+recover from truncation by replaying a non-idempotent request without an
+idempotency key (R12.1, R3.9).
+
+> Provenance: `ST-012` · `P6-D0` batch (Phase 6 walk, 2026-08-10),
+> `research/decisions/baseline-04-streaming.decision.md` · evidence-backed
+> default, with the replay clause `[POLICY]` · confidence high. Scoped by
+> the `streaming` switch, client side.
+
+---
+
+## 13. Streaming responses
+
+This section governs responses delivered incrementally over a single HTTP
+request: Server-Sent Events, long-polling, and streaming HTTP bodies. It is
+deliberately short. The reasoning behind these rules, the wire examples, the
+vendor evidence, and the deployment and client guidance live in the
+informative companion,
+[`streaming-profile.md`](streaming-profile.md); nothing there is normative,
+and where it restates a rule the rule governs.
+
+**WebSockets are outside this section and outside this standard** (§1.2).
+
+**Switch scope.** Rules R13.1, R13.2, and R13.4–R13.11 are scoped by the
+`streaming` applicability switch (§1.8), as is R12.10. **R13.3 is not** — it
+binds precisely those APIs that declare `streaming` off, and scoping it to
+the switch would delete it for the endpoints it exists to protect. R13.9
+binds only where `streaming` **and** `async-operations` are both on.
+
+### 13.1 Shape and negotiation
+
+**R13.1** A streaming response MUST be a `200 OK` whose `Content-Type` names
+a self-delimiting stream media type. `202 Accepted` MUST NOT be used for a
+streaming response — R10.1 binds `202` to an operation resource, and a
+streaming `202` forks that contract. A body of concatenated JSON documents
+MUST NOT be labeled `application/json`: a conforming JSON parser fed the
+whole body fails, and the label is therefore a false statement about the
+body.
+
+> Provenance: `ST-001` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default on the `200` and the declaration, `[POLICY]` on
+> the two prohibitions · confidence high.
+
+**R13.2** Where one endpoint serves both a streamed and a non-streamed
+representation, the choice MUST be made by content negotiation on `Accept`,
+and the response MUST carry `Vary: Accept` (R4.11). A query parameter MUST
+NOT select between them. An API MAY instead expose a distinct resource that
+streams unconditionally; that resource performs no selection, so R4.10 does
+not reach it.
+
+This is R4.10 applied to streaming: streaming changes the response media
+type, so choosing it is media-type selection, and R4.10 already forbids the
+query-parameter form and already supplies the `406 Not Acceptable` guard.
+
+> Provenance: `ST-002` · `P6-D1` (Phase 6 walk, 2026-08-10) · project
+> policy `[POLICY]`, derived from ratified R4.10/R4.11 · confidence
+> moderate — the composition is firm; departing from unanimous vendor
+> practice is a policy choice, recorded as one in the decision record.
+
+**R13.3** `stream` is a reserved request-modifier name (§1.10) meaning
+"deliver this response incrementally." An endpoint that does not implement
+streaming and receives `stream` — as a query parameter or a request-body
+member, with any value — MUST reject the request with `400`, and MUST NOT
+silently answer with a non-streamed response.
+
+**This rule is not scoped by the `streaming` switch.** It binds every
+endpoint that does not stream, which is exactly the set a switch-scoped rule
+would exempt. It is the streaming counterpart of R1.9's `dry_run` guard and
+exists for the identical hazard: silently ignoring an unimplemented request
+modifier leaves a client believing it received what it asked for.
+
+> Provenance: `ST-003` · `P6-D1` (Phase 6 walk, 2026-08-10) · project
+> policy `[POLICY]`, modeled on R1.9 · confidence high.
+
+**R13.4** Server-Sent Events framing, served as `text/event-stream`, SHOULD
+be the default for incrementally generated content. An API adopting it MUST
+document that the media type has no IANA registration, and MUST NOT describe
+it as a registered or standardized media type.
+
+The registration gap is disclosed rather than worked around: `text/event-stream`
+is absent from the IANA `text/*` subregistry and its per-type registry URL
+returns `404` (probed 2026-08-10). The specification that defines it is the
+WHATWG HTML Living Standard, not an RFC, and the W3C Recommendation that
+IETF documents cite for it has been marked obsolete. The one registered
+alternative, `application/json-seq` (RFC 7464), has no HTTP adoption among
+surveyed APIs and no browser parser — which is why this rule blesses the
+unregistered type while §1.10 records what it is.
+
+> Provenance: `ST-004` · `P6-D4a` (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default `[COMPARATIVE]` — explicitly **not** a protocol
+> requirement, since a living-standard section plus a missing registry row
+> cannot make one · confidence high on the practice, moderate on the
+> default; standing weakness recorded in the decision record.
+
+### 13.2 Frames, termination, and errors
+
+**R13.5** Every frame in a stream MUST carry a documented type identifying
+what the frame is, and the API MUST document its full frame-type vocabulary
+and state that the vocabulary may grow. Without a per-frame type a client
+must parse every payload to learn what it received, and can neither route,
+ignore, nor count frames. The growth statement is what makes R12.10's
+unknown-type tolerance dischargeable.
+
+> Provenance: `ST-005` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default · confidence high.
+
+**R13.6** A stream MUST end with a documented terminal frame carrying the
+final outcome, so that a client can distinguish normal completion from a
+truncated connection. A trailing sentinel frame MAY follow the terminal
+frame, and clients MUST tolerate one. A stream that is unbounded by design —
+a watch, an event tail — has no normal end; such an API MUST document that
+the stream is unbounded, and the terminal-frame obligation then applies to
+the server-initiated close case only.
+
+> Provenance: `ST-006` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default on the requirement, `[POLICY]` on preferring a
+> typed terminal frame over a bare sentinel · confidence high.
+
+**R13.7** An error raised after the response status is committed MUST be
+delivered in-band, in a frame of the reserved `error` type (§1.10), whose
+payload is a problem details object per RFC 9457 §3 carrying R5.13's
+required members **other than `status`** — `type`, `title`, and `code` —
+bound by R5.13's `type`/`code` template and listed in the R5.16 catalog,
+with `detail` and extension members permitted exactly as on any other
+problem document. The object MUST omit the `status` member. The frame MUST
+NOT be described as an `application/problem+json` response.
+
+Two protocol facts fix this shape. RFC 9457 §3.1: the `status` member "if
+present, is only advisory," and "Generators MUST use the same status code in
+the actual HTTP response" — so a `status` naming the error would contradict
+the `200` actually sent, while omission is permitted by the same sentence.
+RFC 9110 §6.5.1 excludes trailer fields as the alternative channel: "in most
+cases, the trailers are simply discarded," and a server "SHOULD NOT generate
+trailer fields that it believes are necessary for the user agent to
+receive." What remains is in-band delivery, which this rule specifies.
+
+This is the second named carve-out from R5.12.
+
+> Provenance: `ST-007` · `P6-D2` (Phase 6 walk, 2026-08-10) · project
+> policy `[POLICY]` on the carve-out and the omission; the two constraints
+> it obeys are protocol requirements (RFC 9457 §3.1, RFC 9110 §6.5.1) ·
+> confidence moderate-high — the constraints are certain, the resolution
+> among them is this standard's choice.
+
+**R13.8** An error detected **before** the response status is committed MUST
+follow R5.12 unchanged and be servable as an `application/problem+json`
+error response, whatever the request's streaming `Accept` or `stream`
+modifier asked for. A streaming request modifier governs the success
+representation only; nothing in this section licenses answering a request
+that never began succeeding with `200` plus an error frame.
+
+> Provenance: `ST-008` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> project policy `[POLICY]` — a scope clarification of R5.12 · confidence
+> high.
+
+### 13.3 Relationship to operation resources, and resumption
+
+**R13.9** Where one capability is exposed both as a stream and as an
+operation resource (R10.9), the two MUST be one capability with one
+identity: the stream MUST carry the operation identifier that R10.9 binds
+into the `202` body; both channels MUST report the same terminal state, with
+the operation resource authoritative; and the full problem document for a
+failed operation — carrying `status`, as `application/problem+json` — MUST
+be retrievable from the operation resource.
+
+This composes with R10.9 rather than forking it, and it is the out-of-band
+half of R13.7's carve-out: the operation resource is the one place where a
+status code is still available to be generated.
+
+> Provenance: `ST-009` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default on the unified shape, `[POLICY]` on making the
+> operation resource authoritative · confidence moderate-high — one shipped
+> exemplar against one contrary guideline, adjudicated in the decision
+> record. Binds only where `streaming` and `async-operations` are both on.
+
+**R13.10** Where a stream is a view over a retained artifact, the API SHOULD
+offer resumption. An API that offers resumption MUST carry a monotonically
+ordered `stream_position` (§1.10) on every frame, MUST document the
+retention window, and MUST reject a resumption request whose position lies
+outside that window with a defined error rather than silently restarting the
+stream.
+
+`stream_position` is deliberately not `cursor`: R12.5 requires a client to
+treat a cursor as opaque and never construct or modify one, while this rule
+requires a position with visible ordering. Two names keep both obligations
+literally true. A client echoes a `stream_position` and never computes one.
+
+> Provenance: `ST-010` · `P6-D5` (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default · confidence moderate — two implementations
+> across the surveyed field, resuming two different kinds of thing, which
+> is why this is SHOULD and conditional rather than MUST.
+
+### 13.4 Long-polling
+
+**R13.11** A long-polling endpoint MUST document its maximum hold duration.
+An expired hold MUST return `200` with a well-formed empty-result
+representation carrying the position or cursor for the next poll.
+`204 No Content` MUST NOT be used for an expired hold.
+
+The `204` prohibition has two independent grounds: R5.7 already binds `204`
+to a successful DELETE, and the WHATWG HTML Living Standard gives `204` a
+conflicting reserved meaning on this exact surface — a client "can be told
+to stop reconnecting using the HTTP 204 No Content response code" — so an
+API offering both mechanisms on one path would have the two meanings
+collide.
+
+> Provenance: `ST-011` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
+> evidence-backed default on the `200`-with-empty-result shape, `[POLICY]`
+> on the `204` prohibition · confidence high.
+
 ---
 
 ## Part II — Decision Log
@@ -1608,7 +1895,8 @@ key, and this log maps each key back to its rules. Record files are
 abbreviated:
 **B1** = `research/decisions/baseline-01-http-semantics.decision.md` ·
 **B2** = `research/decisions/baseline-02-api-contracts.decision.md` ·
-**B3** = `research/decisions/baseline-03-operational-practice.decision.md`.
+**B3** = `research/decisions/baseline-03-operational-practice.decision.md` ·
+**B4** = `research/decisions/baseline-04-streaming.decision.md` (Phase 6).
 
 **Amendment rule (Apparatus — ratified at Gate D 2026-08-09).** This document is versioned with
 semantic versioning once approved: editorial changes bump patch; added
@@ -1715,6 +2003,25 @@ Appendix E worked example where it appears.
 | Phase 4 owner walk (2026-08-10) | R4.16; R10.9; §1.8 switch pruning; §1.10 `cancel` scope | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
 | `baseline-02i` · Operation discovery on 202 (Phase 4) | R10.9 | B2 |
 | Gate E ruling (2026-08-10) | R4.17 | `docs/reviews/2026-08-09-phase-4-internal-review-findings.md` |
+| `ST-001` | R13.1 | B4 |
+| `ST-002` | R13.2 | B4 |
+| `ST-003` | R13.3; §1.10 `stream` | B4 |
+| `ST-004` | R13.4; §1.10 `text/event-stream` | B4 |
+| `ST-005` | R13.5 | B4 |
+| `ST-006` | R13.6 | B4 |
+| `ST-007` | R13.7; §1.10 `error` frame type; R5.12 second carve-out; R5.13 scoping | B4 |
+| `ST-008` | R13.8 | B4 |
+| `ST-009` | R13.9 | B4 |
+| `ST-010` | R13.10; §1.10 `stream_position` | B4 |
+| `ST-011` | R13.11 | B4 |
+| `ST-012` | R12.10 | B4 |
+| `ST-013`–`ST-020` | none — informative, `streaming-profile.md` | B4 |
+| `P6-D0` · Deliverable shape (Phase 6 walk) | §13 as a compact normative section; §1.5 namespace extended to thirteen | B4 |
+| `P6-D1` · Streaming negotiation (walked) | R13.2, R13.3 | B4 |
+| `P6-D2` · Post-commit stream errors (walked) | R13.7; R5.12, R5.13 (amended) | B4 |
+| `P6-D3` · `R5.1` streaming scope (walked) | R5.1 (amended) | B4 |
+| `P6-D4a`/`P6-D4b` · §1.10 additions (walked) | §1.10 media-type row; §1.10 stream frame types | B4 |
+| `P6-D5` · Resumption position name (walked) | R13.10; §1.10 `stream_position` | B4 |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
@@ -1749,6 +2056,10 @@ the Gate E approval.
 | Switch vocabulary pruned to the three rule-gating switches (was eight) | §1.8 (R1.6) | Phase 4 owner walk (2026-08-10) |
 | `202` operation-discovery rule | §10.1 (R10.9) | Research leaf `baseline-02i` + Phase 4 owner walk (2026-08-10) |
 | CORS header exposure | §4.3 (R4.17) | `baseline-02i` surfacing + Gate E ruling (2026-08-10) |
+| `streaming` applicability switch, and the rule that a switch never waives a guard | §1.8 (R1.6) | Phase 6 drafting, from the ratified applicability of `ST-003` (B4) |
+| Section namespace extended from twelve to thirteen | §1.5 (R1.2, R1.3) | Phase 6 deliverable-shape ruling `P6-D0` (B4) |
+| Fifth reserved-name category — stream frame types | §1.10 (R1.8) | Phase 6 ruling `P6-D4b` (B4) |
+| Informative companion document as a normative-section relief valve | §13 preamble; `streaming-profile.md` | Phase 6 deliverable-shape ruling `P6-D0` (B4) |
 
 ---
 
@@ -1892,6 +2203,18 @@ own maintenance rather than a conforming API.
 | R12.7 | Client error handling never assumes a problem document |
 | R12.8 | Consumers verify raw-body-first; window enforced; dedupe; constant-time compare; fail closed |
 | R12.9 | Consumers ack before processing; tolerate at-least-once, unordered delivery |
+| R12.10 | Stream clients treat a missing terminal frame as truncation; ignore unknown frame types; never depend on keep-alive timing; never replay non-idempotent requests without a key |
+| R13.1 | Streaming response is `200` with a self-delimiting stream media type; no `202` streaming; concatenated JSON never labeled `application/json` |
+| R13.2 | Streamed-versus-non-streamed chosen by `Accept` with `Vary: Accept`; never by a query parameter; or a distinct always-streaming resource |
+| R13.3 | `stream` on a non-streaming endpoint rejected with `400`, never silently ignored *(binds when the `streaming` switch is off)* |
+| R13.4 | SSE as `text/event-stream` the default for generated content; its lack of IANA registration documented and never described as registered |
+| R13.5 | Every frame carries a documented type; full frame-type vocabulary documented and stated as growable |
+| R13.6 | Documented terminal frame carrying the outcome; trailing sentinel tolerated; unbounded streams documented as unbounded |
+| R13.7 | Post-commit errors delivered in an `error` frame carrying a problem object with `status` omitted; never called an `application/problem+json` response |
+| R13.8 | Pre-commit errors follow R5.12 unchanged, whatever the request asked to stream |
+| R13.9 | Stream and operation resource share one identity and terminal state, operation resource authoritative; full problem document retrievable there |
+| R13.10 | Resumption offered where the stream views a retained artifact; `stream_position` on every frame; retention window documented; out-of-window resume fails with a defined error |
+| R13.11 | Long-poll maximum hold documented; expired hold returns `200` plus an empty result and next position; never `204` |
 
 ## Appendix B — Exception process
 
@@ -1932,8 +2255,10 @@ every response · strong `ETag` on updatable resources · `Location` on
 201.
 
 **Reserved names.** §1.10 is the register: `sort`, `fields`, `cursor`,
-`limit`, `dry_run` and the bracket range filters; `Idempotency-Key`,
-`request-id`, the webhook envelope headers, and the rest.
+`limit`, `dry_run`, `stream`, `stream_position` and the bracket range
+filters; `Idempotency-Key`, `request-id`, the webhook envelope headers;
+the reserved media types; the action verbs; and the `error` stream frame
+type.
 
 **Status quick map.**
 
@@ -1969,6 +2294,15 @@ plus `[gte]`/`[gt]`/`[lte]`/`[lt]`.
 **Webhooks.** Sign per topology (Standard Webhooks shared-secret;
 RFC 9421 + RFC 9530 cross-org); retry at least 72 h; dead-letter at
 least 30 d with redelivery.
+
+**Streaming.** `200` + a self-delimiting media type, never `202`;
+`Accept` selects it, never a query parameter; SSE as `text/event-stream`
+is the default and is unregistered — say so; typed frames with a
+documented terminal frame; errors after commit arrive in an `error` frame
+carrying a problem object with `status` omitted; errors before commit are
+ordinary problem responses; where an operation resource also exists, the
+two share one identity and the operation resource is authoritative.
+Details in [`streaming-profile.md`](streaming-profile.md).
 
 ## Appendix D — OpenAPI mapping
 
@@ -2006,9 +2340,9 @@ E.10, it is omitted from the excerpts below for brevity.
 ```markdown
 ## Conformance note — Bloom Orders API
 
-Standard: rest-api-standard v1.0.0
+Standard: rest-api-standard v1.1.0
 Tier: public
-Switches: webhooks=on, async-operations=on,
+Switches: webhooks=on, async-operations=on, streaming=on,
   bulk-operations=off (imports run through the async export/import
   operations; no synchronous bulk endpoint is offered)
 Context: single-tenant product; handles PII (delivery addresses);
@@ -2241,7 +2575,8 @@ representation (R10.1); the body `id` plus Bloom's documented
 and `Location` carries the same operation URI — the two are required to
 agree (R10.9); `Retry-After` paces the polling (R10.2); an abandonable
 run is stopped with `POST /v1/operations/op_000example/cancel` (R10.2,
-§1.10).
+§1.10). The same export is also reachable as a stream — E.11 shows that
+channel and the R13.9 obligation that binds the two together.
 
 ### E.8 A webhook delivery
 
@@ -2317,6 +2652,77 @@ Link: <https://developers.example.com/migrate-v2>; rel="deprecation"
 The reading: `Deprecation` is a structured-field date (RFC 9745);
 `Sunset` is an HTTP-date (RFC 8594) — deliberately different formats —
 and the window honors the 12-month floor (R9.7).
+
+### E.11 Streaming the export as it is produced
+
+Exercises R13.1, R13.2, R13.4–R13.7, R13.9, R13.10, R5.1, R12.10. This is
+the same export capability as E.7, reached through the streaming channel —
+the pair together is what R13.9 governs.
+
+The client asks for the streamed representation by content negotiation, not
+by a query parameter or a body flag (R13.2):
+
+```http
+GET /v1/order-exports/exp_000example/events HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <access-token>
+Accept: text/event-stream
+```
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Vary: Accept
+Cache-Control: private, no-store
+request-id: req_010example
+
+event: export.started
+data: {"operation_id":"op_000example","stream_position":1,"total_estimate":4820}
+
+event: export.chunk
+data: {"stream_position":2,"rows":500,"url":"https://files.example.com/exp_000example/part-1.csv"}
+
+event: export.completed
+data: {"stream_position":3,"status":"succeeded","rows_total":4820}
+```
+
+The failure case, on a stream that had already committed `200`:
+
+```http
+event: error
+data: {"type":"https://problems.example.com/export-source-unavailable",
+data:  "title":"The order source became unavailable mid-export",
+data:  "code":"export_source_unavailable",
+data:  "operation_id":"op_000example",
+data:  "stream_position":47}
+```
+
+The reading. The response is `200` with `text/event-stream`, an accurate
+self-delimiting media type, and it is not a `202` (R13.1, R13.4). `Accept`
+selected it and `Vary: Accept` records that (R13.2). Every frame carries a
+type from Bloom's documented vocabulary (R13.5), and `export.completed` is
+the terminal frame, so a connection that drops before it is truncation
+rather than a short result (R13.6, R12.10).
+
+The error frame is the second carve-out from R5.12 in action (R13.7): the
+payload is a problem object carrying `type`, `title`, and `code` bound by
+R5.13's template and listed in Bloom's R5.16 catalog — and it **omits
+`status`**, because the response status is `200` and RFC 9457 §3.1 forbids
+an advisory `status` that disagrees with it. The frame is not an
+`application/problem+json` response and is never described as one. R5.1 is
+satisfied, not violated: the `200` was correct for the outcome known when it
+was generated.
+
+`operation_id` is the identifier R10.9 binds into E.7's `202` body, so the
+stream and the operation resource are one capability with one identity
+(R13.9). `GET /v1/operations/op_000example` remains authoritative for the
+terminal state and serves the full problem document — with `status` — as a
+real `application/problem+json` response.
+
+`stream_position` increases monotonically and is what a client echoes to
+resume (R13.10); Bloom documents a 30-minute retention window, and a resume
+outside it fails with a defined error rather than silently restarting. It is
+not a `cursor`, and R12.5's opacity obligation does not reach it.
 
 ## Appendix F — Framework and gateway mapping
 

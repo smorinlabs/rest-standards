@@ -293,7 +293,7 @@ Step sequence and status:
 | 1a | Descriptive leaf `survey-08-streaming` | **Done 2026-08-10** — 1,747-line report, 44 sources, 14 contested axes; arrival check passed; RFC 8895 correction annotated at §3.0a |
 | 1b | Prescriptive leaf `baseline-04-streaming` | **Done 2026-08-10** — 898-line report, 20 proposed `ST-*` principles, six conflicts with ratified 1.0 rules raised |
 | 2 | Ratification walk (Gate C pattern) → `research/decisions/baseline-04-streaming.decision.md` | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc |
-| 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | Pending |
+| 3 | Draft §13 + companion, atomic across the amendment rule's five surfaces | **Done 2026-08-10** — 12 new rules (`R13.1`–`R13.11`, `R12.10`); standard at **139 rules, checklist 139/139, fixture 12/12** |
 | 4 | Review waves (internal lenses → Codex second lens → raw-source verification → structural suite) | Pending |
 | 5 | Release v1.1.0 | Pending |
 
@@ -316,12 +316,12 @@ reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
 | `research/reports/survey-*.report.*.md` | Descriptive evidence, ten runs | Phase 1 | Done |
 | `research/reports/baseline-*.report.*.md` | Proposed normative baselines, 66 principles | Phase 1 | Done |
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
-| Normative standard | Stable rules and rationale | Phase 3 | **Gate E-approved version 1.0 candidate (2026-08-10)** — drafted and Gate D-approved 2026-08-09; Phase 4 review complete. `rest-api-standard.md`: §1–§12 (127 rules, each with provenance, classification, confidence), Part II Decision Log (provenance map + apparatus register), Appendices A–G, Spectral ruleset (`conformance/spectral.yaml`, execution-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12) |
+| Normative standard | Stable rules and rationale | Phase 3 (extended in Phase 6) | **Released 1.0.0 2026-08-10** (Gate E-approved; drafted and Gate D-approved 2026-08-09; Phase 4 review complete) — §1–§12, 127 rules. **Extended to 1.1.0 in Phase 6** with §13 streaming: `rest-api-standard.md` now carries **139 rules**, each with provenance, classification, and confidence, plus Part II Decision Log (provenance map + apparatus register), Appendices A–G, the Spectral ruleset (`conformance/spectral.yaml`, re-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 12/12), and the informative companion `streaming-profile.md` |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
-| `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Written 2026-08-10.** `survey-08` dispatched; `baseline-04` held until its report lands |
-| `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | Pending |
-| `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | Pending |
-| §13 of `rest-api-standard.md` + informative streaming companion | The v1.1.0 extension: compact `R13.x` rules plus the explanatory body | Phase 6 | Pending |
+| `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Done 2026-08-10** — both leaves framed, prompted, and run |
+| `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | **Done 2026-08-10** — descriptive run 1,747 lines / 44 sources / 14 contested axes (carries a dated §3.0a correction: RFC 8895); prescriptive run 898 lines / 20 `ST-*` principles |
+| `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc; indexed in `research/README.md` |
+| §13 of `rest-api-standard.md` + `streaming-profile.md` | The v1.1.0 extension: compact `R13.x` rules plus the informative explanatory body | Phase 6 | **Done 2026-08-10** — `R13.1`–`R13.11` + `R12.10`; `R5.1`, `R5.12`, `R5.13` scoped; §1.2, §1.5, §1.8, §1.10 amended; Appendix A rows, Part II rows, and worked example E.11 landed atomically |
 
 ## Definition of done for version 1.0
 
