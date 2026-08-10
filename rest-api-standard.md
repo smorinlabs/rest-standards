@@ -1814,7 +1814,7 @@ own maintenance rather than a conforming API.
 | R5.17 | No internal implementation detail in any response body |
 | R6.1 | Collection responses use the items-plus-continuation envelope |
 | R6.2 | Empty collections return 200 with an empty array |
-| R6.3 | Cursor pagination (SHOULD; documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
+| R6.3 | Cursor pagination (recommendation-strength, with documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
 | R6.4 | No `Link` headers for pagination |
 | R6.5 | `cursor` and `limit` names; default and maximum documented |
 | R6.6 | Total stable default order documented; `id` tiebreak |
