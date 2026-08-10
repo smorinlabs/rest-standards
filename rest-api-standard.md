@@ -392,8 +392,10 @@ form (308 preserves method and body, per R5.5).
 across changes to its mutable attributes. **Exception:** deliberately
 versioned or dated resources.
 
-> Provenance: `HS-004` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §3.1; BCP 190) · confidence high.
+> Provenance: `HS-004` (batch, `baseline-01` §7) · evidence-backed
+> default, protocol-grounded (RFC 9110 §3.1 resource identity; BCP 190) —
+> no RFC mandates identity stability; the MUST is this standard's ·
+> confidence high.
 
 **R2.8** This standard's URI rules are construction rules applied within
 the adopting organization's own URI space (§1.3). Neither this standard
@@ -559,8 +561,9 @@ gate the same resource class. **Exception:** single-writer resources;
 append-only collections.
 
 > Provenance: `HS-015` (batch, `baseline-01` §7) + addendum A3 drafting
-> row (428) · protocol requirement (RFC 9110 §13.1.1; RFC 6585) ·
-> confidence high.
+> row (428) · protocol-grounded machinery (RFC 9110 §13.1.1; RFC 6585 §3
+> defines 428); requiring the precondition is an evidence-backed
+> default · confidence high.
 
 ### 3.6 Dry-run rehearsal
 
@@ -684,8 +687,9 @@ silently substituted type.
 MUST send `Vary` listing each header that influenced selection.
 **Exception:** responses with no negotiation.
 
-> Provenance: `HS-018` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §12.5.5) · confidence high.
+> Provenance: `HS-018` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9110 §12.5.5, where `Vary` on cacheable responses is a SHOULD);
+> the unconditional MUST is a `[POLICY]` tightening · confidence high.
 
 ### 4.4 Extension hygiene
 
@@ -741,15 +745,17 @@ invalid but well-formed requests, `409 Conflict` for conflicts with
 current resource state; `400 Bad Request` remains correct for malformed
 syntax.
 
-> Provenance: `HS-011` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §15.5.21) · confidence high.
+> Provenance: `HS-011` (batch, `baseline-01` §7) · evidence-backed
+> default over protocol-defined codes (RFC 9110 §15.5.21 defines 422;
+> the usage rule is this standard's) · confidence high.
 
 **R5.4** `410 Gone` SHOULD NOT be returned unless permanence is actually
 known and recorded. **Exception:** tombstoned resources with retained
 deletion records.
 
-> Provenance: `HS-012` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9110 §15.5.11) · confidence high.
+> Provenance: `HS-012` (batch, `baseline-01` §7) · evidence-backed
+> default grounded in RFC 9110 §15.5.11's permanence semantics ·
+> confidence high.
 
 **R5.5** Where method and body must survive a redirect, `307` or `308`
 MUST be used; `301`/`302` have a documented history of rewriting the
@@ -873,7 +879,8 @@ permitted deviations from RFC 9457's defaults, made in writing here.
 **R5.14** RFC 7807 MUST NOT be cited — it is obsoleted by RFC 9457.
 **Exception:** historical notes explicitly labeled as such.
 
-> Provenance: `AC-005` (batch, `baseline-02` §7) · protocol requirement ·
+> Provenance: `AC-005` (batch, `baseline-02` §7) · the obsoletion is
+> protocol fact; the citation ban is project policy `[POLICY]` ·
 > confidence high.
 
 **R5.15** A validation failure covering one or more fields SHOULD carry a
@@ -915,7 +922,9 @@ metadata can be added without a breaking change.
 never `404 Not Found`.
 
 > Provenance: addendum A3 drafting row (`baseline-01` decisions) ·
-> protocol requirement · confidence high.
+> evidence-backed default — the registered semantics of 200 and 404
+> decide it; no RFC states the collection-specific rule · confidence
+> high.
 
 ### 6.2 Pagination
 
@@ -1005,16 +1014,18 @@ means an unlabeled response may still be cached by intermediaries, and
 the ratified posture names `Cache-Control` as the vehicle (an `Expires`
 header alone does not satisfy this rule).
 
-> Provenance: `HS-016` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9111 §4.2.2) · confidence high.
+> Provenance: `HS-016` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9111 §4.2.2 permits heuristic caching — the hazard); the
+> always-emit MUST is a `[POLICY]` tightening per the walked caching
+> decision · confidence high.
 
 **R7.2** Responses carrying user-specific or authenticated data MUST be
 marked `private` or `no-store` — a shared cache may otherwise serve one
 user's data to another. **Exception:** genuinely public responses.
 
-> Provenance: `HS-017` (batch, `baseline-01` §7) · protocol requirement
-> (RFC 9111 §3, §5.2.2.7 — a cross-user data-leak class) · confidence
-> high.
+> Provenance: `HS-017` (batch, `baseline-01` §7) · protocol-grounded
+> (RFC 9111 §3, §5.2.2.7 — the cross-user leak class binds caches); the
+> origin-side marking MUST is a `[POLICY]` tightening · confidence high.
 
 ### 7.2 Caching posture
 
@@ -2226,7 +2237,9 @@ restating a moving wire format.
 Exercises R9.5, R9.6, R9.7.
 
 A v1 response after the v2 launch (deprecation announced 2026-09-01,
-sunset one year later):
+sunset one year later; only the deprecation-relevant headers are
+excerpted — the full response also carries the always-on headers of
+R7.1 and R11.7):
 
 ```http
 Deprecation: @1788220800

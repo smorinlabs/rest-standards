@@ -199,9 +199,11 @@ Phase 4 systematic review. Rulings recorded at the gate:
 **In progress 2026-08-09.** The internal three-agent pass (consistency /
 ambiguity / domain-gap) is complete — 22 findings, recorded in
 [`docs/reviews/2026-08-09-phase-4-internal-review-findings.md`](docs/reviews/2026-08-09-phase-4-internal-review-findings.md);
-fixes are underway on the Phase 4 branch. Remaining before Gate E: the
-owner walk for decision-touching items, the Codex adversarial second lens
-on the corrected text, and the closing structural checks.
+fixes landed on the Phase 4 branch. The Codex second lens ran 2026-08-10
+against the corrected text (10 findings, all dispositioned — same review
+doc), followed by a raw-RFC classification sweep of every
+protocol-requirement label. Remaining before Gate E: the owner walk for
+the four decision-touching items and the closing structural pass.
 
 Run the recovered `cli-standards` review pattern:
 

@@ -99,7 +99,14 @@ The different-model-family adversarial pass returned 10 findings (8 major,
    make each optional): provenance lines relabeled "protocol-grounded +
    `[POLICY]` tightening"; dated annotations added to the A3 entry
    (`baseline-01` decisions) and the OP batch entry (`baseline-03`
-   decisions). Rule strengths unchanged.
+   decisions). Rule strengths unchanged. **Follow-up sweep
+   (2026-08-10):** every remaining protocol-requirement label was
+   verified against raw RFC text (9110/9111/6585/9745 fetched and
+   grepped); eight more relabeled — R2.7, R3.11, R4.11, R5.3, R5.4,
+   R5.14, R6.2, and R7.1/R7.2 — with a matching annotation on the HS
+   batch entry. The labels that survive the sweep are genuinely
+   RFC-mandated (405+`Allow`, 401/403 semantics, BCP 190/BCP 195/
+   BCP 240 MUSTs, RFC 9205 rules).
 2. **E.7 export POST lacked `Idempotency-Key`:** fixed as an example
    improvement — technically R3.9 binds the server to *accept* a key, not
    the client to send one, so this was not a conformance violation; the
@@ -130,7 +137,8 @@ The different-model-family adversarial pass returned 10 findings (8 major,
 - Re-run structural check suite (IDs, cross-refs, keywords, checklist count —
   checklist rows must track any rule-text changes; Part II rows likewise;
   worked example per amendment rule's five surfaces).
-- Codex adversarial pass (different model family) on the corrected text.
+- Codex adversarial pass (different model family) on the corrected
+  text — **done 2026-08-10**, dispositions above.
 - Owner walk for any item that changes a ratified decision's meaning (MC-1,
   MC-2 restorations are fidelity fixes, not decision changes; AM-1 switch
   pruning and cancel-scope broadening are owner calls).

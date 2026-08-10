@@ -252,6 +252,16 @@ zero). Nothing in the twenty conflicts with any walked decision.
 
 **Evidence:** `baseline-01` §7 (the principles table, per-row citations).
 
+> **Annotation (2026-08-10, Phase 4 classification sweep):** the batch
+> note "predominantly protocol requirements" is refined per raw-RFC
+> verification. `HS-004` (URI stability), `HS-011`/`HS-012` (status-code
+> usage guidance), and `HS-015` (requiring `If-Match`) are
+> evidence-backed defaults grounded in protocol-defined machinery, not
+> protocol law; `HS-016`/`HS-017` (explicit cache marking) and `HS-018`
+> (`Vary`, a SHOULD in RFC 9110 §12.5.5) are `[POLICY]` tightenings of
+> protocol-grounded rules. No ratified strength changes; the drafted
+> standard's provenance lines now label these accordingly.
+
 ---
 
 ## Addendum A3 — Status-code contested rows (+ drafting rows en bloc)
