@@ -7,12 +7,35 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 1.1.2 — 2026-08-10
+
+Editorial. No rule text, strength, or obligation changes; 139 rules,
+checklist 139/139, fixtures 14/14.
+
+Two review findings that arrived on PR #9 after it merged, fixed here rather
+than left on `main`:
+
+- The 1.1.1 entry's lead-in read "Phase 7 renumbered to Phase 8", which
+  became ambiguous the moment Phase 7 came to mean the skill-apparatus
+  phase — a reader could take it as saying *that* phase was renumbered. It
+  now names the streaming deferred-work phase explicitly and says the skill
+  phase is unaffected.
+- A missing preposition in the Part II map row for the Tier B deferral
+  ("renumbered v1.1.1" → "renumbered in v1.1.1").
+
+*Process note:* PR #9 was merged on CodeRabbit's green check before Copilot
+had posted, and Copilot then found both items. The lesson is recorded rather
+than the finding alone — a clean check from one reviewer is not the same as
+the review wave having settled.
+
 ## 1.1.1 — 2026-08-10
 
 Editorial. No rule text, strength, or obligation changes; the standard stands
 at 139 rules, checklist 139/139, fixtures 14/14.
 
-**Phase 7 renumbered to Phase 8.** Version 1.1.0 opened a phase for
+**The streaming deferred-work phase is renumbered from 7 to 8.** Phase 7 now
+means the skill-apparatus phase, which is a different body of work and is
+unaffected by this release. Version 1.1.0 opened a phase for
 streaming's five unresolved interactions and numbered it 7. That number was
 already claimed: a skill-apparatus phase had been declared as Phase 7
 twenty-nine minutes earlier, on a branch that had not yet merged and was not
