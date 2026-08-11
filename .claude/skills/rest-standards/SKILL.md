@@ -101,8 +101,11 @@ never an inferred pass.
 3. Execute the mode's reference procedure.
 4. Cite rule IDs (`R#.#`) on every finding and answer, with MUST/SHOULD/MAY
    severity — MUST violation = blocker, SHOULD deviation = fix or waiver,
-   MAY = suggestion. Never cite `HS-*`/`AC-*`/`OP-*`: they are frozen research
-   provenance (R1.3), not rules.
+   MAY = suggestion. **Only `R#.#` is a rule.** Every other identifier series
+   in the document is frozen research provenance (R1.3) and is never citable
+   as a requirement; R1.3 names the series live, and amendments add more.
+   Even an ID shaped like a rule can belong elsewhere — R1.3 assigns
+   `CLI-`-prefixed IDs to the CLI Design Standard, not to this one.
 5. Deviations that stay: record in the target repo's conformance note,
    rendered from the template in §1.9 read live. No `{{VARS}}` may survive.
 6. **Feed back upstream.** A deviation that seems *right* and generalizable is
@@ -119,7 +122,7 @@ never an inferred pass.
 | "Internal API — the standard is overkill" | §1.7 tiers name an audience, not a depth. Every rule applies at every tier. |
 | "I remember what the standard says" | The rule set is larger than memory holds and grows by Part II amendment. Read the section. |
 | "`X-Correlation-Id` is close enough" | §1.10 reserves `request-id`; R1.8 makes the reserved name the contract, and RFC 6648 rules out new `X-` names. |
-| "`AC-016` requires idempotency keys" | `AC-*` is research provenance (R1.3). Cite the `R#.#` rule. |
+| "`AC-016` requires idempotency keys" | Not an `R#.#`, so not a rule — it is research provenance (R1.3). Find and cite the rule. |
 | "I can audit from the OpenAPI document alone" | The contract plane cannot reach runtime behavior. Probe (gated) or mark those rules unverified. |
 | "This deviation is fine, moving on" | Fine → conformance-note entry. Generalizable → Part II amendment. Never just "moving on". |
 

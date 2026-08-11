@@ -41,7 +41,9 @@ Common in otherwise-clean designs — check each explicitly:
   over an unordered set silently skips and duplicates rows.
 - Partial bulk outcomes: confirm the status code against §10 rather than
   assuming `207`.
-- `HS-*`/`AC-*`/`OP-*` cited as if they were rules (R1.3).
+- An identifier that is not an `R#.#` cited as if it were a rule. Every other
+  series in the document is frozen research provenance (R1.3), which names
+  them live; a `CLI-` prefix belongs to the CLI Design Standard.
 - `dry_run` accepted on an endpoint that does not implement it (R1.9) — the
   guard is standard-wide, not per-endpoint-optional.
 
