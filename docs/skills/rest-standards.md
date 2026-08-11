@@ -26,17 +26,21 @@ standard say about \<status codes / headers / pagination\>"
 
 ## The runtime plane is gated
 
-Appendix G probes hit a real deployment, and three of them are destructive
+Appendix G probes hit a real deployment, and some of them are destructive
 exactly when the API fails the check — an unguarded `DELETE` succeeds, an
 "unimplemented" method turns out to be implemented, a `dry_run` parameter
-executes for real. So: the default is **no HTTP requests at all**; the user must
+executes for real. Those are examples, not the list: the skill reads Appendix G
+live and classifies every row before running any of it, because an amendment
+can add probes. So: the default is **no HTTP requests at all**; the user must
 ask, then supply a base URL, an explicit statement that the deployment is
 non-production, and which resources are disposable; read-only probes — those
-that return on their own in bounded time — run first; mutating **and
+that neither change state nor degrade service for other clients **and** return
+on their own in bounded time — run first; mutating **and
 disruptive** probes need a second confirmation naming the fixture;
 **unbounded** probes — a stream consumed, a long poll held, a resumption — need
 that confirmation plus an agreed wall-clock and frame/byte bound, and their
-handed-off `curl` carries `--max-time` and `-N`; nothing runs
+handed-off `curl` enforces both inline (`--max-time` and `--max-filesize`,
+plus `-N`); nothing runs
 against production or against an API the user does not own. Anything not run is
 reported unverified with the exact `curl` for the user to run by hand. Reviewing
 a third party's published contract needs no gate — that is the contract plane.

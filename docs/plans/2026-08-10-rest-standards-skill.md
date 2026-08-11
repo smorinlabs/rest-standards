@@ -1,5 +1,23 @@
 # `rest-standards` Skill Implementation Plan
 
+> **Historical record — executed, then superseded in two places. Do not
+> re-execute it as written.** This plan was authored against
+> `rest-api-standard.md` **v1.0.0** and its verification steps carry that
+> version's shape: 127 rule IDs, 13 Appendix G probes, no §13 streaming
+> section, and no `unbounded` probe tier. The standard moved to **v1.1.2**
+> mid-phase, so those figures are stale by design and are preserved as the
+> record of how the phase was carried out — they are not current expectations,
+> and an executor who enforced them today would reject valid results. The
+> acceptance record for what was actually built and accepted is
+> [`docs/reviews/2026-08-10-phase-7-skill-self-test.md`](../reviews/2026-08-10-phase-7-skill-self-test.md)
+> (re-run at v1.1.2) plus `PLAN.md`'s Gate F entry. Separately, **Task 7's
+> placement steps are superseded**: `PLAN.md` rules that
+> `~/.agents/skills/rest-standards` placement follows the merge and the
+> fast-forward pull, because a symlink created on this branch dangles when the
+> worktree is removed — Gate F ran against the worktree, with no placement
+> link. Live values always come from the standard itself; the extraction
+> commands in the steps below remain the way to derive them.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Author the `rest-standards` agent skill — five files that apply

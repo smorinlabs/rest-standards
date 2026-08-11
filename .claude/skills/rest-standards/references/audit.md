@@ -102,8 +102,11 @@ long as the API chooses. The gate is not optional.
      unverified with the exact `curl` (step 6), never run longer.
 
    When a row's tier is genuinely unclear, treat it as mutating — **and
-   additionally as unbounded whenever it is not clear that the request returns
-   on its own in bounded time**. Two readings
+   additionally as disruptive unless it is established that the request does
+   not degrade service for other clients, and as unbounded whenever it is not
+   clear that the request returns on its own in bounded time**. An unclear row
+   is unclear in every direction at once, so each precaution it cannot be shown
+   to escape applies. Two readings
    settle most cases. The Expected column: an expected rejection still
    executes for real wherever the guard is the thing that is broken. And the
    Request column's verb — a row that says to **stream, consume, hold, or
@@ -122,9 +125,15 @@ long as the API chooses. The gate is not optional.
    the retreat path when a probe turns out to be riskier than it looked.
    The tier's precautions travel with the command, because a handed-off
    probe is run without the gate that would otherwise have applied them:
-   an unbounded probe's `curl` carries its wall-clock bound inline
-   (`--max-time <seconds>`, plus `-N` so the bound is not defeated by
-   buffering) and states the cost ceiling; a mutating or disruptive
+   an unbounded probe's `curl` carries **both** agreed bounds inline — the
+   wall-clock limit (`--max-time <seconds>`) **and** the cost ceiling
+   (`--max-filesize <bytes>`) — plus `-N` so neither is defeated by buffering.
+   A bound the command does not enforce is not a bound: `--max-time` alone
+   caps duration and leaves the transfer size open. `curl` counts bytes, not
+   frames, so `--max-filesize` is the enforceable form of step 3's
+   frame-or-byte ceiling; it cuts a chunked stream of unknown length
+   mid-transfer and exits `63`, which is the probe's report-unverified signal,
+   not a finding against the API. A mutating or disruptive
    probe's `curl` names the disposable fixture it may touch and the side
    effect to expect. Handing over a bare unbounded `curl` reissues exactly
    the open-ended request the gate exists to prevent.

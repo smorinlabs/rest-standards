@@ -132,6 +132,17 @@ recorded as **SF-4** in §5.
 | source | Appendix E's "reading" paragraphs, which state implementation and documentation behavior the exchanges cannot show | Idempotency replay semantics, documented default sort order, webhook consumer obligations, the stream's retention window |
 | runtime | — not available — | Nothing |
 
+**A note on the `source` row's label.** By `references/audit.md`'s own plane
+definitions, reference documentation is *contract* evidence and the source
+plane is routes, handlers, and middleware. Appendix E ships no implementation,
+so its "reading" paragraphs are documented behavior standing in for
+source-shaped facts, not implementation source. The row is labeled `source` for
+what those facts reach, not for what supplied them. This is a labeling
+convention, not a scoring one: no verdict turns on it, because prose is
+documented behavior on either plane under the evidence policy below, and rules
+that genuinely need Bloom's implementation source are held `unverified` by
+policy 4 regardless.
+
 **Spectral could not run.** `references/audit.md` names
 `conformance/spectral.yaml` as the contract plane's checker, and Spectral
 needs a machine-readable document. Appendix E publishes none. The contract
@@ -255,20 +266,20 @@ what the request does.
 | Rule | What runtime would settle | Tier | Probe | Source |
 |---|---|---|---|---|
 | R2.6 | Trailing slash returns `308` to the canonical form | read-only | `curl -sSi https://api.example.com/v1/orders/` | G "Trailing slash" |
-| R1.9 | `dry_run` on an endpoint not implementing it is rejected `400` | mutating | `curl -sSi -X POST 'https://api.example.com/v1/orders?dry_run=true' -H 'Authorization: Bearer $T' -d '{}'` — **gated**: executes for real precisely when the guard is the thing that is broken; needs the §3.4 second confirmation naming a disposable fixture | G "Rehearsal guard" |
-| R3.7, R5.11 | Unsupported PATCH media type rejected `415`; `Accept-Patch` advertised | mutating | `curl -sSi -X PATCH https://api.example.com/v1/orders/ord_000example -H 'Content-Type: application/json' -H 'Authorization: Bearer $T' -d '{}'` — **gated**: the patch applies for real if the `415` guard does not hold | G "PATCH media type" |
-| R5.11 | An unimplemented method on a real path returns `405` carrying `Allow` | mutating | `curl -sSi -X <unimplemented-method> https://api.example.com/v1/orders/ord_000example -H 'Authorization: Bearer $T'` — **gated**: a method assumed unimplemented and turning out to be implemented is a real mutation | G "Unknown method" |
+| R1.9 | `dry_run` on an endpoint not implementing it is rejected `400` | mutating | `curl -sSi -X POST 'https://api.example.com/v1/orders?dry_run=true' -H "Authorization: Bearer $T" -d '{}'` — **gated**: executes for real precisely when the guard is the thing that is broken; needs the §3.4 second confirmation naming a disposable fixture | G "Rehearsal guard" |
+| R3.7, R5.11 | Unsupported PATCH media type rejected `415`; `Accept-Patch` advertised | mutating | `curl -sSi -X PATCH https://api.example.com/v1/orders/ord_000example -H 'Content-Type: application/json' -H "Authorization: Bearer $T" -d '{}'` — **gated**: the patch applies for real if the `415` guard does not hold | G "PATCH media type" |
+| R5.11 | An unimplemented method on a real path returns `405` carrying `Allow` | mutating | `curl -sSi -X <unimplemented-method> https://api.example.com/v1/orders/ord_000example -H "Authorization: Bearer $T"` — **gated**: a method assumed unimplemented and turning out to be implemented is a real mutation | G "Unknown method" |
 | R5.9 | `401` unauthenticated vs `403` authenticated-unauthorized | read-only | `curl -sSi https://api.example.com/v1/orders` (no credential) | G "Auth split" |
-| R13.3 | `stream` on an endpoint without streaming is rejected `400`, never silently answered non-streamed | read-only | `curl -sSi 'https://api.example.com/v1/orders?stream=true' -H 'Authorization: Bearer $T'` — aimed at a safe method, so no state changes even when the guard fails; aimed at a mutating endpoint the same row is **mutating** and gated | G "Stream guard" |
-| R13.2, R4.11 | Streamed/non-streamed choice made on `Accept`, response carries `Vary: Accept` | **unbounded** | `curl -N --max-time 10 -sSi https://api.example.com/v1/order-exports/exp_000example -H 'Accept: text/event-stream' -H 'Authorization: Bearer $T'` — **gated**: opens a stream, so it does not return on its own; only the response headers are needed, so 10 s is an ample bound and the cost ceiling is the frames delivered inside it | G "Stream negotiation" |
-| R13.6 | A documented terminal frame arrives before the connection closes | **unbounded** | `curl -N --max-time 120 -sS https://api.example.com/v1/order-exports/exp_000example/events -H 'Accept: text/event-stream' -H 'Authorization: Bearer $T'` — **gated**: G says to *consume the stream to completion*, and precisely when R13.6 fails there is no completion to reach; a missing terminal frame is indistinguishable from a stream still in progress. Cut at the bound and reported unverified, never run longer | G "Stream termination" |
-| R13.9 | Frames carry `operation_id`; the terminal state matches the operation resource | **unbounded** + mutating | `curl -N --max-time 120 -sS https://api.example.com/v1/order-exports/<disposable-export>/events -H 'Accept: text/event-stream' -H 'Authorization: Bearer $T'` — **gated twice**: it holds a connection open *and* starting the capability creates an export; needs the disposable fixture named and the bound agreed | G "Stream identity" |
+| R13.3 | `stream` on an endpoint without streaming is rejected `400`, never silently answered non-streamed | read-only | `curl -sSi 'https://api.example.com/v1/orders?stream=true' -H "Authorization: Bearer $T"` — aimed at a safe method, so no state changes even when the guard fails; aimed at a mutating endpoint the same row is **mutating** and gated | G "Stream guard" |
+| R13.2, R4.11 | Streamed/non-streamed choice made on `Accept`, response carries `Vary: Accept` | **unbounded** | `curl -N --max-time 10 --max-filesize 65536 -sSi https://api.example.com/v1/order-exports/exp_000example -H 'Accept: text/event-stream' -H "Authorization: Bearer $T"` — **gated**: opens a stream, so it does not return on its own; only the response headers are needed, so 10 s and 64 KiB are both ample, and whichever is reached first cuts the probe (`--max-filesize` exits `63`) | G "Stream negotiation" |
+| R13.6 | A documented terminal frame arrives before the connection closes | **unbounded** | `curl -N --max-time 120 --max-filesize 1048576 -sS https://api.example.com/v1/order-exports/exp_000example/events -H 'Accept: text/event-stream' -H "Authorization: Bearer $T"` — **gated**: G says to *consume the stream to completion*, and precisely when R13.6 fails there is no completion to reach; a missing terminal frame is indistinguishable from a stream still in progress. Cut at whichever bound arrives first — 120 s or 1 MiB — and reported unverified, never run longer | G "Stream termination" |
+| R13.9 | Frames carry `operation_id`; the terminal state matches the operation resource | **unbounded** + mutating | `curl -N --max-time 120 --max-filesize 1048576 -sS https://api.example.com/v1/order-exports/<disposable-export>/events -H 'Accept: text/event-stream' -H "Authorization: Bearer $T"` — **gated twice**: it holds a connection open *and* starting the capability creates an export; needs the disposable fixture named and both bounds agreed (120 s, 1 MiB) | G "Stream identity" |
 | R13.11 | An expired long-poll hold returns `200` with an empty result and a `cursor`, never `204` | **unbounded** | Not constructible against Bloom: G's "Long-poll expiry" row says to *hold past the documented maximum*, and Bloom exhibits no long-polling endpoint and documents no maximum hold duration. The bound cannot even be chosen without the documented maximum the rule's own first clause requires | G "Long-poll expiry" |
 | R8.1 | TLS 1.2+ served, TLS 1.0/1.1 rejected | read-only | `curl -sSI --tlsv1.1 --tls-max 1.1 https://api.example.com/v1/orders` (must fail) | beyond G |
 | R11.5 | `503` carries `Retry-After` | — | Appendix G defines **no** probe for the `503` clause, and none is constructible: `503` cannot be induced by a well-formed request. Settled by observation under real capacity overload, or by reading the error-path source | beyond G |
-| R5.5 | `307`/`308` preserve method and body | read-only | `curl -sSi -X POST https://api.example.com/v1/orders/ -H 'Authorization: Bearer $T'` | beyond G |
-| R7.4 clause 2 | No unfiltered collection-level DELETE is offered | mutating | `curl -sSi -X DELETE https://api.example.com/v1/orders -H 'Authorization: Bearer $T'` — **gated**: destructive precisely when the API fails the check. G's "Destructive guard" row probes clause 1 only | beyond G |
-| R11.4 | Any proprietary quota headers are documented | read-only | `curl -sSiD- https://api.example.com/v1/orders -H 'Authorization: Bearer $T'` | beyond G |
+| R5.5 | `307`/`308` preserve method and body | read-only | `curl -sSi -X POST https://api.example.com/v1/orders/ -H "Authorization: Bearer $T"` | beyond G |
+| R7.4 clause 2 | No unfiltered collection-level DELETE is offered | mutating | `curl -sSi -X DELETE https://api.example.com/v1/orders -H "Authorization: Bearer $T"` — **gated**: destructive precisely when the API fails the check. G's "Destructive guard" row probes clause 1 only | beyond G |
+| R11.4 | Any proprietary quota headers are documented | read-only | `curl -sSiD- https://api.example.com/v1/orders -H "Authorization: Bearer $T"` | beyond G |
 | R13.8 | A pre-commit error on a streaming request is served as `application/problem+json` | mutating | No G row exists. Requires inducing a failure *before* the status is committed — a malformed streaming request, or a fault injected in the source — which is a construction, not a probe of a healthy deployment | beyond G |
 
 Every `curl` above carries its tier's precautions inline, per the corrected
@@ -518,18 +529,21 @@ precautions travel with the command:
 > user to run by hand, **labeled with the tier from step 3**. … The tier's
 > precautions travel with the command, because a handed-off probe is run
 > without the gate that would otherwise have applied them: an unbounded
-> probe's `curl` carries its wall-clock bound inline (`--max-time <seconds>`,
-> plus `-N` so the bound is not defeated by buffering) and states the cost
-> ceiling; a mutating or disruptive probe's `curl` names the disposable
+> probe's `curl` carries **both** agreed bounds inline — the wall-clock limit
+> (`--max-time <seconds>`) **and** the cost ceiling (`--max-filesize <bytes>`)
+> — plus `-N` so neither is defeated by buffering. … A mutating or disruptive
+> probe's `curl` names the disposable
 > fixture it may touch and the side effect to expect. Handing over a bare
 > unbounded `curl` reissues exactly the open-ended request the gate exists to
 > prevent.
 
 **Re-run.** The runtime-probe table in §3 was regenerated under the corrected
 step 6. Every row now carries a **Tier** column and its precautions inline: the
-four unbounded rows (R13.2/R4.11, R13.6, R13.9, R13.11) carry `-N --max-time`
-with a bound chosen from what the probe actually needs — 10 s where only
-response headers are wanted, 120 s where frames must be consumed — and the five
+three constructible unbounded rows (R13.2/R4.11, R13.6, R13.9) carry
+`-N --max-time --max-filesize`, both bounds chosen from what the probe
+actually needs — 10 s and 64 KiB where only response headers are wanted, 120 s
+and 1 MiB where frames must be consumed, whichever is reached first cutting
+the probe — R13.11 is reported not constructible, and the five
 mutating rows name the fixture and the side effect. **No verdict changed**: the
 defect was in the artifact handed to the user, not in the scoring, so the
 conformance figure is identical before and after the fix. That is the correct
@@ -730,7 +744,7 @@ deciding the same question.
 | Verdict arithmetic | 54 + 0 + 50 | 104 |
 | R5.13's point 3 has no other home | `grep -liE 'resolv\|dereferenc'` over all 139 rule blocks → R1.4, R2.11, R5.13, R8.6, R10.8, R13.3; only R5.13 carries the dereferencing prohibition, the rest are unrelated senses ("unresolved question", "resolves a client-supplied ID") | confirms the superseded run's R12.7 cross-reference was false |
 | Runtime probes checked against Appendix G's live-probe table | read Appendix G (lines 2984–3033) per audit.md §3 | 19 rows, up from 13; the report's 16 probe rows cover 17 rules, 10 rows from G's own table and 6 constructed beyond it |
-| Every unrun probe carries its tier's precautions | corrected `audit.md` §3.6 | 4 rows classified unbounded — 3 carry `-N --max-time` inline, and R13.11 is reported not constructible rather than given an invented bound; 5 mutating rows name the fixture and the side effect |
+| Every unrun probe carries its tier's precautions | corrected `audit.md` §3.6 | 4 rows classified unbounded — 3 carry `-N --max-time --max-filesize` inline, so both agreed bounds are enforced by the handed-off command, and R13.11 is reported not constructible rather than given an invented bound; 5 mutating rows name the fixture and the side effect |
 | No HTTP request issued | — | runtime gate never opened |
 
 Both `comm` inputs were produced with plain `sort -u`. `sort -V` is **not**

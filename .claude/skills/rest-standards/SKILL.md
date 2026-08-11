@@ -80,10 +80,12 @@ Pick by what the user is doing; ask only when genuinely ambiguous.
 | **audit** | An existing API: "is it conformant", pre-release gate | `references/audit.md` | Per-plane findings + conformance summary line + conformance note + optional fix plan, CI wiring, and amendments |
 
 Before plan, review, or audit: settle **tier and switches** via
-`references/scoping.md`. Review and audit also settle the **evidence plane**;
-plan mode has none to survey — `planning.md`'s Deliverable 1 *creates* the
-contract plane and Deliverable 3 checks it. `check` skips scoping; it is a
-lookup, not a judgment.
+`references/scoping.md`, then the **evidence plane** under that file's §3,
+which owns the per-mode rule. Review and audit always survey. Plan mode skips
+the survey only for a genuinely greenfield API — there `planning.md`'s
+Deliverable 1 *creates* the contract plane and Deliverable 3 checks it — and
+surveys when the plan extends an existing API's contract. `check` skips
+scoping; it is a lookup, not a judgment.
 
 ## Depth scaling
 
@@ -111,7 +113,8 @@ never an inferred pass.
 ## Workflow (every mode)
 
 1. Locate and version-pin the standard (above).
-2. Identify the mode; for plan/review/audit, settle tier + switches + plane.
+2. Identify the mode; for plan/review/audit, settle tier + switches, then the
+   evidence plane on `references/scoping.md` §3's per-mode rule.
 3. Execute the mode's reference procedure.
 4. Cite rule IDs (`R#.#`) on every finding and answer, with MUST/SHOULD/MAY
    severity — MUST violation = blocker, SHOULD deviation = fix or waiver,

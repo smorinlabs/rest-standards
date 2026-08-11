@@ -30,7 +30,13 @@ audience — go in the conformance note's free-text `Context` field, not here.
 
 ## 3. Evidence plane
 
-Skip in plan mode — greenfield has nothing to survey.
+Skip in plan mode **only when the API is genuinely greenfield** — then there
+is nothing to survey, and `planning.md`'s Deliverable 1 *creates* the contract
+plane. A new resource group inside an existing API is not greenfield:
+`planning.md` extends that API's existing contract document, so survey it and
+record the planes found before writing the skeleton. Existing paths,
+versioning, reserved names, and implemented behavior are evidence the skeleton
+must not contradict. Runtime stays gated in plan mode exactly as below.
 
 Ask what exists. This is a factual question, not a judgment:
 
