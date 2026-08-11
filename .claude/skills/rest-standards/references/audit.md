@@ -49,26 +49,36 @@ names (§1.10) used with a non-registered meaning.
 
 ## 3. Runtime plane — gated
 
-Appendix G probes hit a real deployment. Three of them are destructive
-*precisely when the API fails the check*: an unguarded DELETE succeeds, an
-unimplemented method turns out to be implemented, a `dry_run` parameter
-executes for real. The gate is not optional.
+Appendix G probes hit a real deployment. Some are destructive *precisely when
+the API fails the check* — an unguarded DELETE succeeds, an unimplemented
+method turns out to be implemented, a `dry_run` parameter executes for real —
+so a probe's expected response does not tell you it is safe. The gate is not
+optional.
 
 1. **Default: issue no HTTP requests.** Contract and source planes only.
 2. **The user must ask.** Then require: a base URL, an explicit statement that
    the deployment is non-production (local, sandbox, or staging), and which
    resources are disposable.
-3. **Read-only probes first** — trailing slash (R2.6), credential split
-   (R5.9), existence masking (R5.10), empty collection (R6.2), correlation ID
-   (R11.7), cache posture (§7), error negotiation (§5) against a naturally
-   failing request.
-4. **Mutating or disruptive probes need a second confirmation** naming the
-   disposable fixture: DELETE without `If-Match` (R7.4), the `dry_run` guard
-   (R1.9), PATCH media-type rejection (R3.7), the unknown-method probe
-   (R5.11 — an "unimplemented" method that turns out to be implemented is a
-   real mutation), and 202 discovery (R10.9 — it starts real work). The quota
-   probe (R11.2) additionally warns, before running, that it degrades service
-   for every other client of that deployment.
+3. **Classify every probe before running any of them.** Read Appendix G's
+   live probe table and sort each row into one of the three tiers below by
+   what its *request* does — never from a remembered list, which cannot
+   contain the probes a later amendment adds. Appendix G does not mark the
+   tiers; that judgment is this skill's, and it is made per row:
+   - **read-only** — the request neither changes state nor degrades service
+     for other clients. Run these first.
+   - **mutating** — the request can change state, including when it changes
+     state only *because* the API fails the check: a guard that does not hold
+     lets the request through for real. Needs the second confirmation in
+     step 4.
+   - **disruptive** — the request degrades service for every other client of
+     that deployment while it runs. Needs step 4's confirmation *and* an
+     explicit warning of that side effect before running.
+
+   When a row's tier is genuinely unclear, treat it as mutating. Reading its
+   Expected column settles most cases: an expected rejection still executes
+   for real wherever the guard is the thing that is broken.
+4. **Mutating and disruptive probes need a second confirmation** naming the
+   disposable fixture the probe may touch.
 5. **Never** against production, against an API the user does not own, or with
    credentials the user has not deliberately provided for this purpose.
    Reviewing a third party's *published contract* on the contract plane

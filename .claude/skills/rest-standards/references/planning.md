@@ -32,9 +32,11 @@ the document already satisfies — cite it.
   parameters rather than path segments (R2.9).
 - **Operations**: method semantics and the status codes each returns; read §3
   and §5 before fixing the set.
-- **Reserved names**: any of `sort`, `fields`, `cursor`, `limit`, `dry_run`,
-  or the bracketed range filters that the API offers MUST use the §1.10
-  registered meaning; read §1.10 for the live registry.
+- **Reserved names**: read §1.10 for the live registry — reserved query
+  parameters, headers, and media types — and check every name the API offers
+  against it. A registered name MUST carry its registered meaning, and a
+  registered concept MUST use its registered name rather than a synonym
+  (R1.8). The registry grows by amendment, so it is not reproduced here.
 - **Errors**: `application/problem+json` responses with template-bound
   `type`/`code` (read §5).
 - **Headers**: the response headers the API commits to; §1.10 registry only,

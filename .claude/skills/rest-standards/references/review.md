@@ -9,13 +9,19 @@ finding here traces to a rule ID.
 ## Procedure
 
 1. Tier, switches, and evidence plane settled first (`references/scoping.md`).
-2. Sweep the input against the standard **in section order**, skipping
-   switched-off groups: §1 conformance apparatus and reserved names → §2 URIs
-   → §3 methods → §4 representations → §5 status codes and errors → §6
-   collections → §7 caching and concurrency → §8 security → §9 lifecycle →
-   §10 async, bulk, webhooks → §11 rate limits and observability → §12 client
-   obligations. Read each section from the live standard as you sweep — never
-   from memory.
+2. Sweep **every** numbered normative section, **in the order the standard
+   lists them**, skipping only groups whose applicability switch is off.
+   Derive the list live rather than working from a remembered one — this
+   command is the sweep checklist, and it grows on its own as the standard is
+   amended:
+
+       grep -n '^## [0-9]' "$STD"
+
+   Walk its output top to bottom, reading each section from the live standard
+   as you reach it — never from memory. Skipping a section requires an off
+   switch and its reason (R1.6); nothing else licenses a skip, and a section
+   you did not recognize is one you have not read yet, not one that does not
+   apply.
 3. Check the cross-cutting traps below.
 4. Where the input is silent on an applicable area, that is a **gap finding**,
    not a pass.

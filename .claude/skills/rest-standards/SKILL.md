@@ -49,15 +49,16 @@ absent (`test -f "$STD"` fails); never proceed from memory.
 
 ## Navigating the standard
 
-~2,400 lines. Never read it whole; never answer from memory. Get the live
-section map, then read only the sections in play:
+Thousands of lines. Never read it whole; never answer from memory. Get the
+live section map, then read only the sections in play:
 
-    grep -n '^## ' "$STD"          # 24 top-level sections: Part I §1–§12, Part II, Appendices A–G
+    grep -n '^## ' "$STD"          # every top-level heading: parts, sections, appendices
+    grep -n '^## [0-9]' "$STD"     # just the numbered normative sections, in order
     grep -n '^### ' "$STD"         # subsections, when a section is large
 
-The index is deliberately not written down here. The standard evolves by
-Part II amendment — a hardcoded map would go stale silently, a grepped one
-cannot.
+Neither the index nor its size is written down here, and no count of sections
+or rules appears anywhere in this skill. The standard evolves by Part II
+amendment — a hardcoded map would go stale silently, a grepped one cannot.
 
 ## Modes
 
@@ -107,15 +108,16 @@ never an inferred pass.
 6. **Feed back upstream.** A deviation that seems *right* and generalizable is
    a proposed amendment: draft a Part II Decision Log row, the rule edit, and a
    `CHANGELOG.md` entry against `rest-api-standard.md` in this repo, and offer
-   it to the user. The standard is released at 1.0.0; it evolves by amendment
-   under the Part II rule, not by drift.
+   it to the user. The standard is released — the version pinned in step 1 is
+   the live one — and it evolves by amendment under the Part II rule, not by
+   drift.
 
 ## Red Flags
 
 | Thought | Reality |
 |---|---|
 | "Internal API — the standard is overkill" | §1.7 tiers name an audience, not a depth. Every rule applies at every tier. |
-| "I remember what the standard says" | 127 rules across 12 sections, amended under Part II. Read the section. |
+| "I remember what the standard says" | The rule set is larger than memory holds and grows by Part II amendment. Read the section. |
 | "`X-Correlation-Id` is close enough" | §1.10 reserves `request-id`; R1.8 makes the reserved name the contract, and RFC 6648 rules out new `X-` names. |
 | "`AC-016` requires idempotency keys" | `AC-*` is research provenance (R1.3). Cite the `R#.#` rule. |
 | "I can audit from the OpenAPI document alone" | The contract plane cannot reach runtime behavior. Probe (gated) or mark those rules unverified. |
