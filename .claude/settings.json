@@ -1,0 +1,5 @@
+{
+  "companyAnnouncements": [
+    "The REST API Design Standard — a normative, rule-ID'd standard for resource-oriented HTTP APIs (rest-api-standard.md). Ships the rest-standards skill: plan / check / review / audit any HTTP API against the standard, scaled by evidence plane (contract / source / runtime). Docs: docs/skills/rest-standards.md."
+  ]
+}

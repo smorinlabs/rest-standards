@@ -304,17 +304,82 @@ reserved names in §1.10, and name the `ST-*` series in `R1.3`'s freeze list.
 
 ### Phase 7: Skill apparatus (post-1.0)
 
-**Declared 2026-08-10, developed outside this document's history.** Phase 7
-builds `rest-standards`, an agent skill that reads `rest-api-standard.md`
-live and applies it in four modes, with **Gate F** as its acceptance
-condition. Its full scope, gate, and design pointer land in this file when
-that work merges; the heading is reserved here so the phase sequence has no
-unexplained gap between 6 and 8.
+The standard is a document; this phase gives it an applier. `rest-standards`
+is an agent skill that reads `rest-api-standard.md` live and applies it in
+four modes — `plan`, `check`, `review`, `audit` — the REST counterpart to the
+`cli-standards` skill that ships beside the CLI Design Standard.
 
-*Note for whoever picks it up:* that phase's self-test was run against the
-Appendix E worked example **before §13 existed**. The standard has since
-gained 12 rules and scoped 9 more, so the self-test needs re-running against
-1.1.1 regardless of anything else.
+This closes the second half of the transfer begun at Gate C. The gap review
+(`docs/reviews/2026-08-09-cli-standards-gap-review.md`) moved the CLI
+standard's *content* here — items B.8 and B.12 are why §1.7–1.9 exist. This
+phase moves its *operating apparatus*. Design:
+[`docs/specs/2026-08-10-rest-standards-skill-design.md`](docs/specs/2026-08-10-rest-standards-skill-design.md).
+
+Scope:
+
+- author `.claude/skills/rest-standards/` — `SKILL.md` plus four procedure
+  references (`scoping`, `planning`, `review`, `audit`);
+- ship **no normative content in the skill**: §1.7–1.9 are already ratified,
+  so the skill reads tiers, switches, and the conformance-note template live
+  rather than restating them, and navigates by grepping the standard's
+  headings rather than shipping a section index that a Part II amendment
+  would silently stale;
+- scale audit depth by **evidence plane** — contract document
+  (`conformance/spectral.yaml`), source, deployed runtime (Appendix G probes)
+  — because §1.7 tiers name an audience, not a depth;
+- gate the runtime plane: opt-in, non-production only, read-only probes
+  first, mutating and quota probes behind a second confirmation (owner
+  ruling 2026-08-10) and unbounded probes behind a stated wall-clock and cost
+  bound; and
+- add the repository's first `.claude/settings.json` startup announcement,
+  which names the skill and points at `docs/skills/rest-standards.md` — both
+  therefore Gate F conditions, not optional follow-ups.
+
+Placement is deliberately **not** part of this phase. The skill exists only
+on this branch until it merges, so a `~/.agents/skills/rest-standards`
+symlink created here would dangle when the worktree is removed. Placement
+follows the merge and the fast-forward pull; the quality gate runs against
+the worktree instead.
+
+**The v1.1.0 rebase — why this phase absorbed §13 mid-flight.** Phase 6
+merged while this work was in progress, and the note left at this heading
+asked for the self-test to be re-run against the extended standard. It was:
+the branch took v1.1.2, and the re-run is the phase's acceptance evidence
+rather than a follow-up. The event also proved the design's central bet in
+both directions. The five skill files read the standard live, so §13 reached
+them with no edit — that half held. But three *hardcoded snapshots* the
+implementation plan had mandated went stale exactly as predicted: a section
+count, a rule count, and a twelve-section sweep list that silently omitted
+§13. They were removed rather than corrected, so the next amendment cannot
+repeat the failure.
+
+**Gate F — skill accepted.** The skill's `audit` mode, run against the
+Appendix E worked example (Bloom Orders API) at the current standard version,
+reproduces that appendix's rule-ID annotations and conformance note;
+`skillsmith verify` passes on both `claude-code` and `codex`; the Spectral
+ruleset still fires its full fixture count when invoked through the skill's
+own path; and `git diff origin/main...HEAD` shows no change to
+`rest-api-standard.md` or `conformance/`. No rule text changes in this phase
+— anything the skill exposes as a missing rule is an amendment under Part II,
+not a skill addition.
+
+**Gate F — passed 2026-08-10.** Every condition verified against v1.1.2:
+the self-test result is `104 applicable MUSTs: 54 pass, 0 fail, 50 unverified`
+with zero rule-level contradictions against Appendix E's annotations
+([`docs/reviews/2026-08-10-phase-7-skill-self-test.md`](docs/reviews/2026-08-10-phase-7-skill-self-test.md));
+`skillsmith verify` passes on `claude-code` and `codex`; the Spectral ruleset
+fires 14/14 as Appendix G records; and the branch changes no normative
+content. Zero failures is the expected result — Appendix E declares
+`Deviations: none`, so a failure would mean the standard contradicts itself —
+and the 50 unverified are rules only a live deployment could settle, refused
+rather than inferred.
+
+Three proposed amendments were raised by the phase and deliberately **not**
+applied, since a skill phase does not amend the standard: Appendix A's
+checklist row for R1.3 never gained `ST-*`; R11.2's streaming scope states its
+mid-stream reporting obligation in the indicative, so binds nothing under
+R1.1; and §1.8's "two such rules exist" hardcodes a guard-rule count the skill
+reads live at run time. Each is an owner ruling for a later amendment.
 
 ### Phase 8: Streaming's unresolved interactions (post-1.1.0)
 
@@ -363,6 +428,7 @@ rule. Some items may prove to need no rule; that verdict is itself recorded.
 | `research/decisions/*.decision.md` | Ratified conclusions and consequences | Phase 2 | **Complete 2026-08-09** — Gate C ratified all 66 principles (walked decisions + three per-report batches), plus the Gate C addendum (same day): PATCH format, sorting cluster, status-code rows, dry-run, action verbs, from the CLI-standards gap review. Index in `research/README.md`. The Phase 2 "master register" is realized as that decision index plus the per-stem decision files, rather than a separate merged-register artifact — each contested axis was resolved decision-by-decision instead. |
 | Normative standard | Stable rules and rationale | Phase 3 (extended in Phase 6) | **Released 1.0.0 2026-08-10** (Gate E-approved; drafted and Gate D-approved 2026-08-09; Phase 4 review complete) — §1–§12, 127 rules. **Extended to 1.1.0 in Phase 6** with §13 streaming: `rest-api-standard.md` now carries **139 rules**, each with provenance, classification, and confidence, plus Part II Decision Log (provenance map + apparatus register), Appendices A–G, the Spectral ruleset (`conformance/spectral.yaml`, re-verified 2026-08-10 against `conformance/fixture-violations.yaml`, 14/14), and the informative companion `streaming-profile.md` |
 | Checklist and worked example | Conformance and integration proof | Phase 3–4 | **Drafted 2026-08-09** (Appendices A and E of `rest-api-standard.md`); refined during Phase 4 review |
+| `.claude/skills/rest-standards/` + `docs/skills/rest-standards.md` | Agent skill applying the standard in four modes, and its documentation page | Phase 7 | Designed 2026-08-10 (`docs/specs/2026-08-10-rest-standards-skill-design.md`), authored and self-tested the same day. Five files: `SKILL.md` plus four procedure references. Acceptance evidence in `docs/reviews/2026-08-10-phase-7-skill-self-test.md` |
 | `research/prompts/survey-08-streaming.*` · `baseline-04-streaming.*` | Phase 6 scope framing and the two research leaves | Phase 6 | **Done 2026-08-10** — both leaves framed, prompted, and run |
 | `research/reports/survey-08-streaming.report.*` · `baseline-04-streaming.report.*` | Streaming field evidence, then proposed `ST-*` principles | Phase 6 | **Done 2026-08-10** — descriptive run 1,747 lines / 44 sources / 14 contested axes (carries a dated §3.0a correction: RFC 8895); prescriptive run 898 lines / 20 `ST-*` principles |
 | `research/decisions/baseline-04-streaming.decision.md` | Ratified streaming posture (Step 2 owner walk) | Phase 6 | **Done 2026-08-10** — six forks walked (`P6-D0`–`P6-D5`), fifteen principles ratified en bloc; indexed in `research/README.md` |
