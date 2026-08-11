@@ -1,7 +1,30 @@
 # Phase 8 — consolidated proposal set
 
-**Date:** 2026-08-10 · **Status:** proposals only. Nothing here binds
-`rest-api-standard.md` until ratified in a decision record.
+**Date:** 2026-08-10 · **Revision 2, same day** · **Status:** proposals only.
+Nothing here binds `rest-api-standard.md` until ratified in a decision record.
+
+## Revision 2 — what changed and why
+
+An adversarial review of revision 1 found that this document had **altered
+four leaf proposals while stating that it altered none**. Revision 1's opening
+claim — "It changes no leaf's reasoning" — was false, and the alterations were
+not marked. That is a defect in the consolidation, not in the research. All
+four are restored below and each restoration is marked.
+
+| Proposal | What revision 1 did | Effect |
+| --- | --- | --- |
+| `ST-022` | Dropped "retiring the old name only at a major version" | Converted dual-emit from a preparation for a major bump into a substitute for one, making `ST-022` contradict `ST-021` |
+| `ST-027` | Demoted a SHOULD rule with two MUST clauses to non-normative companion guidance, then described that as the leaf's proposal | Removed the conformance-note obligation the leaf attached |
+| `ST-029` | Omitted `baseline-04f`'s third proposal entirely | A scoping note the leaf judged high-confidence was lost |
+| `ST-026` | Retargeted `baseline-04e`'s `R3.9` amendment onto a new §13 rule | Changed the switch scope of a §3 definition |
+
+The same review falsified `ST-026`'s load-bearing evidence. That is recorded
+in its section below and the leaf is being re-run; `ST-026` is not ratifiable
+in its current form.
+
+Revision 2 also corrects three overstatements revision 1 introduced when
+summarizing leaf findings, each marked in place, and adds the review's own
+findings as a closing section.
 
 ## What this document is
 
@@ -11,10 +34,11 @@ proposed rules independently, so their identifiers collided and two of them
 proposed overlapping rules. This document reconciles them into one set that a
 ratification walk can take item by item.
 
-It changes no leaf's reasoning. Where a merge alters a proposal, the change and
-its reason are stated. The leaves remain authoritative for evidence; this
-document is authoritative only for **which identifier each proposal carries**
-and **which proposals merged**.
+The leaves remain authoritative for evidence and for rule text. This document
+is authoritative only for **which identifier each proposal carries** and
+**which proposals merged**. Where it alters a leaf's proposal it says so at
+that proposal; revision 1 failed this test in four places and revision 2
+restores them.
 
 | Leaf | Topic | Report |
 | --- | --- | --- |
@@ -61,8 +85,9 @@ They are merged, and the merge is not a coin toss; see `ST-024`.
 | `ST-024` | New `R13.13` | `04c` + `04f` merged | `ST-021` / `ST-012` |
 | `ST-025` | New `R13.14` | `04c` | part of `ST-021` |
 | `ST-026` | New `R13.15` | `04e` | `ST-E01` |
-| `ST-027` | Companion guidance, no rule | `04e` | `ST-E02` |
+| `ST-027` | New `R13.17`, at SHOULD | `04e` | `ST-E02` |
 | `ST-028` | New `R13.16` | `04f` | `ST-013` |
+| `ST-029` | Scoping note on `R6.5`, no rule text change | `04f` | `ST-014` |
 
 Ratifying any of these requires adding its identifier to `R1.3`'s frozen-series
 list, exactly as `ST-001`–`ST-020` were added in version 1.1.0.
@@ -96,12 +121,25 @@ renaming it produces the same client-visible failure as renaming it: under
 truncation on success. A name freeze alone would not catch it. No source states
 this; it is this standard's own construction, labeled `[POLICY]`.
 
-**Field confirmation.** Google Gemini renamed six Interactions event types
-including the terminal `interaction.complete`, published it as a breaking
-change behind a dated version header with a sunset date. Every announced rename
-found rode a version mechanism. One unannounced counterexample exists on
-OpenAI's generally-available surface and was not licensed by OpenAI's own
-published compatibility list.
+**Field confirmation — with the qualifier revision 1 dropped.** Google Gemini
+renamed six Interactions event types including the terminal
+`interaction.complete`, published it as a breaking change behind a dated
+version header with a sunset date. **The leaf classifies that rename as
+pre-GA, which `R9.4` already permits** — `R9.4` opens "Within a GA major
+version." So the headline field evidence is not a GA-freeze precedent, and
+revision 1 presented it as one by omitting the classification.
+
+Two further limits: the mechanism Gemini used is a dated *request header*,
+which is not a version mechanism this standard has — `R9.1` requires the major
+version in the path and `R9.2` requires additive evolution within a major. And
+the OpenAI counterexample was stated in the present tense; it is dated to an
+issue opened 2025-05-23 and has since been resolved by the replacement event
+shipping.
+
+**None of this sinks the proposal** — the gap it closes is real, because
+`R9.4` reaches frame types only through "reserved-name semantics (§1.10)", and
+§1.10 registers exactly one frame type while stating that an API's own
+vocabulary "is otherwise its own." It sinks the paragraph, not the rule.
 
 ## `ST-022` — Vocabulary documentation marks terminality; retirement has a path
 
@@ -111,7 +149,30 @@ duty, `[COMPARATIVE]` on the retirement path. **Confidence:** moderate-high.
 The vocabulary documentation marks, per frame type, whether it is terminal. A
 retired frame-type name is never reused for a different meaning. Retirement
 goes either to a new major version, or through a documented dual-emit overlap
-period stated in the vocabulary documentation.
+period stated in the vocabulary documentation, **retiring the old name only at
+a major version**.
+
+**[Restored in revision 2.]** The final clause is the leaf's and was dropped in
+revision 1. Without it, dual-emit reads as a *substitute* for the major bump
+rather than a *preparation* for one, which would let an API remove a frozen
+frame type inside a GA major — contradicting `ST-021`, which adds frame-type
+names to `R9.4`'s Frozen list, and `R9.4`'s Breaking entry "removing or
+renaming any frozen element."
+
+**Open defect the walk must resolve: dual-emit cannot express a terminal
+frame.** `ST-021`'s motivating case is a terminal rename, but `R13.6` requires
+a stream to end with *the* terminal frame, singular, and §1.11 defines that as
+"the frame that ends a stream." Two concurrent typed, payload-carrying
+terminal frames are not expressible: the first would not have ended the
+stream, and a `R12.10` client recognizing the old name stops reading at it.
+Where `R13.9` also binds, neither the leaf nor this document says which of two
+dual-emitted terminal frames carries `operation_state`. Every dual-emit
+precedent the leaf cites — GitHub, CloudEvents, Standard Webhooks — is a
+webhook system, where two deliveries are two independent messages; a stream has
+exactly one ending. **Either terminal types are excluded from the dual-emit
+path, leaving only the major-version route for them, or `R13.6` needs an
+overlap ending defined.** Found by the revision-1 adversarial review; not
+noticed by the leaf.
 
 **Why the overlap window must be documented rather than signaled.** `R9.5`'s
 `Deprecation` and `Sunset` headers are response headers. A stream's headers are
@@ -211,8 +272,39 @@ state its effect on in-flight streams.
 
 ## `ST-026` — A keyed repeat of a streaming request never re-executes
 
+> **NOT RATIFIABLE AS WRITTEN — evidence falsified 2026-08-10.** The leaf's
+> load-bearing claim was a universal negative: that no published API both
+> accepts an idempotency key and streams. It is false. Replicate's Cog HTTP API
+> documents both on one endpoint — a capability table row reads
+> `PUT /predictions/<prediction_id>` with `Accept: text/event-stream` →
+> "Streaming, idempotent", and the endpoint is described as "the idempotent
+> version of the `POST /predictions` endpoint." Verified independently against
+> the raw source file, not the leaf.
+>
+> Worse for the proposal: on a keyed repeat while the original is running, Cog
+> "returns a stream for the existing prediction instead of creating a duplicate
+> prediction" — it **attaches the caller to the in-flight stream**. The clause
+> below requiring a `409` conflict in exactly that case is the one the leaf
+> rated highest-confidence, and the only shipped implementation of the
+> intersection does the opposite. Its behavior is also better for the client,
+> who receives the output rather than an error. The three sources supporting
+> the `409` answer — the expired IETF draft §2.6, Stripe, Shopify — are all
+> non-streaming APIs.
+>
+> The leaf is being re-run against this evidence
+> (`baseline-04e-...report.2026-08-10b.md`). The text below is retained as the
+> first run's proposal, superseded pending that re-run.
+
 **Target:** new `R13.15`. **Class:** `[POLICY]`. **Confidence:** moderate-high
 on the non-re-execution clause; moderate on the response shape.
+
+**[Restored in revision 2 — amendment surface.]** The leaf proposes the
+definition of "the stored response" as a clause riding `R3.9` itself, in §3.
+Revision 1 folded it into a new §13 rule. Those are different changes: `R3.9`
+is not scoped by the `streaming` switch and a new `R13.x` would be, so folding
+it changed which APIs the definition binds. The definition of a §3 term belongs
+on the §3 rule. This part is independent of the falsified negative and survives
+it.
 
 A repeat of a streaming request carrying the same idempotency key does not
 re-execute the work. The server answers by the original execution's state: a
@@ -244,17 +336,31 @@ resumption from position zero.
 
 ## `ST-027` — Prefer splitting execution from delivery
 
-**Target:** companion guidance in `streaming-profile.md`. No rule.
-**Class:** `[COMPARATIVE]`. **Confidence:** moderate.
+**Target:** new `R13.17`, at SHOULD. **Class:** `[COMPARATIVE]` on the split.
+**Confidence:** moderate-high.
 
-An irreversible non-idempotent mutation should not stream its own result.
-Prefer splitting execution from delivery: the mutation returns an operation
-resource, and the stream is a safe `GET` over it, resumable under `R13.10`.
-This is OpenAI's shipped `background: true` design.
+**[Restored in revision 2.]** Revision 1 demoted this to non-normative
+companion guidance and then described that as the leaf's proposal. The leaf
+proposes it as a rule, and its final sentence carries two MUST clauses that
+non-normative text cannot hold — §13's own preamble says of the companion that
+"nothing there is normative."
+
+An API SHOULD NOT stream the response to a non-idempotent mutation whose
+repeated execution has an external effect that cannot be reversed — a payment,
+a disbursement, a message send, a metered charge. Where such a capability needs
+incremental delivery, the API SHOULD split it: the mutation is a non-streaming
+request returning an operation resource (`R10.9`, `R13.9`), and the incremental
+delivery is a **safe** request over that resource, resumable under `R13.10`. An
+API that does stream such a mutation MUST comply with `ST-026` and MUST state
+in its conformance note (`R1.7`) which of `ST-026`'s cases it implements and
+how.
 
 **Why not a prohibition.** A flat ban was assessed against AIP-151 and
 declined: AIP-151 binds long-running-operation methods only, and a ban would
 forbid the pattern §13 exists to serve.
+
+**Dependency.** The final sentence references `ST-026`, which is not currently
+ratifiable (see its section). If `ST-026` changes shape, this sentence follows.
 
 ## `ST-028` — A held-open stream occupies a concurrency slot
 
@@ -274,6 +380,21 @@ default already requires a published posture including concurrency, and
 `R8.10` makes adopting the axis defaults a MUST. The residual gap is only that
 nothing says a stream holds the slot for its lifetime.
 
+## `ST-029` — Streamed collections owe their documented maximum
+
+**Target:** a scoping note on `R6.5`, or one sentence in §13. No rule-text
+change. **Class:** `[POLICY]`. **Confidence:** high.
+
+**[Restored in revision 2.]** Revision 1 omitted this proposal entirely,
+converting it into a register-correction row and dropping its remedy.
+
+A streamed collection documents and enforces its maximum `limit` exactly as an
+unstreamed one does. `R6.5` already binds it — the rule is unqualified, and
+`R6.4`'s version 1.1.0 widening to "the terminal frame where the collection is
+streamed" is the precedent that §6 reaches streamed collections. **The standard
+has never said so**, which is the whole content of this proposal: it closes a
+silence, not a gap.
+
 ---
 
 ## What the research removed from the register
@@ -283,8 +404,8 @@ should correct the register regardless of which proposals it adopts.
 
 | Register claim | What the research established |
 | --- | --- |
-| Streams have no required concurrency ceiling | `R8.10` already requires a published concurrency posture. Only the lifetime-occupancy clarification is missing. |
-| Streamed collections have no published maximum | `R6.5` is unqualified and was never scoped away from streamed collections, so they already owe one. |
+| Streams have no required concurrency ceiling | **Probably already required, on a reading the leaf flagged as an inference.** `R8.10`'s rate-limit axis says "published: … concurrency separate", and the obligation depends on reading the colon as distributing across the whole list. The leaf labeled this `[INFERENCE]` and called the ambiguity itself a finding; revision 1 promoted it to a flat assertion. The walk should disambiguate `R8.10`'s cell in the same release rather than rely on the reading. |
+| *(revision 1 listed a row here about streamed collections lacking a published maximum)* | **Withdrawn as a strawman.** §13.4 makes no such claim; its ceilings entry says only that a held-open stream is in none of `R11.1`'s dimensions. The substantive point survives as `ST-029`. |
 | A stream cannot supply a strong `ETag` | RFC 9110 §8.8.1 permits a pre-transmission revision validator. `R3.10`'s scope is the actual blocker. |
 | `R7.3` conflicts with streaming | `R7.3` carries no BCP 14 keyword, so it never bound anything. There was no conflict. |
 
@@ -301,16 +422,121 @@ Both predate streaming and are independent of every proposal above.
    sortable-field set have the same hole. `ST-021` patches the streaming
    instance; the class remains open.
 
+## Defects the adversarial review found that no leaf caught
+
+These arise from **interactions between proposals** researched independently,
+which is the defect class parallel dispatch is most likely to produce and least
+likely to catch. Each must be repaired before the proposal it affects ships.
+
+**D1 — `ST-024`'s unbounded declaration voids `ST-025`'s bound.** Take an API
+authenticated by a non-expiring server-to-server key, which `R8.5` permits
+because it says only that credentials *SHOULD* be scoped and expiring. It
+declares its stream unbounded. Then `ST-024` is discharged by the declaration
+and requires nothing; `ST-025`'s expiry clause is scoped to credentials that
+carry or imply an expiry and does not fire; `ST-025`'s revocation clause is a
+SHOULD; and `ST-025`'s fallback — "its maximum duration is then the exposure
+window it is publishing" — **has no referent**, because no maximum exists. A
+conforming API can hold a stream open indefinitely for a revoked principal
+with every clause satisfied. `baseline-04c`'s flat form had a backstop here
+("where the credential carries no expiry, the maximum stream duration is the
+bound") that the merge dropped. *Repair:* tie the unbounded declaration to
+`R13.6`'s own test — "has no normal end" — so a generative completion cannot
+claim it, and make "unbounded **and** non-expiring credential" the combination
+that must carry an explicit exposure statement.
+
+**D2 — `ST-024`'s enforcement clause collides with `R13.9`.** Where `streaming`
+and `async-operations` are both on, `R13.9` requires the terminal frame to
+carry `operation_state` from the operation's documented terminal-state
+vocabulary. A stream cut at a duration ceiling while its operation is still
+running has no terminal state to report: it is not succeeded, failed, or
+canceled. Routing it through an `error` frame does not help, because `R13.9`
+binds error terminal frames identically and calling a published, expected limit
+an error contradicts `ST-024`'s own reasoning that such a close is a normal
+end. *Repair:* define a "stream ended at limit, work still running" ending, or
+carve `ST-024` out of `R13.9`.
+
+**D3 — `ST-023`'s tier-3 gate omits authorization.** Tier 3 means
+`Cache-Control: public`, which is precisely the directive that re-enables
+shared-cache storage for a request carrying `Authorization` under RFC 9111 §3.
+Subsequent requests are then answered without the origin running `R8.6`'s
+per-object check, so `ST-025`'s revocation posture bounds nothing — the cache
+does not know. Ratified `R7.2` independently blocks this, which is why the
+proposal is not wrong; but `ST-023` is the text a drafter works from, and
+listing two gates while omitting the third invites the misconfiguration.
+*Repair:* add `R7.2` as an explicit condition.
+
+**D4 — `ST-026` has an unenumerated fourth case.** `R3.9`'s key-retention floor
+is at least 24 hours; the field's retained artifacts run about 5 to 10 minutes.
+So for roughly 23 of those 24 hours a keyed repeat arrives when the terminal
+state is retained but the replayable representation is gone. `ST-026` requires
+delivering a representation that no longer exists and defines no behavior.
+`R13.10` has the matching rule for resumption — reject out-of-window with a
+defined error — and `ST-026` needs its analogue. *Also:* a request may carry
+both an `Idempotency-Key` and a `stream_position`, and no proposal states
+precedence.
+
+**D5 — new error conditions have no `R5.16` catalog entries.** `R13.7` requires
+an in-band error's `type` and `code` to be listed in the `R5.16` catalog. Three
+proposals mandate new conditions without supplying entries: `ST-025`'s
+credential-expired frame, `ST-028`'s concurrency-versus-rate `code`, and
+`ST-026`'s conflict. Without them the rules are unsatisfiable on first
+drafting.
+
+**D6 — a sixth unregistered interaction: cancellation.** `R10.2` expresses
+cancellation as the `cancel` action on the operation resource, and `R13.9`
+makes the stream and the operation one capability with one identity, operation
+authoritative. Nothing says what happens to an open stream when its operation
+is canceled through the other channel, nor whether a client disconnecting from
+the stream cancels the operation. §13.4 does not register it and no proposal
+touches it. Answering the five register questions makes it *more* visible, not
+less, because `ST-024`, `ST-025`, and `ST-026` each introduce a new way for a
+stream to end that `R13.9` must be able to report.
+
+**D7 — `ST-021`'s Compatible entry is vacuous as written.** It permits adding
+frame types "where the API has documented its frame-type vocabulary as
+growable", but ratified `R13.5` already makes that declaration mandatory, so
+every conforming API satisfies the condition by construction. It reconciles the
+Kubernetes dissent only for APIs that are already nonconformant. Harmless;
+keep it only if the walk wants the reasoning visible.
+
+**A correction in the proposals' favor.** RFC 7009 §2.1 is *not* silent on
+revocation timing: "In practice, there could be a propagation delay…
+Implementations should minimize that window." That is a missed supporting
+citation for `ST-025`'s strongest clause, which requires the revocation posture
+to be stated as an upper bound rather than as a claim of immediacy. RFC 9700
+and RFC 9068 are genuinely silent on in-progress requests, as the leaf claimed.
+
 ## What the ratification walk must decide
 
-Each of `ST-021` through `ST-028` is a separate ruling. Beyond adopting or
-declining each, three questions cut across them:
+Each of `ST-021` through `ST-029` is a separate ruling. The adversarial review's
+assessment of how each survives:
 
-1. **Does `ST-025`'s expiry clause survive?** It carries the lowest confidence
-   in the set and overrules the field's clearest precedent.
-2. **Is `ST-027` guidance or a rule?** It is proposed as companion guidance;
-   the ratification walk may judge that an irreversible-mutation preference
-   belongs in normative text.
-3. **Are the register corrections and the two out-of-scope defects handled in
-   the same release, or separately?** They are editorial relative to the rule
-   proposals.
+| Proposal | Standing after review |
+| --- | --- |
+| `ST-023` | Ship as written, plus the `R7.2` gate (D3) |
+| `ST-028` | Sound; needs a catalog entry (D5) and `R8.10` disambiguation |
+| `ST-021` | Substance sound; the field-confirmation paragraph is rewritten above |
+| `ST-025` | Disclosure clauses sound; expiry clause is the walk's real judgment call; D1 must be closed |
+| `ST-024` | Merge reasoning sound; D1 and D2 must be fixed; jitter clause droppable |
+| `ST-027` | Sound; restored to its proposed form in revision 2 |
+| `ST-022` | Sound; restored in revision 2, but the terminal-frame defect must be resolved |
+| `ST-029` | Sound; smallest change in the set |
+| `ST-026` | **Not ratifiable** — evidence falsified, leaf re-running |
+
+Four questions cut across the set:
+
+1. **Does `ST-025`'s expiry clause ship at MUST or SHOULD?** It carries the
+   lowest confidence in the set, overrules the field's clearest precedent
+   (a Kubernetes watch plausibly outlives its bound token), and rests on a
+   threat argued from mechanism with no recorded incident. The adversarial
+   review recommends SHOULD, on the ground that a MUST here is the
+   thin-evidence ruling the Phase 6 decision record declined Tier B items to
+   avoid.
+2. **Should cancellation (D6) be added to the §13.4 register in this release?**
+3. **Where should the general open-enum hole be fixed?** `R9.4` does not
+   classify removing or renaming an open enum value at all; frame types are one
+   instance, and `operation_state` and `R6.7`'s sortable-field set have the
+   same hole. Fixing it generically would make much of `ST-021`'s frozen-list
+   entry redundant, so the layer should be chosen before `ST-021` is ratified.
+4. **Are the register corrections and out-of-scope defects handled in the same
+   release, or separately?** They are editorial relative to the rule proposals.
