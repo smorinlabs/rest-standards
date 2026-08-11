@@ -523,20 +523,46 @@ assessment of how each survives:
 | `ST-029` | Sound; smallest change in the set |
 | `ST-026` | **Not ratifiable** — evidence falsified, leaf re-running |
 
-Four questions cut across the set:
+## Owner rulings made in advance of the walk (2026-08-10)
 
-1. **Does `ST-025`'s expiry clause ship at MUST or SHOULD?** It carries the
-   lowest confidence in the set, overrules the field's clearest precedent
-   (a Kubernetes watch plausibly outlives its bound token), and rests on a
-   threat argued from mechanism with no recorded incident. The adversarial
-   review recommends SHOULD, on the ground that a MUST here is the
-   thin-evidence ruling the Phase 6 decision record declined Tier B items to
-   avoid.
-2. **Should cancellation (D6) be added to the §13.4 register in this release?**
-3. **Where should the general open-enum hole be fixed?** `R9.4` does not
+Two of the four cross-cutting questions were ruled before the walk, so the walk
+inherits them rather than reopening them.
+
+**Ruling 1 — `ST-025`'s expiry clause ships at `SHOULD`, with a research
+trigger.** The disclosure clauses ship at `MUST` and are not affected. The
+expiry clause is demoted because it overrules the field's clearest precedent —
+a Kubernetes watch authenticates once and plausibly outlives its bound token —
+on a threat argued from mechanism with no recorded incident, which is the
+thin-evidence shape the Phase 6 decision record declined Tier B items to avoid.
+
+**The ruling carries a condition: research this again if the rule becomes
+applicable.** "Applicable" means any of the following, and any one of them
+fires a leaf reconsidering `MUST`:
+
+| Trigger | Why it changes the answer |
+| --- | --- |
+| A published incident of data delivered over a stream after the principal's authorization was revoked | Converts the threat from argued-from-mechanism to observed, which is the specific weakness behind the demotion |
+| Any reference implementation shipping mid-stream re-evaluation or credential-bound stream termination | Removes the "overrules the field's clearest precedent" objection |
+| An IETF or OAuth work item addressing authorization for a request already in progress | Supplies the standards authority that RFC 9700, RFC 9068, and RFC 7009 currently do not |
+| Any of OpenAI, Anthropic, or Google Gemini publishing a maximum stream duration or an in-flight revocation posture | Breaks the three-for-three vendor silence the demotion partly rests on |
+
+This trigger is registered with the dated re-check register in
+`research/README.md` when `ST-025` is ratified.
+
+**Ruling 2 — cancellation is registered now and researched later.** D6 is added
+to §13.4 as a sixth recognized-and-not-yet-ruled interaction, so a reader
+hitting it learns the silence is deliberate. No leaf is dispatched for it now,
+because no current proposal depends on resolving it and a sixth leaf would
+delay a walk already waiting on the `ST-026` re-run.
+
+Two questions remain open for the walk:
+
+1. **Where should the general open-enum hole be fixed?** `R9.4` does not
    classify removing or renaming an open enum value at all; frame types are one
    instance, and `operation_state` and `R6.7`'s sortable-field set have the
    same hole. Fixing it generically would make much of `ST-021`'s frozen-list
    entry redundant, so the layer should be chosen before `ST-021` is ratified.
-4. **Are the register corrections and out-of-scope defects handled in the same
-   release, or separately?** They are editorial relative to the rule proposals.
+2. **Are the register corrections and out-of-scope defects handled in the same
+   release, or separately?** They are editorial relative to the rule proposals,
+   and several — including Ruling 2's cancellation entry — do not depend on the
+   walk at all.
