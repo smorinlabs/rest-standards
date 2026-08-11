@@ -36,13 +36,15 @@ the three `..` steps then climb out of `rest-standards`, `skills`, and
 `$STD` and `$REPO` below are shorthand for the paths these two commands print,
 not live shell variables — shell state does not survive between commands in
 most harnesses. Run each command on its own, record its output as text, and
-paste the literal path into every later command.
+paste the literal path into every later command. **Wherever `$STD` or `$REPO`
+appears in a command in this skill, substitute that recorded path**; the
+variable form is written for brevity and will be empty if pasted as-is.
 
 Read the header and note the **Version** line:
 
-    grep -m1 -oE '\*\*Version [0-9]+\.[0-9]+\.[0-9]+' "$STD"
+    grep -m1 -oE '\*\*Version [0-9]+\.[0-9]+\.[0-9]+' "<the path STD printed>"
 
-Keep both as short, standalone commands. Some harnesses refuse a shell command
+Keep each of these as a short, standalone command. Some harnesses refuse a shell command
 they cannot statically verify, and nesting or bundling these with other
 commands is what trips that check. **A refusal to run the command is not a
 missing standard** — it is a shell problem, so retry rather than stop: run

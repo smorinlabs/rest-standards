@@ -55,8 +55,13 @@ them directly and says so, rather than downgrading to source-only.
 reading the canonical standard):
 
     git clone https://github.com/smorinlabs/rest-standards
-    ln -s "$(pwd)/rest-standards/.claude/skills/rest-standards" ~/.claude/skills/rest-standards   # Claude Code
-    ln -s "$(pwd)/rest-standards/.claude/skills/rest-standards" ~/.agents/skills/rest-standards   # Codex
+    cd rest-standards
+    ln -s "$(pwd)/.claude/skills/rest-standards" ~/.claude/skills/rest-standards   # Claude Code
+    ln -s "$(pwd)/.claude/skills/rest-standards" ~/.agents/skills/rest-standards   # Codex
+
+The `cd` is load-bearing: `$(pwd)` is expanded from wherever you are, so
+running the `ln -s` lines from the parent directory instead produces a link
+into a path that does not exist.
 
 Prefer the symbolic link over a copy. The skill locates the standard by
 resolving its own real path and walking up three directories, so a copy placed

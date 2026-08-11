@@ -21,7 +21,7 @@ subtraction comes from
 | Plane | Input | Checker |
 |---|---|---|
 | **contract** | Any documented interface contract — OpenAPI or JSON Schema, else reference docs or worked request/response exchanges | `conformance/spectral.yaml`, or direct reading (below) |
-| **source** | Routes, handlers, middleware | Read / Grep / Glob / ast-grep |
+| **source** | Routes, handlers, middleware | Read / Grep / Glob, and `ast-grep` as a command via Bash where structural search beats regex |
 | **runtime** | A deployed base URL | Appendix G probes — gated, see below |
 
 Every finding names the plane that produced it. Planes overlap: where two
