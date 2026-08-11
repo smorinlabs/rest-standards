@@ -363,6 +363,24 @@ own path; and `git diff origin/main...HEAD` shows no change to
 — anything the skill exposes as a missing rule is an amendment under Part II,
 not a skill addition.
 
+**Gate F — passed 2026-08-10.** Every condition verified against v1.1.2:
+the self-test result is `104 applicable MUSTs: 54 pass, 0 fail, 50 unverified`
+with zero rule-level contradictions against Appendix E's annotations
+([`docs/reviews/2026-08-10-phase-7-skill-self-test.md`](docs/reviews/2026-08-10-phase-7-skill-self-test.md));
+`skillsmith verify` passes on `claude-code` and `codex`; the Spectral ruleset
+fires 14/14 as Appendix G records; and the branch changes no normative
+content. Zero failures is the expected result — Appendix E declares
+`Deviations: none`, so a failure would mean the standard contradicts itself —
+and the 50 unverified are rules only a live deployment could settle, refused
+rather than inferred.
+
+Three proposed amendments were raised by the phase and deliberately **not**
+applied, since a skill phase does not amend the standard: Appendix A's
+checklist row for R1.3 never gained `ST-*`; R11.2's streaming scope states its
+mid-stream reporting obligation in the indicative, so binds nothing under
+R1.1; and §1.8's "two such rules exist" hardcodes a guard-rule count the skill
+reads live at run time. Each is an owner ruling for a later amendment.
+
 ### Phase 8: Streaming's unresolved interactions (post-1.1.0)
 
 Opened 2026-08-10 by the Phase 6 review walk. **Numbered 7 at creation and
