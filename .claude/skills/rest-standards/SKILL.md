@@ -84,9 +84,13 @@ this skill's, and is procedural.
   *audience*, not its quality bar. Every rule applies at every tier unless the
   rule itself carries a tier scope. Tier never waives a MUST.
 - **Switches** (§1.8) — read the live switch vocabulary from §1.8; do not
-  assume it. A switch that is off removes its rule group and MUST carry a
-  stated reason (R1.6): `N/A — <switch>: off, <reason>`. "N/A" with no reason
-  is a deviation, not an exemption.
+  assume it. A switch that is off removes the rules *scoped to it* and MUST
+  carry a stated reason (R1.6): `N/A — <switch>: off, <reason>`. "N/A" with no
+  reason is a deviation, not an exemption. **Off is not empty:** §1.8 exempts
+  guard rules — those defining what an API *without* the capability must do —
+  from their own switch, and they bind per endpoint, so an off switch still
+  leaves binding rules in that section. A rule's own provenance line, not the
+  section it sits in, is authoritative for its scope.
 - **Evidence plane** — contract / source / runtime. Decides which rules can be
   verified *at all*. Planes overlap; agreement between two is a stronger
   result than either alone, and disagreement is itself a finding.

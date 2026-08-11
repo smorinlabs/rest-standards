@@ -10,10 +10,12 @@ finding here traces to a rule ID.
 
 1. Tier, switches, and evidence plane settled first (`references/scoping.md`).
 2. Sweep **every** numbered normative section, **in the order the standard
-   lists them**, skipping only groups whose applicability switch is off.
-   Derive the list live rather than working from a remembered one — this
-   command is the sweep checklist, and it grows on its own as the standard is
-   amended:
+   lists them**, skipping only groups whose applicability switch is off — and
+   a switch never waives a guard rule that binds APIs **without** the
+   capability (§1.8), so read every section's scope statement rather than
+   skipping on the heading. Derive the list live rather than working from a
+   remembered one — this command is the sweep checklist, and it grows on its
+   own as the standard is amended:
 
        grep -n '^## [0-9]' "$STD"
 
@@ -21,7 +23,8 @@ finding here traces to a rule ID.
    as you reach it — never from memory. Skipping a section requires an off
    switch and its reason (R1.6); nothing else licenses a skip, and a section
    you did not recognize is one you have not read yet, not one that does not
-   apply.
+   apply. An off switch is a reason to read the section for what it still
+   binds, never a reason to leave it unopened.
 3. Check the cross-cutting traps below.
 4. Where the input is silent on an applicable area, that is a **gap finding**,
    not a pass.
@@ -44,8 +47,14 @@ Common in otherwise-clean designs — check each explicitly:
 - An identifier that is not an `R#.#` cited as if it were a rule. Every other
   series in the document is frozen research provenance (R1.3), which names
   them live; a `CLI-` prefix belongs to the CLI Design Standard.
-- `dry_run` accepted on an endpoint that does not implement it (R1.9) — the
-  guard is standard-wide, not per-endpoint-optional.
+- A capability the API does not offer, requested anyway and silently ignored
+  instead of rejected. §1.8 identifies the guard rules — those whose whole
+  purpose is to say what an API *without* a capability must do — and they are
+  never scoped by that capability's switch; read §1.8 for the current set
+  rather than a remembered one. Each binds **per endpoint**, so an API that
+  offers the capability on some endpoints still owes the guard on every
+  endpoint that does not. (`dry_run` accepted where it is not implemented is
+  one such miss; it is an example, not the set.)
 
 ## Findings format
 

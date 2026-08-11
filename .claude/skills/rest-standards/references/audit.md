@@ -52,20 +52,23 @@ names (§1.10) used with a non-registered meaning.
 Appendix G probes hit a real deployment. Some are destructive *precisely when
 the API fails the check* — an unguarded DELETE succeeds, an unimplemented
 method turns out to be implemented, a `dry_run` parameter executes for real —
-so a probe's expected response does not tell you it is safe. The gate is not
-optional.
+so a probe's expected response does not tell you it is safe. Others are not
+destructive at all and are still not safe to fire: a probe that holds a
+connection open spends the auditor's time and the deployment's budget for as
+long as the API chooses. The gate is not optional.
 
 1. **Default: issue no HTTP requests.** Contract and source planes only.
 2. **The user must ask.** Then require: a base URL, an explicit statement that
    the deployment is non-production (local, sandbox, or staging), and which
    resources are disposable.
 3. **Classify every probe before running any of them.** Read Appendix G's
-   live probe table and sort each row into one of the three tiers below by
+   live probe table and sort each row into one of the four tiers below by
    what its *request* does — never from a remembered list, which cannot
    contain the probes a later amendment adds. Appendix G does not mark the
    tiers; that judgment is this skill's, and it is made per row:
    - **read-only** — the request neither changes state nor degrades service
-     for other clients. Run these first.
+     for other clients, **and it returns on its own in bounded time**. Run
+     these first.
    - **mutating** — the request can change state, including when it changes
      state only *because* the API fails the check: a guard that does not hold
      lets the request through for real. Needs the second confirmation in
@@ -73,12 +76,27 @@ optional.
    - **disruptive** — the request degrades service for every other client of
      that deployment while it runs. Needs step 4's confirmation *and* an
      explicit warning of that side effect before running.
+   - **unbounded** — the request holds a connection open and how long it runs
+     is the API's choice, not the auditor's: a stream consumed to completion,
+     a long poll held to expiry, a resumption that may restart from the
+     beginning. Precisely when the check fails there may be no end at all — a
+     missing terminal frame (R13.6) is indistinguishable from a stream still
+     in progress, a stream may be unbounded by design, and §13.4 records that
+     no rule requires a maximum duration or a per-principal concurrency
+     ceiling. Metered deployments bill for every frame consumed. Needs step
+     4's confirmation plus a stated wall-clock bound and cost ceiling agreed
+     before running; at the bound the probe is cut and reported unverified
+     with the exact `curl` (step 6), never run longer.
 
-   When a row's tier is genuinely unclear, treat it as mutating. Reading its
-   Expected column settles most cases: an expected rejection still executes
-   for real wherever the guard is the thing that is broken.
-4. **Mutating and disruptive probes need a second confirmation** naming the
-   disposable fixture the probe may touch.
+   When a row's tier is genuinely unclear, treat it as mutating. Two readings
+   settle most cases. The Expected column: an expected rejection still
+   executes for real wherever the guard is the thing that is broken. And the
+   Request column's verb — a row that says to **consume, hold, or resume** a
+   stream is unbounded, not read-only, however harmless its Expected column
+   looks.
+4. **Mutating, disruptive, and unbounded probes need a second confirmation**
+   naming the disposable fixture the probe may touch and, for an unbounded
+   probe, the bound at which it will be cut.
 5. **Never** against production, against an API the user does not own, or with
    credentials the user has not deliberately provided for this purpose.
    Reviewing a third party's *published contract* on the contract plane
