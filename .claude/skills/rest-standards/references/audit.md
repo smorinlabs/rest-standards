@@ -102,8 +102,16 @@ long as the API chooses. The gate is not optional.
    Reviewing a third party's *published contract* on the contract plane
    remains available and needs no gate.
 6. **Anything not run is reported unverified with the exact `curl`** for the
-   user to run by hand. This is also the retreat path when a probe turns out
-   to be riskier than it looked.
+   user to run by hand, **labeled with the tier from step 3**. This is also
+   the retreat path when a probe turns out to be riskier than it looked.
+   The tier's precautions travel with the command, because a handed-off
+   probe is run without the gate that would otherwise have applied them:
+   an unbounded probe's `curl` carries its wall-clock bound inline
+   (`--max-time <seconds>`, plus `-N` so the bound is not defeated by
+   buffering) and states the cost ceiling; a mutating or disruptive
+   probe's `curl` names the disposable fixture it may touch and the side
+   effect to expect. Handing over a bare unbounded `curl` reissues exactly
+   the open-ended request the gate exists to prevent.
 
 Read Appendix G for the live probe table; do not work from the list above,
 which names the gate tiers rather than the probes.
