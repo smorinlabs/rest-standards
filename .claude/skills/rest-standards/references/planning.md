@@ -55,7 +55,9 @@ zero, not at first audit.
 Lint the skeleton with the standard's own ruleset before handing it over:
 
     npx @stoplight/spectral-cli lint \
-      --ruleset <standard-repo>/conformance/spectral.yaml openapi.yaml
+      --ruleset $REPO/conformance/spectral.yaml openapi.yaml
 
-Zero errors is the bar. Warnings are conservative heuristics — review each and
-either fix it or record it, never silently ignore it.
+`$REPO` is the standard's repo root, resolved in SKILL.md's locating section;
+paste the literal path. Zero errors is the bar. Warnings are conservative
+heuristics — review each and either fix it or record it, never silently ignore
+it.

@@ -20,7 +20,7 @@ finding here traces to a rule ID.
        grep -n '^## [0-9]' "$STD"
 
    Walk its output top to bottom, reading each section from the live standard
-   as you reach it — never from memory. Skipping a section requires an off
+   as you reach it — never from memory. Skipping a rule group requires an off
    switch and its reason (R1.6); nothing else licenses a skip, and a section
    you did not recognize is one you have not read yet, not one that does not
    apply. An off switch is a reason to read the section for what it still
@@ -53,8 +53,8 @@ Common in otherwise-clean designs — check each explicitly:
   never scoped by that capability's switch; read §1.8 for the current set
   rather than a remembered one. Each binds **per endpoint**, so an API that
   offers the capability on some endpoints still owes the guard on every
-  endpoint that does not. (`dry_run` accepted where it is not implemented is
-  one such miss; it is an example, not the set.)
+  endpoint that does not. (`dry_run` accepted where it is not implemented
+  (R1.9) is one such miss; it is an example, not the set.)
 
 ## Findings format
 

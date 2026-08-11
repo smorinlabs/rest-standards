@@ -329,7 +329,8 @@ Scope:
   — because §1.7 tiers name an audience, not a depth;
 - gate the runtime plane: opt-in, non-production only, read-only probes
   first, mutating and quota probes behind a second confirmation (owner
-  ruling 2026-08-10); and
+  ruling 2026-08-10) and unbounded probes behind a stated wall-clock and cost
+  bound; and
 - add the repository's first `.claude/settings.json` startup announcement,
   which names the skill and points at `docs/skills/rest-standards.md` — both
   therefore Gate F conditions, not optional follow-ups.

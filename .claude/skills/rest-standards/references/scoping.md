@@ -30,6 +30,8 @@ audience — go in the conformance note's free-text `Context` field, not here.
 
 ## 3. Evidence plane
 
+Skip in plan mode — greenfield has nothing to survey.
+
 Ask what exists. This is a factual question, not a judgment:
 
 | Plane | Present when | Unlocks |

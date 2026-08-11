@@ -7,12 +7,21 @@ at every tier.
 
 Findings use review mode's table: `Rule | Level | Where | Finding | Fix`.
 
+Coverage comes from `references/review.md` § Procedure step 2 and its
+cross-cutting traps: sweep every numbered normative section in the order the
+standard lists them, deriving the list live with `grep -n '^## [0-9]' "$STD"`.
+Audit differs in one way — where review mode calls silence on an applicable
+area a **gap finding**, audit mode calls a rule no available plane reaches
+**unverified**, naming the missing plane. The live rule count for the
+subtraction comes from
+`grep -oE '^\*\*R[0-9]+\.[0-9]+' "$STD" | sort -u | wc -l`.
+
 ## The three evidence planes
 
 | Plane | Input | Checker |
 |---|---|---|
 | **contract** | Any documented interface contract — OpenAPI or JSON Schema, else reference docs or worked request/response exchanges | `conformance/spectral.yaml`, or direct reading (below) |
-| **source** | Routes, handlers, middleware | Read / Grep / ast-grep |
+| **source** | Routes, handlers, middleware | Read / Grep / Glob / ast-grep |
 | **runtime** | A deployed base URL | Appendix G probes — gated, see below |
 
 Every finding names the plane that produced it. Planes overlap: where two
@@ -23,10 +32,12 @@ have diverged.
 ## 1. Contract plane
 
     npx @stoplight/spectral-cli lint \
-      --ruleset <standard-repo>/conformance/spectral.yaml <contract-document>
+      --ruleset $REPO/conformance/spectral.yaml <contract-document>
 
-The ruleset's rules are conservative heuristics; each description states its
-known false-positive and false-negative limits. Warn-severity findings exist
+`$REPO` is the standard's repo root, resolved in SKILL.md's locating section;
+paste the literal path. The ruleset's rules are conservative heuristics; each
+description states its known false-positive and false-negative limits.
+Warn-severity findings exist
 to be reviewed, not blindly enforced. Read Appendix G for what the ruleset
 does and does not traverse before treating a clean run as conformance.
 
@@ -62,7 +73,8 @@ long as the API chooses. The gate is not optional.
    the deployment is non-production (local, sandbox, or staging), and which
    resources are disposable.
 3. **Classify every probe before running any of them.** Read Appendix G's
-   live probe table and sort each row into one of the four tiers below by
+   live probe table and sort each row into the tiers below — **a row may carry
+   more than one, and every tier it carries applies in full** — by
    what its *request* does — never from a remembered list, which cannot
    contain the probes a later amendment adds. Appendix G does not mark the
    tiers; that judgment is this skill's, and it is made per row:
@@ -84,19 +96,23 @@ long as the API chooses. The gate is not optional.
      in progress, a stream may be unbounded by design, and §13.4 records that
      no rule requires a maximum duration or a per-principal concurrency
      ceiling. Metered deployments bill for every frame consumed. Needs step
-     4's confirmation plus a stated wall-clock bound and cost ceiling agreed
-     before running; at the bound the probe is cut and reported unverified
-     with the exact `curl` (step 6), never run longer.
+     4's confirmation plus stated bounds agreed before running — a wall-clock
+     limit in seconds **and** a frame count (or byte) ceiling; whichever is
+     reached first cuts the probe; at the bound the probe is cut and reported
+     unverified with the exact `curl` (step 6), never run longer.
 
-   When a row's tier is genuinely unclear, treat it as mutating. Two readings
+   When a row's tier is genuinely unclear, treat it as mutating — **and
+   additionally as unbounded whenever it is not clear that the request returns
+   on its own in bounded time**. Two readings
    settle most cases. The Expected column: an expected rejection still
    executes for real wherever the guard is the thing that is broken. And the
-   Request column's verb — a row that says to **consume, hold, or resume** a
-   stream is unbounded, not read-only, however harmless its Expected column
-   looks.
+   Request column's verb — a row that says to **stream, consume, hold, or
+   resume** a stream is unbounded, not read-only, however harmless its
+   Expected column looks.
 4. **Mutating, disruptive, and unbounded probes need a second confirmation**
    naming the disposable fixture the probe may touch and, for an unbounded
-   probe, the bound at which it will be cut.
+   probe, the bounds (wall-clock seconds and frame/byte ceiling) at which it
+   will be cut.
 5. **Never** against production, against an API the user does not own, or with
    credentials the user has not deliberately provided for this purpose.
    Reviewing a third party's *published contract* on the contract plane

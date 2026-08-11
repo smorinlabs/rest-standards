@@ -31,6 +31,12 @@ the three `..` steps then climb out of `rest-standards`, `skills`, and
 `.claude` to reach the repo root:
 
     STD="$(realpath "<skill-base-dir>")/../../../rest-api-standard.md"
+    REPO="$(realpath "<skill-base-dir>")/../../.."
+
+`$STD` and `$REPO` below are shorthand for the paths these two commands print,
+not live shell variables — shell state does not survive between commands in
+most harnesses. Run each command on its own, record its output as text, and
+paste the literal path into every later command.
 
 Read the header and note the **Version** line:
 
@@ -52,7 +58,7 @@ absent (`test -f "$STD"` fails); never proceed from memory.
 Thousands of lines. Never read it whole; never answer from memory. Get the
 live section map, then read only the sections in play:
 
-    grep -n '^## ' "$STD"          # every top-level heading: parts, sections, appendices
+    grep -n '^## ' "$STD"          # every top-level heading — parts, sections, appendices, and headings embedded in templates
     grep -n '^## [0-9]' "$STD"     # just the numbered normative sections, in order
     grep -n '^### ' "$STD"         # subsections, when a section is large
 
@@ -66,14 +72,16 @@ Pick by what the user is doing; ask only when genuinely ambiguous.
 
 | Mode | Fires when | Load | Deliverable |
 |---|---|---|---|
-| **plan** | Greenfield API or new resource group: "new API", "design this endpoint" | `references/planning.md` | OpenAPI skeleton + seeded conformance note |
+| **plan** | Greenfield API or new resource group: "new API", "design this endpoint" | `references/planning.md` | OpenAPI skeleton + seeded conformance note + Spectral lint pass |
 | **check** | Mid-build lookup: "what status code / header / parameter name…" | The relevant § of the standard | Cited answer with rule IDs; nothing written |
 | **review** | A spec, OpenAPI document, or diff exists but hasn't shipped | `references/review.md` | Findings table with rule IDs |
-| **audit** | An existing API: "is it conformant", pre-release gate | `references/audit.md` | Per-plane findings + conformance note + optional CI wiring |
+| **audit** | An existing API: "is it conformant", pre-release gate | `references/audit.md` | Per-plane findings + conformance summary line + conformance note + optional fix plan, CI wiring, and amendments |
 
-Before plan, review, or audit: settle **tier, switches, and evidence plane**
-via `references/scoping.md`. `check` skips scoping; it is a lookup, not a
-judgment.
+Before plan, review, or audit: settle **tier and switches** via
+`references/scoping.md`. Review and audit also settle the **evidence plane**;
+plan mode has none to survey — `planning.md`'s Deliverable 1 *creates* the
+contract plane and Deliverable 3 checks it. `check` skips scoping; it is a
+lookup, not a judgment.
 
 ## Depth scaling
 
@@ -111,7 +119,10 @@ never an inferred pass.
    Even an ID shaped like a rule can belong elsewhere — R1.3 assigns
    `CLI-`-prefixed IDs to the CLI Design Standard, not to this one.
 5. Deviations that stay: record in the target repo's conformance note,
-   rendered from the template in §1.9 read live. No `{{VARS}}` may survive.
+   rendered from the template in §1.9 read live. No placeholder may survive:
+   §1.9's template marks them with angle brackets (`<API name>`, `<version>`,
+   `<rule ID>`, `<free text …>`). Every one is replaced, or the note is not
+   rendered.
 6. **Feed back upstream.** A deviation that seems *right* and generalizable is
    a proposed amendment: draft a Part II Decision Log row, the rule edit, and a
    `CHANGELOG.md` entry against `rest-api-standard.md` in this repo, and offer

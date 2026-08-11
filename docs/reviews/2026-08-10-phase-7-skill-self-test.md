@@ -626,7 +626,7 @@ switch says.
 
 **Proposed amendment.** Two parts. (a) Soften the preamble to say each block is
 annotated with the *principal* rules it exercises — the accurate description of
-what is there — rather than extending the annotations to all 55, since a
+what is there — rather than extending the annotations to all 54, since a
 complete coverage map is a different artifact from a worked example. (b)
 Separately, consider a short E.12 exhibiting the `stream` rejection guard
 (R13.3) and a pre-commit streaming error (R13.8): both are small exchanges, both
