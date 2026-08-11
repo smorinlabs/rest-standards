@@ -10,6 +10,13 @@
 > and streaming scope added to 9 existing rules — and the skill has been amended
 > for it. That earlier result is no longer the record; this one is. What changed
 > between the two runs, and why, is §7.
+>
+> One of the earlier run's verdicts is also **corrected** rather than
+> superseded: **R5.13** was scored `pass` there on a cross-reference to R12.7
+> that does not carry the obligation in question, and is `unverified` here.
+> That correction is independent of the version bump — the clause it turns on
+> existed in v1.0.0 — so §7 states the earlier figure both as published
+> (`52 pass`) and as it should have read (`51 pass`).
 
 Appendix E of `rest-api-standard.md` is a worked example — the Bloom Orders
 API — already annotated with rule IDs and carrying its own conformance note.
@@ -159,7 +166,7 @@ before the sweep so the verdicts are reproducible:
 
 ## 3. Conformance summary
 
-    104 applicable MUSTs: 55 pass, 0 fail, 49 unverified
+    104 applicable MUSTs: 54 pass, 0 fail, 50 unverified
 
 This matches the `<N> applicable MUSTs: <P> pass, <F> fail, <U> unverified`
 format required by `references/audit.md` § Report.
@@ -215,10 +222,10 @@ streaming scope, and E.11's `Cache-Control: private, no-store` satisfies R7.1
 and R7.2 while §13.4 records the general streaming cache posture as
 deliberately unruled.
 
-**`U = 49` is the honest reach of the evidence, not a defect in Bloom.**
+**`U = 50` is the honest reach of the evidence, not a defect in Bloom.**
 Appendix E is a set of excerpts, not a deployed API with published
-documentation. 49 applicable MUSTs have at least one clause that no supplied
-plane reaches — 17 because the runtime plane is absent, the remaining 32
+documentation. 50 applicable MUSTs have at least one clause that no supplied
+plane reaches — 17 because the runtime plane is absent, the remaining 33
 because Bloom's OpenAPI document, implementation source, and published
 operational and client documentation are outside the appendix.
 
@@ -274,11 +281,19 @@ would only corroborate a verdict, not supply a missing one.
 
 ### Unverified rules needing a document Appendix E does not contain
 
-The remaining 32 need Bloom's OpenAPI document (R4.1, R4.2, R4.8, R4.9), its
+The remaining 33 need Bloom's OpenAPI document (R4.1, R4.2, R4.8, R4.9), its
 implementation source (R8.6–R8.9, R8.11), or its published operational and
-client documentation (R3.1, R3.9, R5.16, R6.5, R10.2, R10.6, R11.1, R11.6,
-R11.8, R12.1, R12.2, R12.3, R12.4, R12.7, R12.8, R12.10, R13.4, R13.5, and the
-conditional clauses of R3.8, R3.12, R4.15, R8.4, R8.10).
+client documentation (R3.1, R3.9, R5.13, R5.16, R6.5, R10.2, R10.6, R11.1,
+R11.6, R11.8, R12.1, R12.2, R12.3, R12.4, R12.7, R12.8, R12.10, R13.4, R13.5,
+and the conditional clauses of R3.8, R3.12, R4.15, R8.4, R8.10).
+
+**R5.13 is in this group for one clause only.** Its member set, `type`/`code`
+template binding, `about:blank` prohibition, and provider-controlled base
+domain are all settled — on four problem documents, more evidence than any
+other rule in this audit receives. What no plane reaches is point 3, "clients
+MUST NOT depend on it resolving", a capitalized MUST NOT whose subject is the
+client. Appendix E contains no client documentation, which is the same missing
+plane that holds R12.1, R12.2, R12.3, R12.4, R12.7, and R12.10.
 
 R13.4 and R13.5 are the §13 additions to this group, and both are documentation
 obligations rather than wire facts:
@@ -351,7 +366,7 @@ The **Count** column marks whether the rule is one of the 104 applicable MUSTs
 | R5.7 | — | E.5: a matching `If-Match` delete returns `204 No Content` | pass (no RFC 2119 keyword — see SF-3) | agree |
 | R5.11 | ✔ | E.5: `428 Precondition Required` where `If-Match` is demanded and absent | **unverified** — the `428` clause passes; the `405`+`Allow` and `415` clauses are never exhibited | consistent (partial) |
 | R5.12 | ✔ | E.3: `application/problem+json`. E.11 **cross-ref**: the error frame is the second carve-out | pass — all three error responses are problem documents, and the stream error frame takes the carve-out the rule itself names rather than violating it | agree |
-| R5.13 | ✔ | E.3: `code` maps to `type` by the fixed template; the human link lives in `documentation`. E.11: the frame's problem object carries the same members except `status` | pass — verified on four pairs now: `validation_failed`, `precondition_required`, `rate_limit_exceeded`, and E.11's `export_source_unavailable` → `…/export-source-unavailable`; `type` present on all, no `about:blank`, base domain provider-controlled. Points 2 (immutability) and 3 (clients must not depend on `type` resolving) are unexhibited: point 2 is a negative obligation with instances present and no counterexample, and point 3 binds clients through R12.7, separately scored `unverified` | agree |
+| R5.13 | ✔ | E.3: `code` maps to `type` by the fixed template; the human link lives in `documentation`. E.11: the frame's problem object carries the same members except `status` | **unverified** — the member set and template binding pass, verified on four pairs now: `validation_failed`, `precondition_required`, `rate_limit_exceeded`, and E.11's `export_source_unavailable` → `…/export-source-unavailable`; `type` present on all, no `about:blank`, base domain provider-controlled. Point 2 (immutability) is a negative obligation with instances present and no counterexample, so it passes over the exhibited surface. Point 3 — "clients **MUST NOT** depend on it resolving" — is a capitalized MUST NOT that no supplied plane reaches: it is a client clause, and Bloom's client documentation is outside the appendix | consistent (partial) |
 | R5.15 | — | E.3: field failures ride `errors[]` with JSON Pointers | pass (SHOULD) — `pointer`, `code`, `detail` all present | agree |
 | R5.16 | ✔ | E.11 **cross-ref**: the error frame's `code` is "listed in Bloom's R5.16 catalog" | **unverified** — the assertion establishes that a catalog exists and contains this pair; the MUST is that it catalogs **every** `type`/`code` pair the API can return, and completeness is never asserted or exhibited | consistent (partial) |
 | R6.1 | ✔ | E.4: the envelope carries `items` and `next_cursor` | pass — E.4 exhibits the envelope, and E.11's terminal frame carries `next_cursor`, which is the streamed form the rule's v1.1.0 scope names | agree |
@@ -393,7 +408,7 @@ The **Count** column marks whether the rule is one of the 104 applicable MUSTs
 | R13.9 | ✔ | E.11: `operation_id` is what makes the stream and the operation resource one capability with one identity; both terminal frames carry `operation_state` | **unverified** — identity carriage passes (`operation_id: op_000example` matches E.7's `id`, and the member matches R10.9's `id` form), the reserved-member and vocabulary clauses pass, and the retrievable full problem document is asserted. Unreached: "both channels MUST report the same terminal state" is never exhibited as two matching values — E.7 shows the operation resource as `running`, and no exchange shows it reporting `failed` alongside the error frame | consistent (partial) |
 | R13.10 | ✔ | E.11: `stream_position` increases monotonically and is what a client echoes to resume; Bloom documents a 30-minute retention window; a resume outside it fails with a defined error rather than silently restarting | pass — all three MUST clauses reached. Strictly increasing positions exhibited (1, 2, 3), retention window asserted, out-of-window rejection asserted. The SHOULD on offering resumption is followed | agree |
 
-**Totals:** 63 answer-key rules — **45 agree**, **18 consistent (partial
+**Totals:** 63 answer-key rules — **44 agree**, **19 consistent (partial
 evidence)**, **0 disagree**.
 
 Three §13 rules — **R13.3**, **R13.8**, and **R13.11** — are applicable MUSTs
@@ -443,6 +458,26 @@ dischargeable.
 That the same failure mode recurred five times on a section the fix predates is
 the strongest evidence available that the fix was not over-fitted to the
 v1.0.0 input.
+
+**It also caught a sixth instance, in the superseded run's own scoring.**
+**R5.13** was `pass` in v1.0.0, justified by the claim that its point 3
+("clients MUST NOT depend on `type` resolving") "binds clients through R12.7".
+That cross-reference is **false**: R12.7 forbids relying on every error being a
+problem document, a different obligation, and grepping all of Part I for
+`resolv|dereferenc` confirms R5.13 is the only rule carrying the dereferencing
+prohibition. There is no rule for it to bind through. Point 3 is a capitalized
+MUST NOT that no supplied plane settles, so under `audit.md`'s one-verdict rule
+R5.13 is `unverified`. This audit scores it that way, which is why `P` is 54
+and not 55 (§7).
+
+The correction is worth recording precisely because of its shape. The other
+five instances were caught by the rule operating normally on new text. This one
+survived a full audit and a review, hidden behind a *citation* — a plausible
+rule ID standing in for evidence. That is a harder variant of the same failure:
+an inferred pass laundered through a cross-reference is not visibly an
+inference at all. The lesson for the procedure is that a cross-reference
+discharging a clause must be checked against the cited rule's text, exactly as
+a wire fact is checked against the exchange.
 
 ### Skill defect (fixed, re-run)
 
@@ -496,10 +531,9 @@ four unbounded rows (R13.2/R4.11, R13.6, R13.9, R13.11) carry `-N --max-time`
 with a bound chosen from what the probe actually needs — 10 s where only
 response headers are wanted, 120 s where frames must be consumed — and the five
 mutating rows name the fixture and the side effect. **No verdict changed**: the
-defect was in the artifact handed to the user, not in the scoring, so `104
-applicable MUSTs: 55 pass, 0 fail, 49 unverified` is the figure both before and
-after. That is the correct shape for this defect — the pre-fix table was
-unsafe, not wrong.
+defect was in the artifact handed to the user, not in the scoring, so the
+conformance figure is identical before and after the fix. That is the correct
+shape for this defect — the pre-fix table was unsafe, not wrong.
 
 The fix also exposed the one probe the corrected procedure cannot express, which
 is itself a result: **R13.11's** bound is not choosable, because G's row says to
@@ -562,8 +596,8 @@ Appendix E's preamble states: "Every block is annotated with the rules it
 exercises." Read naturally, that claims the annotations are complete. They are
 not, though the gap narrowed in v1.1.2.
 
-This audit scored **55 applicable MUSTs as `pass`** on the appendix's own
-evidence. **20 of those 55 are never annotated anywhere in Appendix E**,
+This audit scored **54 applicable MUSTs as `pass`** on the appendix's own
+evidence. **20 of those 54 are never annotated anywhere in Appendix E**,
 despite being plainly demonstrated by it:
 
 | Section | Demonstrated but unannotated |
@@ -691,9 +725,10 @@ deciding the same question.
 | MUST-class rule count | per-rule blocks matched against `(MUST\|REQUIRED\|SHALL)` | 108 |
 | `N` reproduces from the live standard | re-derivation, subtraction shown in §3 | 104 |
 | `N` reconciles with the superseded run | applicable set less the 12 new rules | 92, matching v1.0.0 exactly |
-| Verdict list covers exactly the applicable-MUST set | explicit 55-rule pass list and 49-rule unverified list built, unioned, and `comm`-diffed against the applicable set in both directions | empty both ways; union is 104 |
+| Verdict list covers exactly the applicable-MUST set | explicit 54-rule pass list and 50-rule unverified list built, unioned, and `comm`-diffed against the applicable set in both directions | empty both ways; union is 104 |
 | No rule scored twice | `comm -12` of the pass and unverified lists | empty |
-| Verdict arithmetic | 55 + 0 + 49 | 104 |
+| Verdict arithmetic | 54 + 0 + 50 | 104 |
+| R5.13's point 3 has no other home | `grep -liE 'resolv\|dereferenc'` over all 139 rule blocks → R1.4, R2.11, R5.13, R8.6, R10.8, R13.3; only R5.13 carries the dereferencing prohibition, the rest are unrelated senses ("unresolved question", "resolves a client-supplied ID") | confirms the superseded run's R12.7 cross-reference was false |
 | Runtime probes checked against Appendix G's live-probe table | read Appendix G (lines 2984–3033) per audit.md §3 | 19 rows, up from 13; the report's 16 probe rows cover 17 rules, 10 rows from G's own table and 6 constructed beyond it |
 | Every unrun probe carries its tier's precautions | corrected `audit.md` §3.6 | 4 rows classified unbounded — 3 carry `-N --max-time` inline, and R13.11 is reported not constructible rather than given an invented bound; 5 mutating rows name the fixture and the side effect |
 | No HTTP request issued | — | runtime gate never opened |
@@ -723,19 +758,31 @@ underscore-to-hyphen template, with `status` correctly absent.
 | Part I rules | 127 | 139 |
 | MUST-class rules | 96 | 108 |
 | `N` (applicable MUSTs) | 92 | **104** |
-| Summary | `92: 52 pass, 0 fail, 40 unverified` | **`104: 55 pass, 0 fail, 49 unverified`** |
+| Summary as published | `92: 52 pass, 0 fail, 40 unverified` | **`104: 54 pass, 0 fail, 50 unverified`** |
+| Summary with R5.13 corrected | `92: 51 pass, 0 fail, 41 unverified` | same as above |
 | Switches | 3 (`bulk-operations` off) | 4 — `streaming` added, declared **on** |
 | Answer-key rules | 50 | **63** |
-| Agreement | 39 agree / 11 partial / 0 disagree | **45 agree / 18 partial / 0 disagree** |
+| Agreement | 39 agree / 11 partial / 0 disagree | **44 agree / 19 partial / 0 disagree** |
 | Appendix G probe rows | 13 | **19** |
 | Skill defects found | 2 (SD-1, SD-2) | **1 (SD-3)**; SD-1 and SD-2 re-confirmed |
 | Standard findings | 3 (SF-1, SF-2, SF-3) | **4** — SF-1 and SF-2 revised, SF-3 unchanged, **SF-4 new** |
 
-**Every one of the 92 v1.0.0 verdicts is unchanged.** The delta is entirely the
-12 new rules: 3 pass (R13.1, R13.7, R13.10) and 9 unverified (R12.10, R13.2,
-R13.3, R13.4, R13.5, R13.6, R13.8, R13.9, R13.11). That the older verdicts held
-is a result, not an assumption — each was re-derived against the amended text
-and the new E.11 evidence, and two were re-examined closely:
+**91 of the 92 v1.0.0 verdicts are unchanged; one is corrected.** The new rules
+account for the rest of the delta: 3 pass (R13.1, R13.7, R13.10) and 9
+unverified (R12.10, R13.2, R13.3, R13.4, R13.5, R13.6, R13.8, R13.9, R13.11).
+That the older verdicts held is a result, not an assumption — each was
+re-derived against the amended text and the new E.11 evidence.
+
+**The corrected verdict is R5.13, and it is not a v1.1.2 effect.** Point 3
+("clients MUST NOT depend on `type` resolving") existed in v1.0.0 and was
+unreachable then too; the superseded run scored it `pass` on a cross-reference
+to R12.7 that does not carry the obligation (§5). The correction therefore
+belongs to the earlier run, not to the version bump, which is why the table
+above states the v1.0.0 figure twice — `52 pass` as it was published, and `51
+pass` as it should have read. Arithmetic reconciles either way: 51 + 3 = 54
+pass, 41 + 9 = 50 unverified.
+
+Two further rules were re-examined closely because their text changed:
 
 - **R11.2** was the one rule whose verdict was genuinely in play. Its v1.1.0
   streaming scope adds behavior Appendix E never exhibits, and whether that
@@ -748,7 +795,9 @@ and the new E.11 evidence, and two were re-examined closely:
   no longer "is there a catalog" but "does it list **every** pair the API can
   return."
 
-**The unverified share rose, from 43% to 47%**, and the cause is worth naming
+**The unverified share rose, from 45% to 48%** — measured against the corrected
+v1.0.0 baseline of 41 of 92, so the comparison isolates the version bump rather
+than absorbing the R5.13 correction. The cause is worth naming
 because it is not a regression. §13's rules lean heavily on *documentation*
 obligations — the frame-type vocabulary and its growth statement (R13.5), the
 keep-alive disclosure (R13.5), the SSE registration gap (R13.4), the retention
@@ -769,7 +818,7 @@ needed a human reader. Here it caught five, unaided, on first pass.
 ## 8. Verdict
 
 The skill reproduced Appendix E's reading with no rule-level contradiction
-across a section it had never seen. Its plane discipline forced 49 applicable
+across a section it had never seen. Its plane discipline forced 50 applicable
 MUSTs to `unverified` where a less disciplined sweep would have inferred passes
 from an excerpt, and the live-derivation discipline mattered concretely: the
 skill carries no hardcoded map of the standard's shape, so §13 entered the
@@ -789,6 +838,6 @@ probe was handed to the user instead. It is fixed in
 procedure reproduces this document's results with a safer artifact and an
 unchanged score.
 
-**Gate F evidence:** `104 applicable MUSTs: 55 pass, 0 fail, 49 unverified`
+**Gate F evidence:** `104 applicable MUSTs: 54 pass, 0 fail, 50 unverified`
 against `rest-api-standard.md` v1.1.2, on the contract and source planes, with
 `streaming=on` and `bulk-operations=off`.
