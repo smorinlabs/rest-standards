@@ -32,6 +32,7 @@ and for identifier assignment.
 | `baseline-04e` run a | Idempotency replay — **superseded** | 788 lines, 22 sources |
 | `baseline-04e` run b | Idempotency replay — **controlling** | 1,479 lines, 49 sources |
 | `baseline-04f` | Resource ceilings for streams | 821 lines, 27 sources |
+| `baseline-04g` | Delivery-ended signalling | 1,144 lines, 46 sources |
 
 Run b supersedes run a's central claim. Both are retained: divergence between
 independent runs of one prompt is a confidence signal.
@@ -52,6 +53,7 @@ Rule identifiers continue from `R13.11`, the current end of §13.
 | `ST-027` | New `R13.16`, at `SHOULD` | `04e` run b |
 | `ST-028` | New `R13.17` | `04f` |
 | `ST-029` | Scoping note on `R6.5`; no rule text change | `04f` |
+| `ST-030` | Amends `R12.10` and `R13.9`; reserves `stream_end_reason` in §1.10 | `04g` |
 
 Ratifying any of these adds its identifier to `R1.3`'s frozen-series list, as
 `ST-001`–`ST-020` were added in version 1.1.0.
@@ -262,9 +264,9 @@ the maximum with `R13.6`'s terminal frame rather than by closing the
 connection, because a close at a published limit is a normal end and a client
 must not be made to report it as truncation.
 
-> **Open — see "The delivery-ended gap" below.** What that terminal frame
-> carries when the operation is still running is not yet settled, because
-> `R13.9` requires a terminal state the operation does not have.
+**Resolved by `ST-030`.** That terminal frame carries the operation's current
+state — permitted once `R13.9` is scoped — plus a `stream_end_reason` naming
+why delivery ended.
 
 ### How the merge resolved
 
@@ -560,32 +562,86 @@ gap.
 
 ---
 
-# The delivery-ended gap
+## `ST-030` — Delivery and work are reported separately
 
-**This is the one structural problem the proposal set does not solve, and it
-blocks parts of `ST-024`, `ST-025`, and `ST-026`.**
+**Target:** amends `R12.10`, amends `R13.9`, and adds a reserved member in
+§1.10. **Class:** `[COMPARATIVE]` on the shape, `[POLICY]` on the reason
+member. **Confidence:** moderate-high on the shape; moderate on the
+HTTP-nativeness of the precedent. **Version class:** MINOR — the same
+relaxation class `ST-024` already accepted.
 
-Three rulings now produce a stream that ends while its work continues: a
-stream cut at its documented maximum; a stream ended because its credential
-expired; and a replay or resumption that cannot deliver missed frames.
+An **`error` frame determines the fate of the delivery, not of the work.**
+`R12.10` is scoped accordingly: a client receiving an `error` frame treats the
+*stream* as ended in failure, and consults the operation resource — already
+authoritative and already reachable via `operation_id` or `operation_url`
+(`R13.9`) — for the fate of the operation.
 
-Two ratified rules block the obvious signalling routes:
+A **terminal frame may carry the operation's current state**, including a
+non-terminal one, rather than only a terminal-state value. `R13.9` is scoped
+accordingly.
 
-| Rule | Text | Consequence |
-| --- | --- | --- |
-| `R12.10` | "On an `error` frame it MUST treat the operation as failed" | An error frame cannot mean "delivery ended, work continues" |
-| `R13.9` | The terminal frame carries `operation_state` from the operation's **terminal-state** vocabulary, and "this applies to an `error` terminal frame exactly as to a success one" | A still-running operation is in none of those states |
+A terminal frame that ends delivery while the work continues **MUST** carry a
+documented **`stream_end_reason`** (§1.10) naming why delivery ended. The
+standard reserves the member name and **standardizes no value set**; each API
+documents its own vocabulary.
 
-So `ST-024`'s "the terminal frame indicates that" names no frame type, member,
-value, or problem code — a client cannot act on it. `ST-025` ends an
-expired-credential stream with an `error` frame, which `R12.10` forces the
-client to read as *the operation failed*, which it did not. And `ST-026`'s
-gap-visibility clause permits three mechanisms of which only one is an error.
+### Why this shape, and not a new terminal frame type
 
-**A research leaf is running** (`baseline-04g-delivery-ended-signalling`) to
-establish what the field does before this standard invents a vocabulary. It is
-explicitly authorized to conclude that `R12.10` or `R13.9` should be scoped,
-or that no rule is warranted.
+`baseline-04g` built a six-pattern taxonomy of how the field signals
+stream-end-without-work-end. The decisive evidence is that **the one protocol
+that shipped a standalone end-of-stream marker removed it.** A2A carried
+`final: true` on `TaskStatusUpdateEvent` in v0.3.0 and deleted it in v1.0.1.
+The issue, verified directly at `a2aproject/A2A` #1308, is titled "Remove
+redundant `final` field from `TaskStatusUpdateEvent`" and reasons:
+
+> Terminal states (COMPLETED, FAILED, CANCELLED, REJECTED) already indicate
+> task completion, making the final field redundant. This creates consistency
+> across streaming, polling, and push notification communication patterns.
+
+Adding a frame type would therefore re-adopt a design a peer protocol
+reversed, for the reason that the state vocabulary already carries the
+information.
+
+Where the field converged instead is the shape proposed here: Temporal returns
+the most advanced stage reached plus a continuation handle **on a success
+response**, and A2A v1.0.1 closes the stream when the task reaches "a terminal
+**or interrupted** state" — one vocabulary spanning both.
+
+### Why not reuse the error channel with a distinguishing reason
+
+That pattern is shipped — Kubernetes watch signals `410 Expired` inside an
+`ERROR` event, and `client-go` logs "Watch closed" for `Expired` against
+"Failed to watch" otherwise — and it is the most **HTTP-native** precedent
+available. It was declined because every client would then have to read inside
+an error to avoid treating a normal end as a failure, while `R12.10`'s plain
+text still says the operation failed. Scoping `R12.10` fixes the text rather
+than working around it.
+
+### This reverses the earlier repair for the duration-cap collision
+
+An earlier ruling exempted the terminal frame from carrying `operation_state`
+in the duration-cap case. `baseline-04g` recommends reversing that, and the
+reasoning holds: the objection to carrying the current state was that it
+"weakens the comparison in every case," and that does not reach a relaxation
+**conditioned on the divergence case**. Exempting removes information;
+carrying the current state adds it. `ST-030` supersedes that repair.
+
+### What it unblocks
+
+| Was blocked | Now |
+| --- | --- |
+| `ST-024`'s enforcement clause named no frame type, member, or value | The terminal frame carries the current state plus `stream_end_reason` |
+| `ST-025` ends an expired-credential stream with an `error` frame that `R12.10` forced clients to read as operation failure | The error frame ends the *delivery*; the operation resource reports the work |
+| `ST-026`'s gap-visibility clause permits three mechanisms, only one an error | All three remain available, and none is forced to imply the work failed |
+
+### The honest weakness, recorded
+
+The two strongest precedents are **not HTTP streaming APIs**: Temporal is an
+RPC framework and A2A is a protocol specification. Gemini Live's advance-warning
+pattern is WebSocket, which §1.2 places outside this standard. The HTTP-native
+evidence is thinner — Kubernetes' error-with-reason and Kinesis's silent close
+plus documented reconnect. Whether an RPC-shaped precedent should drive an HTTP
+rule is a fair objection and was weighed at the ruling.
 
 ---
 
@@ -593,7 +649,6 @@ or that no rule is warranted.
 
 | Item | What is unresolved |
 | --- | --- |
-| **The delivery-ended gap** | Above. Blocks `ST-024`'s enforcement clause, `ST-025`'s expiry termination, and `ST-026`'s gap-visibility mechanism |
 | **`R3.9` exception form** | Whether to remove work-starting `PUT`s from the exception entirely, or exempt **only the header** while keeping the guarantees, as run b proposed. The second is narrower and may avoid a major bump |
 | **`R3.9` version classification** | Whether the clarification is editorial or re-means the rule |
 | **`ST-025` exposure statement scope** | After expiry became `SHOULD`, an unbounded stream may outlive an *expiring* credential with neither a required termination nor a required statement |
@@ -647,12 +702,13 @@ inherits settled ground.
 | 4 | `ST-026`'s shape after its evidence was falsified | Non-re-execution `MUST`; response shape a documented choice |
 | 5 | Must an attached stream reveal missed frames? | Yes — server obligation, with the client clause restored |
 | 6 | `R3.9`'s "naturally idempotent" exception | Clarify the premise; the exact form remains open |
-| 7 | A stream cut at its cap has no terminal state | Exempt and signal — blocked pending the delivery-ended leaf |
+| 7 | A stream cut at its cap has no terminal state | Exempt and signal — **superseded by ruling 13** |
 | 8 | The unbounded-plus-non-expiring escape hatch | Gate the claim, require the statement |
 | 9 | A request carrying both a key and a position | They compose |
 | 10 | `ST-024`'s jitter clause | Move to the companion |
 | 11 | A different-family review before the walk? | Run it |
 | 12 | The retention mismatch | Terminal state suffices; exact shape remains open |
+| 13 | The delivery-ended gap | Scope `R12.10` and `R13.9`; the terminal frame carries the operation's current state plus `stream_end_reason` (`ST-030`). Supersedes ruling 7 |
 
 Two further rulings stand: `ST-025`'s expiry clause at `SHOULD` with a
 research trigger, and cancellation registered now and researched later.
