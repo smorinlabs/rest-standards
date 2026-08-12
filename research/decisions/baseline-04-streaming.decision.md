@@ -570,3 +570,93 @@ as accurate.
 **Non-invalidating:** further AI-provider examples of SSE framing, or further
 private in-band error schemas. Both findings are already unanimous; additional
 instances change no ratified principle.
+
+---
+
+# Phase 8 ratification — 2026-08-12
+
+**All ten `ST-021`–`ST-030` principles ratified en bloc**, following the Gate C
+precedent where the `HS`, `AC`, and `OP` batches were each ratified en bloc
+after the contested forks had been walked. Sixteen owner rulings shaped the set
+first; nothing remained contested at ratification.
+
+**Evidence base.** Six research leaves under `baseline-04` — `04b` frame
+versioning, `04c` authorization lifetime, `04d` caching, `04e` idempotency
+replay (two runs, `b` controlling), `04f` resource ceilings, `04g`
+delivery-ended signalling — totalling roughly 6,700 lines and 230 sources.
+Reviewed by one same-family adversarial pass and one Codex second lens, both
+dispositioned in
+[`docs/reviews/2026-08-10-phase-8-consolidated-proposals.md`](../../docs/reviews/2026-08-10-phase-8-consolidated-proposals.md),
+which carries the full post-ruling text and is the drafting source.
+
+**Version class: MINOR — v1.2.0.** Six new rules, six amended, four new
+reserved names. Nothing is strengthened: `R3.9`'s change is deliberately split
+into an editorial clarification plus a relaxation so that it stays MINOR, and
+every other amendment either scopes or relaxes.
+
+## The ratified set
+
+| ID | Obligation | Surfaces |
+| --- | --- | --- |
+| `ST-021` | Documented open-enum values, their meanings, and — for frame types — which are terminal, are frozen within a GA major | Amends `R9.4` |
+| `ST-022` | Vocabulary marks terminality; non-terminal types may retire via dual-emit, terminal types only at a major version | Amends `R13.5` |
+| `ST-023` | Explicit `Cache-Control`; tier 1 default; tier 3 gated on immutability, `Vary`, and `R7.2` | New `R13.12` |
+| `ST-024` | Document a maximum duration or declare the stream unbounded, the latter only where it has no normal end; enforce with a terminal frame | New `R13.13` |
+| `ST-025` | A stream should not outlive its credential; should end on revocation; must publish its revocation posture and, when unbounded, its exposure window | New `R13.14` |
+| `ST-026` | A keyed repeat never re-executes; answer by attaching or `409`, documented; gaps and expired representations stated | New `R13.15`, amends `R3.9` |
+| `ST-027` | Irreversible non-idempotent mutations should not stream; split execution from delivery, or name the work in the request target | New `R13.16` |
+| `ST-028` | A held-open stream occupies a concurrency slot for its lifetime; the counting rule is documented | New `R13.17` |
+| `ST-029` | A streamed collection documents and enforces its maximum `limit` | Note on `R6.5` |
+| `ST-030` | An `error` frame determines the fate of the delivery, not the work; a terminal frame may carry a non-terminal state plus `stream_end_reason` | Amends `R12.10`, `R13.9`, §1.10 |
+
+## Weaknesses ratified with the set, recorded rather than resolved
+
+Three principles carry known weakness. Ratifying them accepts these, and each
+is stated in the standard's own provenance lines.
+
+| Principle | Weakness |
+| --- | --- |
+| `ST-025` | The expiry clause is `SHOULD` because no published incident exists and it overrules the field's clearest precedent — a Kubernetes watch authenticates once and plausibly outlives its bound token. A research trigger is registered below |
+| `ST-028` | Its premise depends on reading `R8.10`'s compressed "published: … concurrency separate" as distributive. `baseline-04f` labelled that `[INFERENCE]` and called the ambiguity itself a finding |
+| `ST-030` | Its two strongest precedents are not HTTP streaming APIs: Temporal is an RPC framework and A2A a protocol specification. The HTTP-native evidence — Kubernetes' error-with-reason, Kinesis's documented reconnect — is thinner |
+
+## Research trigger, added to the register in `research/README.md`
+
+> **`ST-025` expiry-clause re-check.** Any one of the following fires a leaf
+> reconsidering `MUST`: a published incident of data delivered over a stream
+> after the principal's authorization was revoked; any implementation shipping
+> mid-stream re-evaluation or credential-bound termination; an IETF or OAuth
+> work item addressing authorization for a request already in progress; or any
+> of OpenAI, Anthropic, or Google Gemini publishing a maximum stream duration
+> or an in-flight revocation posture. Baseline recorded 2026-08-12: none
+> present, and `baseline-04g` re-confirmed the Anthropic negative.
+
+## Left unruled, by ruling
+
+**Cancellation across the two channels.** `R10.2` expresses cancellation as the
+`cancel` action on the operation resource and `R13.9` makes stream and
+operation one identity, but nothing says what happens to an open stream when
+its operation is cancelled through the other channel, nor whether a client
+disconnecting cancels the operation. Registered in §13.4 as of v1.1.3;
+deliberately not researched, because no proposal in this set depends on
+resolving it.
+
+## Corrections this phase made to released text
+
+Recorded because two of them corrected claims the decision layer itself had
+asserted, and one corrected a correction.
+
+- §13.4 said a stream **cannot supply** a strong `ETag`. RFC 9110 §8.8.1
+  permits a validator from a revision identifier assigned before the
+  representation is accessible. The replacement claim — that `R3.10`'s scope
+  excludes streams — was **also wrong**, because `R3.10` binds a *resource*
+  and `R13.2` lets that resource serve a streamed representation. Shipped
+  corrected in v1.1.3 after two review passes.
+- §13.4 said streams have no required concurrency ceiling; `R8.10` already
+  requires a published posture including concurrency.
+- Appendix A's `R7.3` row asserted an obligation the keyword-free rule does not
+  impose.
+- The companion advised "add frame types freely", which detonates the same
+  false-truncation cascade when the added type is terminal.
+- Six interactions were missing from §13.4 entirely; the register went from
+  five entries to eleven in v1.1.3.
