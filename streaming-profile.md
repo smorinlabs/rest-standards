@@ -470,36 +470,38 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 
 ## 13. What §13 does not yet answer
 
-§13.4 records **eleven** interactions between streaming and the rest of the
-standard that are **recognized and not yet ruled**. They are listed there so
-that silence reads as a decision rather than an oversight, and Phase 8 in
-[`PLAN.md`](PLAN.md) is open to rule them with the same evidence discipline
-that produced §13.
+§13.4 records **five** interactions between streaming and the rest of the
+standard that are **recognized and not yet ruled**: cancellation across the
+two channels, an unsupported `stream_position`, a no-`Accept` request to an
+always-streaming resource, CSRF under ambient browser credentials, and where a
+§13.4 resolution is actually recorded. They are listed there so that silence
+reads as a decision rather than an oversight.
 
-The practical advice while they are open: resolve each as your deployment
-requires, and record the choice in your conformance note under `R1.7`. Two
-deserve a note here because getting them wrong is expensive.
+The register held eleven in version 1.1.3. **Phase 8 ruled six of them** in
+version 1.2.0, and two pieces of advice this section used to carry are now
+rules rather than guidance.
 
-**Frame-type names are effectively frozen, even though §9.3 does not say so
-yet.** `R12.10` requires clients to ignore frame types they do not
-recognize. That tolerance is what makes a growing vocabulary safe — and it
-is also a trap: rename your terminal frame and every deployed client
-silently ignores the new name, sees no terminal frame, and reports
-**truncation on every successful stream**. Treat documented frame-type names,
-and which types are terminal, as part of the frozen compatibility surface
-until §13.4's register is resolved. **Add non-terminal frame types freely;
-rename none; and do not add a new terminal type without treating it as a
-breaking change.**
+**Frame-type names and terminality are now frozen — `R9.4` says so.** This
+section previously told you to treat them as frozen precisely because §9.3 did
+not. It does now: removing, renaming, or re-meaning a documented open-enum
+value is a breaking change, and `R13.5` requires the vocabulary to mark which
+types are terminal. The reason is unchanged and still worth understanding —
+`R12.10` requires clients to ignore frame types they do not recognize, which
+is what makes a growing vocabulary safe and is also the trap. Rename a
+terminal frame, or add a new one, and every deployed client ignores it, sees
+no terminal frame, and reports **truncation on every successful stream**.
+`R13.5` routes retirement accordingly: non-terminal types may go through a
+documented dual-emit overlap, terminal types only at a major version.
 
-That last clause matters and is easy to lose. Adding a *terminal* type causes
-the identical failure a rename does: deployed clients ignore the type they do
-not recognize, see no terminal frame, and report truncation on every
-successful stream. "Add freely" is safe only for non-terminal types.
+**Stream lifetime and revocation are now `R13.14`.** A stream is one request,
+so a 45-minute stream opened with a 5-minute token is authorized once, at
+minute zero. `R13.14` says a stream *should not* outlive its credential and
+*should* end on revocation — both at SHOULD strength, because no published
+incident exists and a MUST would overrule Kubernetes' shipped design. What is
+mandatory is disclosure: publish your revocation posture as an **upper
+bound**, never as a claim of immediacy, and if your stream is unbounded, state
+its exposure window even when that statement is "indefinite".
 
-**A stream can outlive the credential that opened it.** `R8.6` authorizes a
-request, and a stream is one request. A 45-minute stream opened with a
-5-minute token is authorized once, at minute zero, and no rule yet requires
-re-evaluation. If revocation matters in your threat model — and §8.3's
-token-format axis says it should — bound stream lifetime by credential
-lifetime, or re-evaluate periodically and terminate through an `error` frame
-(R13.7). Do not assume the standard has covered this for you.
+For the five that remain, the practical advice still holds: resolve each as
+your deployment requires, and record the choice in your conformance note under
+`R1.7` — noting that *where* to record it is itself one of the five.

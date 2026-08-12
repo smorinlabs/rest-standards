@@ -7,6 +7,85 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 1.2.0 — 2026-08-12
+
+Completes **Phase 8**, the streaming interactions §13.4 recorded as recognized
+and not yet ruled. A MINOR bump: six rules added, six amended, one reserved
+member added, **nothing strengthened**. The standard now carries **145 rules**
+(from 139); checklist 145/145.
+
+### Added
+
+- **`R13.12`** — a streaming response carries explicit `Cache-Control` and
+  defaults to tier 1. Tier 3 requires an immutable retained artifact, `Vary`
+  coverage of every resumption input, and no authenticated data.
+- **`R13.13`** — document a maximum stream duration, or declare the stream
+  unbounded, which is available only where it genuinely has no normal end. A
+  documented maximum is enforced and ends with a terminal frame, not a
+  connection close.
+- **`R13.14`** — a stream should not outlive its credential, should end on
+  revocation, must publish its revocation posture as an upper bound, and when
+  unbounded must state its exposure window.
+- **`R13.15`** — a keyed repeat never re-executes; the server documents
+  whether it attaches or rejects with `409`; omitted frames are made visible;
+  an expired representation is stated as unavailable.
+- **`R13.16`** — irreversible non-idempotent mutations should not stream;
+  split execution from delivery, or name the work in the request target.
+- **`R13.17`** — a held-open stream occupies a concurrency slot for its
+  lifetime, and the counting rule is documented.
+- **`stream_end_reason`** reserved in §1.10, with no standardized value set.
+
+### Changed
+
+- **`R9.4`** — documented open-enum values, their meanings, and frame-type
+  terminality join the frozen surface. Removing, renaming, or re-meaning one
+  is breaking. This fixes a class, not an instance: `operation_state` and
+  `R6.7`'s sortable-field set had the same hole.
+- **`R13.5`** — the vocabulary marks which types are terminal. Non-terminal
+  types may retire through a documented dual-emit overlap; **terminal types
+  only at a major version**, because a stream has exactly one ending.
+- **`R12.10`** and **`R13.9`** — an `error` frame now ends the **delivery**,
+  not the work, and a terminal frame may carry a non-terminal
+  `operation_state` paired with `stream_end_reason`. Three rules end delivery
+  while work continues, and the previous vocabulary could not express it.
+- **`R3.9`** — split deliberately. The exception's premise is *clarified*, so
+  that "naturally idempotent" covers a `PUT` storing a representation and not
+  one starting work; and a *header exemption* is added where the request
+  target names the work. Clarification plus relaxation, which is why the
+  amendment stays MINOR.
+- **`R6.5`** — states that it binds streamed collections, which it always did.
+
+### Evidence
+
+Six research leaves under `baseline-04` — frame versioning, authorization
+lifetime, caching, idempotency replay (two runs), resource ceilings, and
+delivery-ended signalling — roughly 6,700 lines and 230 sources. Reviewed by
+one adversarial pass and one different-model-family pass, then walked through
+sixteen owner rulings before en-bloc ratification.
+
+Two findings changed the answer rather than confirming it. The claim that no
+published API both accepts an idempotency key and streams was **false** —
+Replicate's Cog does both on one endpoint and *attaches* a repeat to the
+running stream, which is the opposite of the `409` the first run had mandated.
+And the obvious fix for delivery-ended signalling, a new terminal frame type,
+is a design **A2A shipped and then removed** as redundant, so `R12.10` and
+`R13.9` were scoped instead.
+
+### Known weaknesses, ratified knowingly
+
+`R13.14`'s expiry clause is `SHOULD` because no published incident exists and
+a `MUST` would overrule Kubernetes' shipped design; a dated re-check trigger
+is registered. `R13.17`'s premise depends on a distributive reading of
+`R8.10`'s compressed wording. `R12.10`/`R13.9`'s strongest precedents —
+Temporal and A2A — are not HTTP streaming APIs.
+
+### Still unruled
+
+§13.4 keeps five interactions, down from eleven: cancellation across the two
+channels, an unsupported `stream_position`, a no-`Accept` request to an
+always-streaming resource, CSRF under ambient browser credentials, and where a
+§13.4 resolution is recorded.
+
 ## 1.1.3 — 2026-08-10
 
 Editorial. No rule text, strength, or obligation changes; 139 rules, checklist
