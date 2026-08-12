@@ -498,8 +498,10 @@ types may go through a documented dual-emit overlap, terminal types only at a
 major version.
 
 **Stream lifetime and revocation are now `R13.14`.** A stream is one request,
-so a 45-minute stream opened with a 5-minute token is authorized once, at
-minute zero. `R13.14` says a stream *should not* outlive its credential and
+so HTTP checks authorization once, at admission. That is the hazard, not the
+permission: open a 45-minute stream with a 5-minute token and nothing in the
+protocol re-examines it at minute six. `R13.14` is what governs the remaining
+44 minutes. `R13.14` says a stream *should not* outlive its credential and
 *should* end on revocation — both at SHOULD strength, because no published
 incident exists and a MUST would overrule Kubernetes' shipped design. What is
 mandatory is disclosure: publish your revocation posture as an **upper

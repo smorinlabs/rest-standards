@@ -383,11 +383,25 @@ reads live at run time. Each is an owner ruling for a later amendment.
 
 ### Phase 8: Streaming's unresolved interactions — **complete 2026-08-12 (v2.0.0)**
 
-**Outcome.** Six of the register's eleven interactions ruled; five remain,
-recorded in §13.4. Ten principles `ST-021`–`ST-030` ratified en bloc into
+**Outcome.** Six of the register's eleven interactions ruled. **§13.4 now
+carries six rows**, not five: five untouched questions plus one *residue* —
+`R13.12` ruled the caching posture but not what revalidation means for a
+representation still arriving, so what is left of that entry stays registered.
+
+Ten principles `ST-021`–`ST-030` ratified en bloc into
 `research/decisions/baseline-04-streaming.decision.md`, producing six new
-rules (`R13.12`–`R13.17`) and six amendments (`R9.4`, `R13.5`, `R12.10`,
-`R13.9`, `R3.9`, `R6.5`). The standard stands at **145 rules**, checklist
+rules (`R13.12`–`R13.17`) and **nine** amendments: `R9.4`, `R13.5`, `R12.10`,
+`R13.9`, `R3.9`, `R6.5`, plus `R4.9`, `R8.10`, and `R13.6`, which were added
+at drafting after a second-lens review of the drafted text.
+
+**Released as v2.0.0, not v1.2.0.** Five of the nine amendments — `R9.4`,
+`R4.9`, `R13.5`, `R8.10`, `R13.6` — strengthen an existing rule, and the Part
+II amendment rule classes a strengthening as MAJOR. Two of those five were
+ratified or implied but never drafted until that review: `R8.10`'s clause
+under `ST-025`, and `R4.9`'s terminal-frame exception. The version class is
+corrected as a dated annotation in the decision record.
+
+The standard stands at **145 rules**, checklist
 145/145, fixtures 14/14.
 
 **Method, and what it cost.** Six research leaves (~6,700 lines, ~230

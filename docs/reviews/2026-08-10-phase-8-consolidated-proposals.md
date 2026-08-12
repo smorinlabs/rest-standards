@@ -18,6 +18,26 @@ and `ST-026` carried a decision adopting one shape above rule text stating
 another. Revision 3 integrates instead of annotating, because annotation does
 not survive twelve rulings.
 
+## Corrections at drafting (2026-08-12) — read before using this as a source
+
+This document is a **dated proposal artifact**, not the standard. Drafting
+`v2.0.0` and a second-lens review of the drafted text superseded it in four
+places. They are collected here rather than edited inline, because inline
+annotation is exactly what made revisions 1 and 2 unusable. Where this
+document and `rest-api-standard.md` disagree, **the standard governs**.
+
+| Where | What this document says | What shipped, and why |
+| --- | --- | --- |
+| `ST-023`, caching | "tier 1's strong-`ETag` revalidation clause does not apply to it — `R3.10` binds resources supporting conditional update, and a stream is not one" | **Superseded.** `R3.10` binds a *resource*, and `R13.2` lets one endpoint serve both a streamed and a non-streamed representation, so such a resource still owes a strong `ETag`. `R13.12` states the scope; what revalidation *means* for a representation still arriving stays registered in §13.4. |
+| `ST-022`, frame versioning | classifies *renaming* a terminal frame type as breaking | **Extended.** *Adding* a terminal type breaks deployed clients identically and was not classified. `R4.9` and `R9.4` now classify it. |
+| `ST-025`, "Consequential amendment" | `R8.10` "gains a clause requiring that plan to state its effect on in-flight streams" | **Was never drafted** until the review caught it. Now enacted in `R8.10`'s token-format axis. |
+| `ST-030`, delivery-ended signalling | scopes the `stream_end_reason` duty through `R12.10` and `R13.9` | **Relocated.** The ratified `MUST` was unconditional, and `R13.9` is inherently dual-channel, so the general obligation lives in `R13.6`; `R13.9` states its dual-channel instance. |
+
+Three of the four **strengthen** a rule, which is why the release is `v2.0.0`
+rather than the `v1.2.0` this document's version-class notes assume. The
+governing record is the dated correction in
+[`research/decisions/baseline-04-streaming.decision.md`](../../research/decisions/baseline-04-streaming.decision.md).
+
 **Authority.** The research leaves in `research/reports/` remain authoritative
 for evidence. This document is authoritative for the **post-ruling rule text**
 and for identifier assignment.

@@ -1,4 +1,32 @@
-# Baseline 04e — Idempotency-key replay of a streaming request
+# baseline-04e — Idempotency-key replay of a streaming request
+
+> ## ⚠ Correction (2026-08-12) — this run's central negative was falsified
+>
+> **Do not cite this run's precedent claim.** Below, this report states that
+> "Every surveyed API that streams has **no** idempotency key at all" and that
+> the combination has "**zero published precedent** — nobody has solved this
+> because nobody has built it." **That is false.**
+>
+> **Replicate's Cog does both on one endpoint.** `PUT /predictions/<id>` with
+> `Accept: text/event-stream` is documented as "Streaming, idempotent," and a
+> repeat **attaches** to the running stream. That was verified independently
+> against Cog's own capability table. The claim was not merely incomplete: it
+> pointed the opposite way from the evidence, because a shipped implementation
+> attaches where this run reasoned toward rejection.
+>
+> This run also escalated an expired IETF draft's `409` from `SHOULD` to
+> `MUST`, presenting a draft's recommendation as a requirement.
+>
+> The leaf was re-run as
+> [`…report.2026-08-10b.md`](baseline-04e-stream-idempotency-replay.report.2026-08-10b.md),
+> which supersedes this one on the precedent question and on the response
+> shape. `R13.15` as shipped documents **attach or `409`** as a choice, rather
+> than mandating `409`, precisely because of what run b found.
+>
+> This run is kept unedited: the record of what a run concluded is the point of
+> keeping it, and a report quietly corrected is a report that cannot be audited.
+> Its analysis of the three server states and of "the stored response" for a
+> stream survived ratification and is unaffected.
 
 *Research leaf under `baseline-04` (streaming), answering the fourth row of
 `rest-api-standard.md` §13.4 "Known unresolved interactions": **what an

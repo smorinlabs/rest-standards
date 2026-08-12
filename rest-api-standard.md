@@ -397,7 +397,7 @@ a client reading two APIs find the same concept under the same name.
 | `operation_url` | Same | The absolute URI of the operation resource, where the API uses R10.9's `url` form instead of `id`. Exactly one of the two is carried, matching whichever form the `202` body uses | `P6-D0` batch (`ST-009`) `[POLICY]` |
 | `operation_state` | A terminal frame | The operation's terminal-state value, drawn from the vocabulary R10.1 requires the operation resource to document (`succeeded`, `failed`, `canceled`, …). This is the member R13.9 compares across the two channels. Deliberately **not** named `status`: R13.7 forbids a `status` member on an `error` frame's problem object, and one name for the terminal state across both success and failure frames is what makes the comparison mechanical | Phase 6 review walk `[POLICY]` |
 | `retry_after` | An `error` frame | Seconds a client should wait before retrying, carrying the pacing hint that the `Retry-After` header would have carried had a status still been available (R11.2 streaming scope). Same semantics and units as `Retry-After`'s delay-seconds form | Phase 6 review walk `[POLICY]` |
-| `stream_end_reason` | A terminal frame | Why delivery ended, where it ended while the underlying work continued (R13.9, R13.13, R13.14, R13.15). **This standard reserves the name and standardizes no value set**; each API documents its own vocabulary. Required whenever the terminal frame's `operation_state` is non-terminal | `ST-030` (`baseline-04g`) `[POLICY]` |
+| `stream_end_reason` | A terminal frame | Why delivery ended, where it ended while the underlying work continued (R13.13, R13.14, R13.15). **This standard reserves the name and standardizes no value set**; each API documents its own vocabulary. **Required by R13.6 whenever a terminal frame ends delivery while the work continues, whether or not an operation resource exists**; where one does, R13.9's dual-channel instance pairs it with a non-terminal `operation_state` | `ST-030` (`baseline-04g`) `[POLICY]` |
 
 #### Reserved stream frame types
 
@@ -836,7 +836,7 @@ truncation on every success, which is the one addition tolerance cannot absorb.
 > Provenance: `AC-012` (batch, `baseline-02` §7) · evidence-backed
 > default · confidence moderate. The terminal-frame exception was added in
 > version 2.0.0 by `ST-021`/`ST-022` (`baseline-04b`) · `[POLICY]` ·
-> confidence moderate-high. It **strengthens** this rule, one of the four
+> confidence moderate-high. It **strengthens** this rule, one of the five
 > amendments making that release MAJOR. Phase 8 classified *renaming* a
 > terminal frame as breaking and initially missed *adding* one, which is the
 > same defect one row over; the Codex review of the drafted text found it.
