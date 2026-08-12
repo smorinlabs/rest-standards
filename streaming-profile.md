@@ -487,7 +487,14 @@ is also a trap: rename your terminal frame and every deployed client
 silently ignores the new name, sees no terminal frame, and reports
 **truncation on every successful stream**. Treat documented frame-type names,
 and which types are terminal, as part of the frozen compatibility surface
-until Phase 8 rules otherwise. Add frame types freely; rename none.
+until §13.4's register is resolved. **Add non-terminal frame types freely;
+rename none; and do not add a new terminal type without treating it as a
+breaking change.**
+
+That last clause matters and is easy to lose. Adding a *terminal* type causes
+the identical failure a rename does: deployed clients ignore the type they do
+not recognize, see no terminal frame, and report truncation on every
+successful stream. "Add freely" is safe only for non-terminal types.
 
 **A stream can outlive the credential that opened it.** `R8.6` authorizes a
 request, and a stream is one request. A 45-minute stream opened with a

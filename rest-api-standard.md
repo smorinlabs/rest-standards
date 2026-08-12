@@ -1,14 +1,17 @@
 # REST API Design Standard
 
-**Version 1.1.2.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
+**Version 1.1.3.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
 and E all passed (decision layer ratified 2026-08-09; draft approved
 2026-08-09 and systematically reviewed through 2026-08-10; review history in
 [`docs/reviews/`](docs/reviews/)). Version 1.1.0 adds **§13, streaming
 responses**, under the Part II amendment rule — a MINOR bump, since it adds
 rules and scopes nine existing ones without strengthening or removing any.
-Versions 1.1.1 and 1.1.2 are editorial only: 1.1.1 renumbers the
-deferred-work phase from 7 to 8 wherever this document names it, and 1.1.2
-corrects wording in the Part II map. Neither changes a rule.
+Versions 1.1.1 through 1.1.3 are editorial only: 1.1.1 renumbers the
+deferred-work phase from 7 to 8 wherever this document names it, 1.1.2
+corrects wording in the Part II map, and 1.1.3 corrects two overstated claims
+in §13.4's register, adds six interactions it had not recorded, and fixes an
+Appendix A row that stated an obligation `R7.3` does not impose. None of them
+changes a rule.
 This document, with
 [`conformance/spectral.yaml`](conformance/spectral.yaml),
 [`conformance/fixture-violations.yaml`](conformance/fixture-violations.yaml),
@@ -2048,7 +2051,7 @@ literally true. A client echoes a `stream_position` and never computes one.
 
 ### 13.4 Known unresolved interactions
 
-Five interactions between streaming and the rest of this standard are
+Eleven interactions between streaming and the rest of this standard are
 **recognized and not yet ruled**. They are recorded here rather than left to
 be discovered, because a reader who hits one should know the standard is
 silent by decision rather than by oversight. None of them makes a rule in
@@ -2061,9 +2064,15 @@ choice in its conformance note (R1.7).
 | --- | --- |
 | **Frame-vocabulary versioning** (§9.3) | R9.4's breaking-change taxonomy does not classify frame-type names. Renaming a terminal frame looks compatible, yet every deployed client would ignore the unrecognized frame under R12.10, see no terminal frame, and report truncation on every success. Until ruled, treat documented frame-type names and which types are terminal as part of the frozen surface. |
 | **Authorization over a stream's lifetime** (§8) | R8.6 authorizes a request; a stream is one request that may outlive the credential that opened it (R8.5 wants expiring credentials). No rule says whether a server must re-evaluate authorization mid-stream or bound a stream's lifetime by its credential's. |
-| **Caching posture for a stream** (§7) | R7.1 requires an explicit `Cache-Control` on every response, and R7.3's tier-1 default revalidates via strong `ETag` — machinery a stream cannot supply, since the body does not exist when headers are sent. The worked example uses `no-store`; the general rule is unruled. |
+| **Caching posture for a stream** (§7) | R7.1 requires an explicit `Cache-Control` on every response, and R7.3's tier-1 default revalidates via the strong `ETag` machinery of R3.10. What blocks that for a stream is **R3.10's scope** — it binds resources supporting conditional update, and a stream is not one. It is *not* that no validator is computable: RFC 9110 §8.8.1 permits a validator based on a revision identifier assigned before the representation is made accessible. Note also that R7.3 carries no BCP 14 keyword, so it states a default posture rather than an obligation. The general rule is unruled. |
 | **Idempotency-key replay of a streaming request** (§3) | R3.9 replays "the stored response" for a genuine retry. For a stream that is undefined: replay from the first frame, serve a non-streamed representation, or resume — which is R13.10, a different mechanism with different preconditions. |
-| **Resource ceilings for streams** (§11) | R11.1 requires published maxima for page size, expansion depth, and bulk item count. A held-open stream is the largest unbounded commitment the API makes and is in none of those dimensions; no maximum duration or per-principal concurrency ceiling is required. |
+| **Resource ceilings for streams** (§11) | R11.1 requires published maxima for page size, expansion depth, and bulk item count, and a held-open stream is in none of those dimensions, so **no maximum duration is required**. Concurrency is narrower than it first appears: R8.10's rate-limit axis default already calls for a published posture including concurrency, so what is missing there is only a statement that a stream occupies its slot for the stream's lifetime. That reading depends on R8.10's compressed wording and is itself flagged for resolution. |
+| **Cancellation across the two channels** (§10) | R10.2 expresses cancellation as the `cancel` action on the operation resource, and R13.9 makes the stream and the operation one capability with one identity. Nothing says what happens to an open stream when its operation is cancelled through the other channel, nor whether a client disconnecting from the stream cancels the operation. |
+| **An unsupported `stream_position`** (§13) | R13.10's rejection duty binds only "an API that offers resumption." An endpoint that streams but offers none may receive `stream_position`, ignore it, and restart from the first frame — while §1.10 tells clients to echo the value. This is the hazard R1.9 and R13.3 both exist to prevent, with no guard of its own. |
+| **A no-`Accept` request to an always-streaming resource** (§4) | R13.2 permits a distinct resource that streams unconditionally and says R4.10 does not reach it, but R4.10 has two clauses: the second fixes `application/json` as the media type served when a request carries no `Accept`. Such a resource cannot produce it, and R13.1 forbids labelling a stream that way. R4.10's default clause carries no BCP 14 keyword, so this is a taxonomy hole rather than a live conflict. |
+| **Renaming or removing an open enum value, generally** (§9) | R4.9 rules that enum additions are non-breaking and R9.4 classifies additions, but neither classifies removing or renaming a value. Frame types are one instance; `operation_state` (R10.1, made cross-channel by R13.9) and R6.7's sortable-field set have the same hole. |
+| **CSRF under ambient browser credentials** (§8) | R8.2 forecloses a query-parameter token, so a browser-direct `EventSource` connection must rely on ambient credentials, of which a cookie is the common one. §8 does not address CSRF at all. The gap predates streaming; streaming is what makes ambient credentials the browser-native path and so makes it load-bearing. |
+| **Where a §13.4 resolution is recorded** (§1.9) | This section directs an API to record its choice in the conformance note (R1.7), but R1.7's template offers `Deviations` (from rules — none exist here), `N/A declarations`, and free-text `Context`. A resolution of an unruled interaction fits no slot. |
 
 ### 13.5 Long-polling
 
@@ -2365,7 +2374,7 @@ own maintenance rather than a conforming API.
 | R6.10 | `fields` comma-list when field selection is offered |
 | R7.1 | Explicit `Cache-Control` on every response |
 | R7.2 | Authenticated data `private` or `no-store` |
-| R7.3 | Three-tier posture applied; no blanket `no-store` |
+| R7.3 | Three-tier posture is the stated default, not an obligation — R7.3 carries no BCP 14 keyword. Review that the posture was chosen deliberately and that blanket `no-store` is not the unexamined default |
 | R7.4 | Destructive operations demand `If-Match`; no unfiltered collection DELETE |
 | R8.1 | TLS 1.2+ only, 1.3 preferred |
 | R8.2 | No tokens in query strings |
@@ -2556,7 +2565,7 @@ E.10, it is omitted from the excerpts below for brevity.
 ```markdown
 ## Conformance note — Bloom Orders API
 
-Standard: rest-api-standard v1.1.2
+Standard: rest-api-standard v1.1.3
 Tier: public
 Switches: webhooks=on, async-operations=on, streaming=on,
   bulk-operations=off (imports run through the async export/import

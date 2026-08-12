@@ -7,6 +7,57 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 1.1.3 — 2026-08-10
+
+Editorial. No rule text, strength, or obligation changes; 139 rules, checklist
+139/139, fixtures 14/14.
+
+Phase 8 research and two review waves found defects in released text. This
+patch ships them ahead of the Phase 8 rule proposals, because none of them
+depends on that work and one is actively misleading.
+
+### Corrected — guidance that caused the failure it warned against
+
+[`streaming-profile.md`](streaming-profile.md) advised *"Add frame types
+freely; rename none."* Adding a new **terminal** frame type follows that
+advice and produces the identical failure a rename does: deployed clients
+ignore the type they do not recognize, see no terminal frame, and report
+truncation on every successful stream. An implementer following the guidance
+was worse off than one ignoring it. The advice now distinguishes terminal from
+non-terminal types.
+
+### Corrected — two §13.4 claims that overstated their own gaps
+
+- The register said a stream **cannot supply** a strong `ETag`. It can:
+  RFC 9110 §8.8.1 permits a validator based on a revision identifier assigned
+  before the representation is made accessible. What actually blocks tier-1
+  revalidation is `R3.10`'s scope, which binds resources supporting
+  conditional update. The row also now notes that `R7.3` carries no BCP 14
+  keyword, so it states a default posture rather than an obligation.
+- The register said streams have **no required concurrency ceiling**.
+  `R8.10`'s rate-limit axis default already calls for a published posture
+  including concurrency; what is missing is only a statement that a stream
+  occupies its slot for its lifetime. The row now says so, and flags that the
+  reading depends on `R8.10`'s compressed wording.
+
+### Added — six interactions the register had not recorded
+
+Cancellation across the two channels · an unsupported `stream_position` ·
+a no-`Accept` request to an always-streaming resource · renaming or removing
+an open enum value in general · CSRF under ambient browser credentials · and
+where a §13.4 resolution is actually recorded, given that `R1.7`'s template
+has no slot for one.
+
+The register now lists eleven interactions rather than five. Recording them is
+the point: §13.4 exists so that a reader who hits one knows the silence is a
+decision rather than an oversight, and six of them were oversights.
+
+### Corrected — an Appendix A row that asserted a non-obligation
+
+The checklist row for `R7.3` read as a requirement. `R7.3` contains no BCP 14
+keyword, so the row now describes what a reviewer should look for rather than
+a rule to enforce.
+
 ## 1.1.2 — 2026-08-10
 
 Editorial. No rule text, strength, or obligation changes; 139 rules,
