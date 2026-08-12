@@ -400,9 +400,12 @@ the two permitted shapes it implements**:
 
 Once the original reaches a terminal state, the server delivers the recorded
 outcome. Where the replayable representation has expired but the terminal
-state is retained, delivering the terminal state discharges this rule, and the
-API documents its **representation-retention window separately** from `R3.9`'s
-key-retention floor.
+state is retained, delivering the terminal state discharges this rule,
+**provided the response states that the representation is no longer
+available** — carried in `stream_end_reason` (§1.10) where the reply is itself
+a stream, and in a documented member where it is not. The API documents its
+**representation-retention window separately** from `R3.9`'s key-retention
+floor.
 
 Where a delivered stream omits frames the client would otherwise have
 received, the server **MUST** make the omission visible rather than delivering
@@ -693,7 +696,6 @@ rule is a fair objection and was weighed at the ruling.
 
 | Item | What is unresolved |
 | --- | --- |
-| **`ST-026` expired-representation shape** | "Terminal state suffices" needs an exact response shape; a terminal state is not necessarily the application result |
 | **Cancellation** | Registered for §13.4 by owner ruling; not researched. Nothing says what happens to an open stream when its operation is cancelled through the other channel, nor whether disconnecting cancels the operation |
 
 ---
@@ -752,6 +754,7 @@ inherits settled ground.
 | 13 | The delivery-ended gap | Scope `R12.10` and `R13.9`; the terminal frame carries the operation's current state plus `stream_end_reason` (`ST-030`). Supersedes ruling 7 |
 | 14 | `R3.9` exception form and version class | Split it — clarification is editorial, the header exemption for URI-named work is a relaxation. Resolves to MINOR |
 | 15 | `ST-025`'s exposure statement scope | Binds on the unbounded declaration, whatever the credential does |
+| 16 | `ST-026`'s expired-representation shape | Terminal state **plus** an explicit statement that the representation is unavailable — `stream_end_reason` where the reply is a stream, a documented member where it is not |
 
 Two further rulings stand: `ST-025`'s expiry clause at `SHOULD` with a
 research trigger, and cancellation registered now and researched later.
