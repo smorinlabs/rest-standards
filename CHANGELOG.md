@@ -30,9 +30,13 @@ non-terminal types.
 
 - The register said a stream **cannot supply** a strong `ETag`. It can:
   RFC 9110 §8.8.1 permits a validator based on a revision identifier assigned
-  before the representation is made accessible. What actually blocks tier-1
-  revalidation is `R3.10`'s scope, which binds resources supporting
-  conditional update. The row also now notes that `R7.3` carries no BCP 14
+  before the representation is made accessible. Nor does `R3.10` fail to reach
+  streams — it binds a *resource* that supports conditional update, and
+  `R13.2` lets one endpoint serve both a streamed and a non-streamed
+  representation, so such a resource still owes a strong `ETag`. What is
+  genuinely unresolved is what **revalidation means for an incrementally
+  delivered representation**: whether a `304` is coherent against a body that
+  does not yet exist. The row also now notes that `R7.3` carries no BCP 14
   keyword, so it states a default posture rather than an obligation.
 - The register said streams have **no required concurrency ceiling**.
   `R8.10`'s rate-limit axis default already calls for a published posture
