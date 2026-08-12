@@ -297,12 +297,12 @@ this standard, and must rely on ambient credentials if the deployment permits
 them.*
 
 If you go the ambient route, note what comes with it: cookie-backed sessions
-put you in CSRF territory, and §8 does not address CSRF at all. That gap
-predates streaming and is **not** one of the five interactions §13.4
-registers — it is an unregistered gap in §8, surfaced here because streaming
-is what makes ambient credentials the browser-native path and so makes the
-gap load-bearing. Handle it in your own design; do not expect the standard
-to have covered it.
+put you in CSRF territory, and §8 does not address CSRF at all. The gap
+predates streaming — streaming is what makes ambient credentials the
+browser-native path and so makes it load-bearing — and **it is now recorded
+in §13.4's register**, having previously been an unregistered gap in §8.
+Recorded is not ruled: handle it in your own design and do not expect the
+standard to have covered it.
 
 A query-string token is not merely inelegant. It lands in server access logs,
 browser history, `Referer` headers on any outbound link, and any URL a user
@@ -470,7 +470,7 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 
 ## 13. What §13 does not yet answer
 
-§13.4 records five interactions between streaming and the rest of the
+§13.4 records **eleven** interactions between streaming and the rest of the
 standard that are **recognized and not yet ruled**. They are listed there so
 that silence reads as a decision rather than an oversight, and Phase 8 in
 [`PLAN.md`](PLAN.md) is open to rule them with the same evidence discipline
@@ -487,7 +487,14 @@ is also a trap: rename your terminal frame and every deployed client
 silently ignores the new name, sees no terminal frame, and reports
 **truncation on every successful stream**. Treat documented frame-type names,
 and which types are terminal, as part of the frozen compatibility surface
-until Phase 8 rules otherwise. Add frame types freely; rename none.
+until §13.4's register is resolved. **Add non-terminal frame types freely;
+rename none; and do not add a new terminal type without treating it as a
+breaking change.**
+
+That last clause matters and is easy to lose. Adding a *terminal* type causes
+the identical failure a rename does: deployed clients ignore the type they do
+not recognize, see no terminal frame, and report truncation on every
+successful stream. "Add freely" is safe only for non-terminal types.
 
 **A stream can outlive the credential that opened it.** `R8.6` authorizes a
 request, and a stream is one request. A 45-minute stream opened with a

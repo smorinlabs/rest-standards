@@ -3,7 +3,7 @@
 A reusable, language-agnostic standard for designing consistent HTTP/REST APIs.
 
 The normative standard is [`rest-api-standard.md`](rest-api-standard.md)
-(v1.1.2), released 2026-08-10 and amended under its own Part II rule. Start
+(v1.1.3), released 2026-08-10 and amended under its own Part II rule. Start
 with [`PLAN.md`](PLAN.md), then read [`research/README.md`](research/README.md)
 for the research inventory and naming convention.
 
