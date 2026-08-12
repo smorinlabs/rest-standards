@@ -50,11 +50,9 @@ Two earlier rulings stand unchanged: `ST-025`'s expiry clause ships at
 `SHOULD` with a research trigger, and cancellation is registered now and
 researched later.
 
-**Still open, not yet consented into the pile:** the retention-mismatch case at
-D4 — a keyed repeat arriving while the terminal state is retained but the
-replayable representation has been collected, which `R3.9`'s 24-hour floor
-against 5-to-10-minute artifacts makes the common case rather than the rare
-one.
+| 12 | The retention mismatch — key retained 24 h, representation gone in 5–10 min | **The terminal state suffices.** Delivering the recorded outcome discharges `ST-026`; representation retention is documented separately from `R3.9`'s key floor |
+
+All twelve questions are decided. Nothing remains parked.
 
 ## What this document is
 
@@ -698,9 +696,40 @@ natural recovery request a streaming client can make. A document-your-behavior
 duty was declined for the reason this walk has declined it elsewhere: it leaves
 the client unable to rely on anything.
 
-**Still open at D4:** the retention-mismatch case — a keyed repeat arriving
-while the terminal state is retained but the replayable representation has
-been collected.
+**Decision (2026-08-10) on the retention mismatch: the terminal state
+suffices.** Where the replayable representation has expired but the terminal
+state is retained, delivering the recorded outcome discharges `ST-026`. The
+API documents its **representation-retention window separately** from
+`R3.9`'s key-retention floor.
+
+The mismatch is not an edge case. `R3.9` requires the key to be remembered for
+**at least 24 hours**, while the representations measured in run b last far
+less: Cog's replay buffer is **1024 events** — a count, not a duration, and
+configurable to zero — OpenAI's stored response about ten minutes, and
+Kubernetes' watch history about five. So for roughly 23 of those 24 hours a
+keyed repeat arrives with the key known, the terminal state known, and the
+frames gone.
+
+**Why this does not mirror `R13.10`, despite the structural parallel.** The two
+mechanisms are asked different questions. A *resumption* request asks "give me
+frames 48 onward," which without the frames is unanswerable, so `R13.10`'s
+defined error is the honest reply. A *keyed repeat* asks "did this already
+run," and the terminal state answers that completely — the frames were never
+the point, not re-executing was. Copying `R13.10`'s error would return a
+failure when the server knows the answer, and would push the client toward
+re-running work that already succeeded, which is the outcome `ST-026` exists
+to prevent.
+
+Two alternatives were declined. Requiring the representation to be retained as
+long as the key would demand retention an order of magnitude beyond anything
+shipped, which is run b's magnitude finding. A document-your-behavior duty
+would leave the client unable to predict whether it receives an outcome, an
+error, or a replay — the condition that produced the question.
+
+**Side benefit recorded:** the rule forces a distinction the standard
+currently hides. `R3.9` puts a floor on *key* retention and says nothing about
+*representation* retention. Those are different guarantees, and implementers
+will otherwise conflate them.
 
 **D5 — new error conditions have no `R5.16` catalog entries.** `R13.7` requires
 an in-band error's `type` and `code` to be listed in the `R5.16` catalog. Three
