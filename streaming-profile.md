@@ -297,12 +297,12 @@ this standard, and must rely on ambient credentials if the deployment permits
 them.*
 
 If you go the ambient route, note what comes with it: cookie-backed sessions
-put you in CSRF territory, and §8 does not address CSRF at all. That gap
-predates streaming and is **not** one of the five interactions §13.4
-registers — it is an unregistered gap in §8, surfaced here because streaming
-is what makes ambient credentials the browser-native path and so makes the
-gap load-bearing. Handle it in your own design; do not expect the standard
-to have covered it.
+put you in CSRF territory, and §8 does not address CSRF at all. The gap
+predates streaming — streaming is what makes ambient credentials the
+browser-native path and so makes it load-bearing — and **it is now recorded
+in §13.4's register**, having previously been an unregistered gap in §8.
+Recorded is not ruled: handle it in your own design and do not expect the
+standard to have covered it.
 
 A query-string token is not merely inelegant. It lands in server access logs,
 browser history, `Referer` headers on any outbound link, and any URL a user
@@ -470,7 +470,7 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 
 ## 13. What §13 does not yet answer
 
-§13.4 records five interactions between streaming and the rest of the
+§13.4 records **eleven** interactions between streaming and the rest of the
 standard that are **recognized and not yet ruled**. They are listed there so
 that silence reads as a decision rather than an oversight, and Phase 8 in
 [`PLAN.md`](PLAN.md) is open to rule them with the same evidence discipline
