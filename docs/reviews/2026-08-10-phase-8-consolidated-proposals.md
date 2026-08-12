@@ -315,7 +315,9 @@ assertion that revocation is immediate. An API that does not terminate on
 revocation at all MUST say so.
 
 An API whose stream is **unbounded by design** MUST state its exposure window
-explicitly, including when that statement is "indefinite."
+explicitly, including when that statement is "indefinite." **This binds
+whatever the credential does** — an unbounded stream that terminates on
+credential expiry states that it does.
 
 Resumption (`R13.10`) is a new request and is authorized as one (`R8.6`); a
 resumption position is never evidence of authorization.
@@ -358,10 +360,27 @@ upper-bound-not-immediacy clause directly.
 `R8.10`'s token-format axis requires a revocation-propagation plan; it gains a
 clause requiring that plan to state its effect on in-flight streams.
 
-> **Open — see "Known open items" below.** The exposure statement covers
-> unbounded streams. After the demotion of expiry to `SHOULD`, an unbounded
-> stream may also outlive an *expiring* credential, and that case currently
-> has neither a required termination nor a required statement.
+**Why the statement binds on the unbounded declaration rather than on
+credential type.** It originally covered only non-expiring credentials,
+because expiry was then a `MUST` and the credential genuinely supplied the
+bound. Once expiry became a `SHOULD`, an unbounded stream on an *expiring*
+credential reached the same exposure by a second route: `ST-024` is discharged
+by the unbounded declaration, and both termination clauses are `SHOULD`s, so
+nothing required the server to stop and nothing required it to say so.
+
+The trigger that matters is therefore **unbounded**, not what kind of
+credential is presented. An unbounded stream is the one shape where nothing
+else in the set supplies a bound.
+
+Two narrower forms were declined. Binding the statement to the `R1.7`
+deviation record — required only of an API that explicitly declines the expiry
+`SHOULD` — is well-aimed but under-inclusive, catching the API that considered
+expiry and missing the one that never did. Doing both adds a second obligation
+the first already covers.
+
+**Recorded cost:** an unbounded stream that *does* terminate on credential
+expiry must still say so. That is one sentence, and it is the sentence a
+client needs in order to plan.
 
 ---
 
@@ -674,7 +693,6 @@ rule is a fair objection and was weighed at the ruling.
 
 | Item | What is unresolved |
 | --- | --- |
-| **`ST-025` exposure statement scope** | After expiry became `SHOULD`, an unbounded stream may outlive an *expiring* credential with neither a required termination nor a required statement |
 | **`ST-026` expired-representation shape** | "Terminal state suffices" needs an exact response shape; a terminal state is not necessarily the application result |
 | **Cancellation** | Registered for §13.4 by owner ruling; not researched. Nothing says what happens to an open stream when its operation is cancelled through the other channel, nor whether disconnecting cancels the operation |
 
@@ -733,6 +751,7 @@ inherits settled ground.
 | 12 | The retention mismatch | Terminal state suffices; exact shape remains open |
 | 13 | The delivery-ended gap | Scope `R12.10` and `R13.9`; the terminal frame carries the operation's current state plus `stream_end_reason` (`ST-030`). Supersedes ruling 7 |
 | 14 | `R3.9` exception form and version class | Split it — clarification is editorial, the header exemption for URI-named work is a relaxation. Resolves to MINOR |
+| 15 | `ST-025`'s exposure statement scope | Binds on the unbounded declaration, whatever the credential does |
 
 Two further rulings stand: `ST-025`'s expiry clause at `SHOULD` with a
 research trigger, and cancellation registered now and researched later.
