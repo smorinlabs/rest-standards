@@ -381,7 +381,7 @@ mid-stream reporting obligation in the indicative, so binds nothing under
 R1.1; and §1.8's "two such rules exist" hardcodes a guard-rule count the skill
 reads live at run time. Each is an owner ruling for a later amendment.
 
-### Phase 8: Streaming's unresolved interactions — **complete 2026-08-12 (v1.2.0)**
+### Phase 8: Streaming's unresolved interactions — **complete 2026-08-12 (v2.0.0)**
 
 **Outcome.** Six of the register's eleven interactions ruled; five remain,
 recorded in §13.4. Ten principles `ST-021`–`ST-030` ratified en bloc into

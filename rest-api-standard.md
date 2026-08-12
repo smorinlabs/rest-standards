@@ -1,6 +1,6 @@
 # REST API Design Standard
 
-**Version 1.2.0.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
+**Version 2.0.0.** Version 1.0.0 was released 2026-08-10 after Gates C, D,
 and E all passed (decision layer ratified 2026-08-09; draft approved
 2026-08-09 and systematically reviewed through 2026-08-10; review history in
 [`docs/reviews/`](docs/reviews/)). Version 1.1.0 adds **§13, streaming
@@ -13,12 +13,26 @@ in §13.4's register, adds six interactions it had not recorded, and fixes an
 Appendix A row that stated an obligation `R7.3` does not impose. None of them
 changes a rule.
 
-**Version 1.2.0** completes Phase 8: six new rules (`R13.12`–`R13.17`), six
-amended (`R9.4`, `R13.5`, `R12.10`, `R13.9`, `R3.9`, `R6.5`), and one new
-reserved member. A MINOR bump — every amendment scopes or relaxes, and
-`R3.9`'s change is split into an editorial clarification plus a relaxation so
-that it strengthens nothing. Ratified from ten `ST-021`–`ST-030` principles
-in `research/decisions/baseline-04-streaming.decision.md`.
+**Version 2.0.0** completes Phase 8: six new rules (`R13.12`–`R13.17`), nine
+amended (`R4.9`, `R8.10`, `R9.4`, `R12.10`, `R13.5`, `R13.6`, `R13.9`,
+`R3.9`, `R6.5`), and one new reserved member. Ratified from ten `ST-021`–`ST-030`
+principles in `research/decisions/baseline-04-streaming.decision.md`.
+
+**Why MAJOR.** Five of the nine amendments **strengthen** an existing rule, and
+the amendment rule classes a strengthening as MAJOR whatever its size:
+
+| Rule | What it now requires that 1.1.3 did not |
+| --- | --- |
+| `R9.4` | Documented open-enum values and their meanings are frozen. Renaming one inside a GA major was compatible and is now breaking. |
+| `R4.9` | Adding a new **terminal** stream frame type is breaking, not a compatible enum addition. |
+| `R13.5` | The frame vocabulary marks which types are terminal; retired names are not reused; terminal types retire only at a major version. |
+| `R8.10` | A client-visible JWT's revocation-propagation plan states its effect on in-flight streams. |
+| `R13.6` | A terminal frame ending delivery while the work continues carries `stream_end_reason`. |
+
+An API conformant at 1.1.3 may not be conformant here — which is the condition
+the MAJOR class exists to signal. This was drafted as 1.2.0 and reclassified
+after a review of the drafted text; the reasoning is recorded as a dated
+correction in the decision record.
 
 This document, with
 [`conformance/spectral.yaml`](conformance/spectral.yaml),
@@ -664,12 +678,15 @@ configuration.
 
 > Provenance: `AC-016`/`AC-017` (completed; walked, `baseline-02`
 > decisions + `baseline-02g`) · project policy `[POLICY]` · confidence
-> high-moderate (placement), high (retention floor). Amended in version 1.2.0
+> high-moderate (placement), high (retention floor). Amended in version 2.0.0
 > by `ST-026` (`baseline-04e` run b) in two deliberately separate parts: the
 > exception's premise is **clarified** — a work-starting `PUT` was never
 > naturally idempotent, so nothing is strengthened — and a **header
 > exemption** is added for a request target that names the work, which is a
-> relaxation. Split so the amendment stays MINOR.
+> relaxation. **This amendment is not one of the five that make 2.0.0 MAJOR:**
+> split, it is a clarification plus a relaxation and would have been MINOR
+> alone. The separation is kept because it records why, not because the
+> release still turns on it.
 
 ### 3.5 Conditional operations
 
@@ -809,9 +826,20 @@ sole exception.
 **R4.9** Enum additions are non-breaking and MUST be documented as such;
 the corresponding client obligation to tolerate unknown values is R12.4.
 **Exception:** genuinely closed enumerations, documented as closed.
+**Second exception: adding a new *terminal* stream frame type is breaking**
+(R9.4, R13.5). R12.4's tolerance obligation is what makes every other addition
+safe — an unknown value is ignored — but R12.10 requires a client to ignore an
+unrecognized frame *and* to treat a stream lacking its terminal frame as
+truncated. A new terminal type therefore makes every deployed client report
+truncation on every success, which is the one addition tolerance cannot absorb.
 
 > Provenance: `AC-012` (batch, `baseline-02` §7) · evidence-backed
-> default · confidence moderate.
+> default · confidence moderate. The terminal-frame exception was added in
+> version 2.0.0 by `ST-021`/`ST-022` (`baseline-04b`) · `[POLICY]` ·
+> confidence moderate-high. It **strengthens** this rule, one of the four
+> amendments making that release MAJOR. Phase 8 classified *renaming* a
+> terminal frame as breaking and initially missed *adding* one, which is the
+> same defect one row over; the Codex review of the drafted text found it.
 
 ### 4.3 Content negotiation
 
@@ -1365,7 +1393,7 @@ normative skeleton:
 | Axis | Default | Headline flip triggers |
 | --- | --- | --- |
 | Sender-constrained tokens | Bearer over TLS + short TTL + audience restriction + refresh-token rotation for public clients; validation SHOULD NOT hard-code the `Bearer` scheme | FAPI 2.0 / open banking → DPoP or mTLS; tokens visible to logging intermediaries; hostile-environment public clients → DPoP; existing PKI server-to-server → mTLS; per-operation value → RFC 9470 step-up |
-| Token format | Opaque on the public wire; phantom-token pattern where a gateway exists; a client-visible JWT MUST be RFC 9068-conformant and paired with a revocation-propagation plan | Measured introspection bottleneck, AS-outage tolerance, or third-party resource servers → JWT; instant-revocation SLA or PII claims → stay opaque |
+| Token format | Opaque on the public wire; phantom-token pattern where a gateway exists; a client-visible JWT MUST be RFC 9068-conformant and paired with a revocation-propagation plan, which MUST state its effect on in-flight streams (R13.14) | Measured introspection bottleneck, AS-outage tolerance, or third-party resource servers → JWT; instant-revocation SLA or PII claims → stay opaque |
 | Rate-limit aggressiveness | Multi-dimensional tiered posture, published: per-principal sustained + token-bucket burst (start ≈100 rps/account, 25 rps/endpoint, `[POLICY]` numbers); unauthenticated per-IP an order of magnitude lower; auth endpoints strictly stricter (start ≤5/min per IP+account); failed-auth budget; concurrency separate | Large per-request cost variance → cost/token accounting; metered third-party spend → spend caps; credential stuffing → lockout tier; multi-tenant → fair-share; free-tier abuse → spend/tenure gating |
 | Replay window | 300 s past / 60 s future, asymmetric + mandatory dedup cache held at least the past window; NTP required; the window alone is never sufficient. Does not reopen the ratified webhook tolerance convention (R12.8) | Interactive high-value signing → 30–60 s; server-provided nonces remove skew; unmanaged clocks or store-and-forward → up to 15 min, never without dedup; signature omits body → add RFC 9530 binding |
 | Object-level authorization | Centralized decision, in-handler enforcement (R8.6) | Relationship-derived permissions or cross-tenant sharing at scale → ReBAC; regulated audit or polyglot fleet → policy language; single service with an ownership column → stay embedded |
@@ -1374,7 +1402,12 @@ normative skeleton:
 > security axes" (`baseline-03` decisions + `baseline-03g`) · project
 > policy `[POLICY]` throughout, grounded in BCP 240, RFC 9449/8705/9068,
 > FAPI 2.0, and OWASP API Top 10 2023 · confidence per-axis in the
-> decision record.
+> decision record. The token-format axis gained the in-flight-stream clause in
+> version 2.0.0 by `ST-025` (`baseline-04c`) · `[POLICY]` · confidence
+> moderate-high. It **strengthens** this rule, one of the five amendments
+> making that release MAJOR. A revocation plan that never says what happens to
+> a stream already open is the gap R13.14 makes visible; this is where the
+> obligation to answer belongs, because the plan is required here.
 
 ### 8.4 Server-side request forgery
 
@@ -1445,12 +1478,14 @@ their meanings, and — for stream frame types — which of them are terminal
 
 **Compatible (permitted within a major):** adding endpoints · adding
 optional request fields or parameters · adding response fields · adding
-enum values where the enumeration is documented open (R4.9) · adding new
+enum values where the enumeration is documented open (R4.9), **except a new
+terminal stream frame type** · adding new
 problem types · relaxing a documented limit · adding an optional header.
 
 **Breaking (a new major, or a pre-GA tier):** removing or renaming any
 frozen element · **removing or renaming a documented open-enum value, or
-changing what one means, with or without a change of name** · changing a
+changing what one means, with or without a change of name** · **adding a new
+terminal stream frame type (R4.9, R13.5, R13.6)** · changing a
 field's type or meaning · making an optional
 input required · tightening validation on existing inputs · changing
 defaults, including the default sort order · repurposing a status code ·
@@ -1461,11 +1496,14 @@ removing or narrowing an authentication mechanism.
 > rules `AC-012`, A2.1, R5.13.2, and `OP-015`'s
 > compatible-evolution-first posture. Open-enum values, their meanings, and
 > frame-type terminality added to the frozen and breaking lists in version
-> 1.2.0 by `ST-021` (`baseline-04b`,
+> 2.0.0 by `ST-021` (`baseline-04b`,
 > `research/decisions/baseline-04-streaming.decision.md`) · evidence-backed
 > default on the name and meaning clauses, `[POLICY]` on terminality ·
 > confidence moderate-high, terminality moderate. Precedent for freezing a
-> value rather than a name is this rule's own `R5.13.2` entry.
+> value rather than a name is this rule's own `R5.13.2` entry. These entries
+> **strengthen** this rule — an API that renamed an open-enum value inside a
+> GA major was conformant at version 1.1.3 and is not now — which is the
+> primary reason that release is MAJOR rather than MINOR.
 
 ### 9.4 Deprecation and sunset
 
@@ -1825,8 +1863,10 @@ underlying work failed:** where an operation resource exists, that resource is
 authoritative for the operation's fate (R13.9), and the client MUST consult it
 rather than infer failure from the frame — the frame may carry a non-terminal
 `operation_state` and a `stream_end_reason` naming why delivery ended (R13.9,
-§1.10). Where no operation resource exists, an `error` frame ends the work as
-well as the delivery. It MUST NOT depend on keep-alive frames arriving
+§1.10). Where **no** operation resource exists, the frame's
+`stream_end_reason` (R13.6) is the only account of why delivery ended, and the
+client MUST NOT infer the work's fate from the frame alone: it has not been
+told, and no channel exists to tell it. It MUST NOT depend on keep-alive frames arriving
 on any schedule. It MUST NOT recover from truncation by replaying a
 non-idempotent request without an idempotency key (R12.1, R3.9).
 
@@ -1834,7 +1874,7 @@ non-idempotent request without an idempotency key (R12.1, R3.9).
 > `research/decisions/baseline-04-streaming.decision.md` · evidence-backed
 > default, with the replay clause `[POLICY]` · confidence high. Scoped by
 > the `streaming` switch, client side. The error-frame clause was rewritten in
-> version 1.2.0 by `ST-030` (`baseline-04g`) so that it ends the delivery
+> version 2.0.0 by `ST-030` (`baseline-04g`) so that it ends the delivery
 > rather than the work · evidence-backed default · confidence moderate-high;
 > the two strongest precedents (Temporal, A2A) are not HTTP streaming APIs,
 > which is recorded as this rule's standing weakness.
@@ -1853,7 +1893,8 @@ and where it restates a rule the rule governs.
 
 **WebSockets are outside this section and outside this standard** (§1.2).
 
-**Switch scope.** Rules R13.1, R13.2, and R13.4–R13.11 are scoped by the
+**Switch scope.** Rules R13.1, R13.2, R13.4–R13.11, and R13.12–R13.17 are
+scoped by the
 `streaming` applicability switch (§1.8), as is R12.10. **R13.3 is not** — it
 binds **every endpoint that does not implement streaming, whatever the API's
 `streaming` switch says**, because scoping it to the switch would delete it
@@ -1994,9 +2035,10 @@ name stops reading at it and never sees the replacement.
 
 > Provenance: `ST-005` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
 > evidence-backed default · confidence high. Terminality marking and the
-> retirement path added in version 1.2.0 by `ST-022` (`baseline-04b`) ·
+> retirement path added in version 2.0.0 by `ST-022` (`baseline-04b`) ·
 > `[POLICY]` on the marking duty, evidence-backed default on the retirement
-> path · confidence moderate-high. The terminal-type exclusion is this
+> path · confidence moderate-high. These duties **strengthen** this rule, one
+> of the five amendments making that release MAJOR. The terminal-type exclusion is this
 > standard's own construction: every dual-emit precedent surveyed is a webhook
 > system, where two deliveries are two independent messages and nothing
 > declares the conversation over.
@@ -2011,14 +2053,30 @@ tolerate one. A sentinel is a bare end-of-stream marker carrying no type and
 no payload — the widely shipped `data: [DONE]` is the example — so it is
 transport filler rather than a frame, and R13.5's typing obligation does not
 reach it. An API MUST NOT carry outcome information in a sentinel; that is
-the terminal frame's job. A stream that is unbounded by design — a watch, an event
+the terminal frame's job.
+
+**Where a terminal frame ends delivery while the underlying work continues**,
+it MUST carry a documented `stream_end_reason` (§1.10) naming why delivery
+ended. This binds every stream, whether or not the capability is also exposed
+as an operation resource: a duration cap (R13.13), a credential expiry
+(R13.14), and a replay that omits frames (R13.15) all end delivery without
+ending the work, and a client that cannot tell why has been told only that its
+stream stopped. R13.9 states the same obligation for the dual-channel case,
+where the reason accompanies a non-terminal `operation_state`.
+
+A stream that is unbounded by design — a watch, an event
 tail — has no normal end; such an API MUST document that the stream is
 unbounded, and the terminal-frame obligation then applies to the
 server-initiated close case only.
 
 > Provenance: `ST-006` · `P6-D0` batch (Phase 6 walk, 2026-08-10) ·
 > evidence-backed default on the requirement, `[POLICY]` on preferring a
-> typed terminal frame over a bare sentinel · confidence high.
+> typed terminal frame over a bare sentinel · confidence high. The
+> `stream_end_reason` obligation was added in version 2.0.0 by `ST-030`
+> (`baseline-04g`) · evidence-backed default · confidence moderate-high. It
+> **strengthens** this rule, which is one of the five amendments making that
+> release MAJOR; the two strongest precedents (Temporal, A2A) are not HTTP
+> streaming APIs, recorded as this clause's standing weakness.
 
 **R13.7** An error raised after the response status is committed MUST be
 delivered in-band, in a frame of the reserved `error` type (§1.10), whose
@@ -2078,7 +2136,8 @@ comparable — this applies to an `error` terminal frame exactly as to a
 success one, which is why the member is not named `status` (R13.7 forbids
 `status` on the problem object). Where the state carried is **not** terminal,
 the frame MUST also carry `stream_end_reason` (§1.10) naming why delivery
-ended while the work continued. Where both channels report a terminal state
+ended while the work continued — this is the dual-channel instance of R13.6's
+general obligation, not a narrowing of it. Where both channels report a terminal state
 they MUST agree, with the operation resource
 authoritative; and
 the full problem document for a failed operation — carrying `status`, as
@@ -2101,7 +2160,7 @@ status code is still available to be generated.
 > operation resource authoritative · confidence moderate-high — one shipped
 > exemplar against one contrary guideline, adjudicated in the decision
 > record. Binds only where `streaming` and `async-operations` are both on.
-> Relaxed in version 1.2.0 by `ST-030` (`baseline-04g`) to permit a
+> Relaxed in version 2.0.0 by `ST-030` (`baseline-04g`) to permit a
 > non-terminal `operation_state` paired with `stream_end_reason`, because
 > three rules — R13.13's duration cap, R13.14's credential expiry, and
 > R13.15's gap signalling — each end delivery while the work continues, and a
@@ -2135,7 +2194,7 @@ literally true. A client echoes a `stream_position` and never computes one.
 
 ### 13.4 Known unresolved interactions
 
-Five interactions between streaming and the rest of this standard are
+Six interactions between streaming and the rest of this standard are
 **recognized and not yet ruled**. They are recorded here rather than left to
 be discovered, because a reader who hits one should know the standard is
 silent by decision rather than by oversight. None of them makes a rule in
@@ -2146,11 +2205,14 @@ Phase 8 ruled six of the eleven interactions this register carried in version
 1.1.3 — frame-vocabulary versioning, authorization over a stream's lifetime,
 caching posture, idempotency-key replay, resource ceilings, and open-enum
 renaming generally. Those rows are removed; their rules are `R9.4`, `R13.12`
-through `R13.17`, and `R3.9`'s amendment. The five below were not researched
-and remain open.
+through `R13.17`, and `R3.9`'s amendment. Four of the five that remain were
+not researched. The sixth is a **residue**: R13.12 ruled the caching posture
+but not what revalidation *means* for a representation still arriving, so the
+row below is what is left of the entry rather than the whole of it.
 
 | Interaction | What is unresolved |
 | --- | --- |
+| **What revalidation means for a representation still arriving** (§7) | R13.12 rules the caching posture and settles which streaming responses owe a strong `ETag` — those whose resource supports conditional update (R3.10, R13.2). It does not settle what a conditional request *does* against an incrementally delivered representation: whether a `304` is coherent against a body that does not yet exist, and what tier 1's `no-cache` therefore obliges. RFC 9111 §3.3 bears on the neighbouring question of storing an incomplete response, not on this one. |
 | **Cancellation across the two channels** (§10) | R10.2 expresses cancellation as the `cancel` action on the operation resource, and R13.9 makes the stream and the operation one capability with one identity. Nothing says what happens to an open stream when its operation is cancelled through the other channel, nor whether a client disconnecting from the stream cancels the operation. |
 | **An unsupported `stream_position`** (§13) | R13.10's rejection duty binds only "an API that offers resumption." An endpoint that streams but offers none may receive `stream_position`, ignore it, and restart from the first frame — while §1.10 tells clients to echo the value. **No rule currently supplies a guard.** R1.9 covers `dry_run` and R13.3 covers `stream`; neither reaches `stream_position`. They are named here only as the pattern — a reserved modifier an endpoint may receive without implementing — not as governing rules. |
 | **A no-`Accept` request to an always-streaming resource** (§4) | R13.2 permits a distinct resource that streams unconditionally and says R4.10 does not reach it, but R4.10 has two clauses: the second fixes `application/json` as the media type served when a request carries no `Accept`. Such a resource cannot produce it, and R13.1 forbids labelling a stream that way. R4.10's default clause carries no BCP 14 keyword, so this is a taxonomy hole rather than a live conflict. |
@@ -2188,10 +2250,13 @@ transmitted before the body exists, and the directive is a property of the
 resource's policy rather than of its bytes.
 
 Within R7.3's posture a streaming response takes **tier 1 —
-`Cache-Control: private, no-cache`** — by default, and tier 1's strong-`ETag`
-revalidation clause does not apply to it, because R3.10 binds a resource that
-supports conditional update and revalidating a representation that is still
-arriving has no defined meaning. Tier 2 (`no-store`) applies on exactly the
+`Cache-Control: private, no-cache`** — by default. Tier 1's strong-`ETag`
+revalidation clause reaches a streaming response only where R3.10 already
+reaches it: R3.10 binds a **resource that supports conditional update**, so an
+endpoint that serves both a streamed and a non-streamed representation (R13.2)
+still owes a strong `ETag`, and one that supports no conditional update owes
+none. What revalidation *means* for an incrementally delivered representation
+remains unruled and is registered in §13.4. Tier 2 (`no-store`) applies on exactly the
 same condition as to any other response — a genuinely sensitive payload,
 judged from what the frames carry — and MUST NOT be adopted merely because the
 response is a stream.
@@ -2252,8 +2317,9 @@ deployment choice.
 **R13.14** A stream SHOULD NOT continue past the expiry of the credential
 that authorized it. Where the credential carries or implies an expiry, the
 server SHOULD end the stream at or before that expiry rather than relying on
-the maximum duration to bound it, delivering an `error` frame (R13.7) whose
-problem type states that the credential expired.
+the maximum duration to bound it. This rule does not prescribe the ending's
+shape: R13.6 already governs it, and a stream ended this way while its work
+continues carries a `stream_end_reason` under that rule.
 
 An API SHOULD end an in-flight stream when the authorization that permitted it
 is revoked, and MUST document its revocation posture as an **upper bound** on
@@ -2270,8 +2336,13 @@ Resumption (R13.10) is a new request and is authorized as one (R8.6); an API
 MUST NOT treat a resumption position as evidence of authorization.
 
 > Provenance: `ST-025` · Phase 8 ratification (2026-08-12) · `[POLICY]`
-> throughout, grounded in R8.6 and RFC 9068 §4 for the expiry clause ·
-> confidence moderate-high on the disclosure clauses, moderate on expiry.
+> throughout, grounded in R8.6. The expiry clause is `[INFERENCE]`, not a
+> grounded requirement: RFC 9068 §4 requires that "the current time MUST be
+> before the time represented by the `exp` claim" when a JWT access token is
+> **validated**, which governs admitting a request, not continuing one already
+> in flight. Extending it across a held-open stream is this standard's
+> reasoning · confidence moderate-high on the disclosure clauses, moderate on
+> expiry.
 > **Standing weakness, ratified knowingly:** the expiry clause is SHOULD
 > rather than MUST because no published incident of post-revocation delivery
 > over a stream was found, and a MUST would overrule the field's clearest
@@ -2281,11 +2352,15 @@ MUST NOT treat a resumption position as evidence of authorization.
 > request already in progress; RFC 7009 §2.1 does confirm that revocation
 > carries a propagation delay, which is why the posture is an upper bound.
 
-**R13.15** A repeat of a streaming request carrying the same idempotency key
-MUST NOT re-execute the work. The server answers by the original execution's
-state and MUST document which of two permitted shapes it implements: **serving
-the in-flight work** by attaching the caller to the running stream, or
-**rejecting with `409`** while the original is still executing.
+**R13.15** A repeat of a streaming request MUST NOT re-execute the work. A
+repeat is a request carrying the same idempotency key, **or one whose request
+target names the same work** where R3.9's header exemption applies — the URI
+supplies the deduplication key there, so every guarantee in this rule binds
+identically whether the key arrives in a header or in the path. The server
+answers by the original execution's state and MUST document which of two
+permitted shapes it implements: **serving the in-flight work** by attaching
+the caller to the running stream, or **rejecting with `409`** while the
+original is still executing.
 
 Once the original reaches a terminal state the server delivers the recorded
 outcome. Where the replayable representation has expired but the terminal
@@ -2300,6 +2375,13 @@ received, the server MUST make the omission visible rather than delivering a
 terminal frame as though the stream were complete. Delivering the retained
 frames, ending with a defined `error` frame, and carrying a position on every
 frame whose numbering makes an omission visible all satisfy this.
+
+**A client MUST NOT infer, from the presence of a terminal frame alone, that
+it received every frame of the original stream.** Server-side gap signalling
+does not discharge this: a client that attached to work already in progress,
+or that received a retained prefix, sees a well-formed terminal frame in both
+the complete and the incomplete case, and only the mechanisms above tell them
+apart.
 
 A request may carry both an `Idempotency-Key` and a `stream_position`. The key
 governs **execution** — the work is not run again — and the position governs
@@ -2497,16 +2579,16 @@ Appendix E worked example where it appears.
 | Codex second lens (2026-08-10) | R6.2, R6.4 (completing the R6.1 streaming scope); §1.10 `operation_state`; R5.13 and R13.4 provenance corrections | B4 |
 | Phase 6 review walk · Tier B deferral (2026-08-10) | §13.4 known-unresolved register; `PLAN.md` Phase 8 (numbered 7 in v1.1.0; renumbered in v1.1.1) | B4 |
 | `ST-021` | R9.4 (frozen and breaking lists) | B4 |
-| `ST-022` | R13.5 (terminality marking, retirement path) | B4 |
+| `ST-022` | R13.5 (terminality marking, retirement path); R4.9 (terminal-frame addition breaking); R9.4 (same, breaking list) | B4 |
 | `ST-023` | R13.12 | B4 |
 | `ST-024` | R13.13 | B4 |
-| `ST-025` | R13.14 | B4 |
+| `ST-025` | R13.14; R8.10 (token-format axis, in-flight streams) | B4 |
 | `ST-026` | R13.15; R3.9 (clarification + header exemption) | B4 |
 | `ST-027` | R13.16 | B4 |
 | `ST-028` | R13.17 | B4 |
 | `ST-029` | R6.5 (streamed-collection scope) | B4 |
-| `ST-030` | R12.10; R13.9; §1.10 `stream_end_reason` | B4 |
-| Phase 8 ratification (2026-08-12) | R13.12–R13.17 and the six amendments above, ratified en bloc from sixteen owner rulings | B4 |
+| `ST-030` | R12.10; R13.6; R13.9; §1.10 `stream_end_reason` | B4 |
+| Phase 8 ratification (2026-08-12) | R13.12–R13.17 and the nine amendments above, ratified en bloc from sixteen owner rulings; version class corrected to MAJOR 2026-08-12 after review of the drafted text | B4 |
 
 ### II.2 Apparatus register — provisions ratified at Gate D
 
@@ -2591,7 +2673,7 @@ own maintenance rather than a conforming API.
 | R3.6 | QUERY, where used, only for safe idempotent body-carrying reads |
 | R3.7 | PATCH accepts `merge-patch+json` (plus `json-patch+json` where the MAY is exercised); unsupported types 415; `Accept-Patch` advertised |
 | R3.8 | Null and absent equivalent everywhere; Merge Patch deletion the sole exception |
-| R3.9 | `Idempotency-Key` accepted on non-idempotent mutations; payload fingerprinted; retention window at least 24 h and stated |
+| R3.9 | `Idempotency-Key` accepted on non-idempotent mutations; payload fingerprinted; retention window at least 24 h and stated; a `PUT` that *starts work* treated as outside the natural-idempotence exception; where the request target names the work, the header exemption applied with every other guarantee intact; for a stream, "the stored response" read as its terminal state plus the documented replayable representation |
 | R3.10 | Strong `ETag` on conditionally updatable resources |
 | R3.11 | `If-Match` expected where concurrent modification is exposed; 412 and 428 used correctly |
 | R3.12 | Dry-run responses carry the marker, the real outcome shape, and validation depth; no key consumed |
@@ -2603,7 +2685,7 @@ own maintenance rather than a conforming API.
 | R4.6 | Timestamps RFC 3339 with explicit offset |
 | R4.7 | Money as minor-unit integer with required ISO 4217 `currency` |
 | R4.8 | Null-versus-omission rule stated in the contract |
-| R4.9 | Open enums documented; additions non-breaking |
+| R4.9 | Open enums documented; additions non-breaking, **except that adding a new terminal stream frame type is breaking** (R9.4, R13.5) |
 | R4.10 | Default media type `application/json` UTF-8; no `format` parameter; 406 for unsatisfiable `Accept` |
 | R4.11 | `Vary` lists every selecting header |
 | R4.12 | New header fields use RFC 9651 structured types |
@@ -2633,7 +2715,7 @@ own maintenance rather than a conforming API.
 | R6.2 | Empty collections return 200 with an empty array; streamed form is zero item frames followed by the terminal frame |
 | R6.3 | Cursor pagination (recommendation-strength, with documented bounded/append-only and jump-to-page exceptions); cursors opaque and non-constructable |
 | R6.4 | No `Link` headers for pagination; state in the body representation — envelope, or terminal frame when streamed |
-| R6.5 | `cursor` and `limit` names; default and maximum documented |
+| R6.5 | `cursor` and `limit` names; default and maximum documented — including for a collection delivered as a stream, where the documented maximum is enforced per page and not waived by incremental delivery |
 | R6.6 | Total stable default order documented; `id` tiebreak |
 | R6.7 | Sort syntax fixed when offered; sortable set enumerated |
 | R6.8 | Filters are per-field equality plus bracket ranges, AND-only; DSL only on a search endpoint |
@@ -2652,13 +2734,13 @@ own maintenance rather than a conforming API.
 | R8.7 | Unguessability never an access control |
 | R8.8 | Property-level authorization per caller |
 | R8.9 | Writable-field allow-lists |
-| R8.10 | Five-axes defaults adopted, or flips recorded in the conformance note |
+| R8.10 | Five-axes defaults adopted, or flips recorded in the conformance note; a client-visible JWT's revocation-propagation plan states its effect on in-flight streams |
 | R8.11 | Caller-supplied URLs validated against internal ranges |
 | R8.12 | No secrets or PII in problem `detail` or echoed input |
 | R9.1 | `/v1` path major only; no minor versions in URIs |
 | R9.2 | Evolution additive; majors rare |
 | R9.3 | Pre-GA tiers in the path; graduation an explicit migration |
-| R9.4 | Frozen surface respected; every change classified per the taxonomy |
+| R9.4 | Frozen surface respected; every change classified per the taxonomy; documented open-enum values, their meanings, and stream frame-type terminality treated as frozen, so removing, renaming, or re-meaning one — or adding a new terminal frame type — is breaking |
 | R9.5 | `Deprecation` and `Sunset` headers, correct formats, sunset not earlier |
 | R9.6 | Deprecation link relation to migration docs; sunset date always present |
 | R9.7 | Deprecated GA majors supported at least 12 months |
@@ -2688,24 +2770,24 @@ own maintenance rather than a conforming API.
 | R12.7 | Client error handling never assumes a problem document |
 | R12.8 | Consumers verify raw-body-first; window enforced; dedupe; constant-time compare; fail closed |
 | R12.9 | Consumers ack before processing; tolerate at-least-once, unordered delivery |
-| R12.10 | Stream clients treat a missing terminal frame as truncation (an `error` frame is terminal, not truncation); tolerate a trailing sentinel; ignore unknown frame types; never depend on keep-alive timing; never replay non-idempotent requests without a key |
+| R12.10 | Stream clients treat a missing terminal frame as truncation (an `error` frame is terminal, not truncation); tolerate a trailing sentinel; ignore unknown frame types; never depend on keep-alive timing; never replay non-idempotent requests without a key; treat an `error` frame as ending the **delivery**, consulting the operation resource for the work's fate, and where none exists infer no fate from the frame |
 | R13.1 | Streaming response is `200` with a self-delimiting stream media type; no `202` streaming; concatenated JSON never labeled `application/json` |
 | R13.2 | Streamed-versus-non-streamed chosen by `Accept` with `Vary: Accept`; never by a query parameter; or a distinct always-streaming resource |
 | R13.3 | `stream` on a non-streaming endpoint rejected with `400`, never silently ignored; on a streaming endpoint, a `stream` modifier disagreeing with the negotiated representation rejected with `400` *(binds per endpoint, whatever the `streaming` switch says)* |
 | R13.4 | SSE as `text/event-stream` the default for generated content; its lack of IANA registration documented and never described as registered |
-| R13.5 | Every frame carries a documented type; full frame-type vocabulary documented and stated as growable; frame payloads obey §4's representation rules; keep-alive emission documented (or its absence stated) |
-| R13.6 | Documented terminal frame carrying the outcome; a stream-ending `error` frame counts as terminal; trailing sentinel tolerated; unbounded streams documented as unbounded |
+| R13.5 | Every frame carries a documented type; full frame-type vocabulary documented and stated as growable; frame payloads obey §4's representation rules; keep-alive emission documented (or its absence stated); the vocabulary marks which types are terminal; retired names not reused; non-terminal types retired only through a documented dual-emit overlap and terminal types only at a major version |
+| R13.6 | Documented terminal frame carrying the outcome; a stream-ending `error` frame counts as terminal; trailing sentinel tolerated; unbounded streams documented as unbounded; a terminal frame that ends delivery while the work continues carries `stream_end_reason` |
 | R13.7 | Stream-ending errors after commit delivered in an `error` frame carrying a problem object with `status` omitted; never called an `application/problem+json` response; `error` never used for a failure the stream survives |
 | R13.8 | Pre-commit errors follow R5.12 unchanged, whatever the request asked to stream |
-| R13.9 | Stream carries `operation_id` or `operation_url` matching R10.9's form; terminal frame carries `operation_state` from R10.1's vocabulary, on error frames as well as success ones; operation resource authoritative; full problem document retrievable there |
+| R13.9 | Stream carries `operation_id` or `operation_url` matching R10.9's form; terminal frame carries `operation_state` from R10.1's vocabulary, on error frames as well as success ones; operation resource authoritative; full problem document retrievable there; `operation_state` permitted to be non-terminal, in which case the frame also carries `stream_end_reason` |
 | R13.10 | Resumption offered where the stream views a retained artifact (data outliving the connection); strictly increasing `stream_position` on every frame; retention window documented; out-of-window resume fails with a defined error |
 | R13.11 | Long-poll maximum hold documented; expired hold returns `200` plus an empty result carrying the next `cursor`; never `204` |
 | R13.12 | Streams carry explicit `Cache-Control`, default tier 1; `no-store` not adopted merely for shape; tier 3 only on an immutable artifact with `Vary` coverage and no authenticated data |
 | R13.13 | Maximum stream duration documented, or the stream declared unbounded and genuinely having no normal end; a documented maximum enforced and ended with a terminal frame |
-| R13.14 | Stream not outliving its credential; revocation posture published as an upper bound; unbounded streams state their exposure window; resumption authorized as a new request |
-| R13.15 | Keyed repeat never re-executes; attach-or-`409` documented; omitted frames made visible; expired representation stated as unavailable; key governs execution and position governs delivery |
-| R13.16 | Irreversible non-idempotent mutations not streamed, or split from delivery or named in the request target; conformance note states which R13.15 shape is implemented |
-| R13.17 | A held-open stream counted against concurrency for its lifetime; the counting rule documented; `429` distinguishes concurrency from rate exhaustion |
+| R13.14 | Stream recommended not to outlive its credential (`SHOULD`, not an obligation); revocation posture published as an upper bound; unbounded streams state their exposure window; resumption authorized as a new request |
+| R13.15 | A repeat — same key, or a request target naming the same work — never re-executes; attach-or-`409` documented; omitted frames made visible; expired representation stated as unavailable; key governs execution and position governs delivery; clients told not to infer completeness from a terminal frame alone |
+| R13.16 | Irreversible non-idempotent mutations recommended not to stream (`SHOULD NOT`, not a prohibition), or split from delivery or named in the request target; conformance note states which R13.15 shape is implemented |
+| R13.17 | A held-open stream counted against concurrency for its lifetime; the counting rule documented; `429` recommended to distinguish concurrency from rate exhaustion (`SHOULD`) |
 
 ## Appendix B — Exception process
 
@@ -2838,7 +2920,7 @@ E.10, it is omitted from the excerpts below for brevity.
 ```markdown
 ## Conformance note — Bloom Orders API
 
-Standard: rest-api-standard v1.2.0
+Standard: rest-api-standard v2.0.0
 Tier: public
 Switches: webhooks=on, async-operations=on, streaming=on,
   bulk-operations=off (imports run through the async export/import
@@ -3154,9 +3236,12 @@ and the window honors the 12-month floor (R9.7).
 
 ### E.11 Streaming the export as it is produced
 
-Exercises R13.1, R13.2, R13.4–R13.7, R13.9, R13.10, R5.1, R12.10. This is
+Exercises R13.1, R13.2, R13.4–R13.7, R13.9, R13.10, R13.12–R13.14, R13.16,
+R13.17, R5.1, R12.10. This is
 the same export capability as E.7, reached through the streaming channel —
-the pair together is what R13.9 governs.
+the pair together is what R13.9 governs, and the pair *is* R13.16's
+split-execution structure: E.7's `POST` starts the work and returns `202`,
+this stream only delivers it.
 
 `/events` is R13.2's **second limb** — a distinct resource that streams
 unconditionally. It performs no selection, so it emits no `Vary` and R4.10
@@ -3244,6 +3329,33 @@ serves the full problem document — with `status` — as a real
 resume (R13.10); Bloom documents a 30-minute retention window, and a resume
 outside it fails with a defined error rather than silently restarting. It is
 not a `cursor`, and R12.5's opacity obligation does not reach it.
+
+**The Phase 8 rules this exchange also exercises.** `Cache-Control` is present
+and explicit, which R13.12 requires of every streaming response. The value is
+tier 2, `no-store`, and R13.12 permits that **only** on the same condition as
+any other response — a genuinely sensitive payload, judged from what the
+frames carry. Here they carry customer order rows and signed `part_url`
+links, so the choice is made on the payload; it would be a violation if Bloom
+chose `no-store` because the response is a stream. Tier 3 is unavailable
+regardless, since the data is authenticated.
+
+Bloom documents a **six-hour maximum** for this stream (R13.13). The stream is
+finite by design, so it may not be declared unbounded; and when the cap is
+reached the server sends a terminal frame rather than dropping the connection,
+because a dropped connection is indistinguishable from truncation under
+R12.10. That terminal frame carries `stream_end_reason` while
+`operation_state` is still `running` — delivery has ended, the export has not
+(R13.6, R13.9). Neither frame shown above carries `stream_end_reason`, and
+correctly so: both end with a **terminal** `operation_state`, which is exactly
+the case the member does not cover.
+
+Bloom's revocation posture (R13.14) is published as an upper bound — "an
+in-flight export stream ends within 60 seconds of token revocation" — never as
+a claim that revocation is instantaneous, and the same statement appears in
+the revocation-propagation plan R8.10 requires of its client-visible JWTs. A
+held-open export stream counts against Bloom's published per-account
+concurrency for its whole lifetime, and exhausting that budget yields a `429`
+whose `code` distinguishes concurrency from rate exhaustion (R13.17, R11.2).
 
 ## Appendix F — Framework and gateway mapping
 

@@ -594,6 +594,42 @@ reserved names. Nothing is strengthened: `R3.9`'s change is deliberately split
 into an editorial clarification plus a relaxation so that it stays MINOR, and
 every other amendment either scopes or relaxes.
 
+> **Correction (2026-08-12) — the version class above is wrong, and so is the
+> reserved-name count.** Both were found by a Codex second-lens review of the
+> *drafted rule text*, before release. The record is corrected here rather
+> than edited, per this layer's no-silent-edit rule.
+>
+> **The release is MAJOR — v2.0.0.** Five amendments strengthen an existing
+> rule, and the Part II amendment rule classes a strengthening as MAJOR
+> whatever its size:
+>
+> | Rule | Obligation absent at v1.1.3 |
+> | --- | --- |
+> | `R9.4` | Documented open-enum values and their meanings are frozen; renaming one inside a GA major becomes breaking |
+> | `R4.9` | Adding a new **terminal** stream frame type is breaking, not a compatible enum addition |
+> | `R13.5` | Terminality marked; retired names not reused; terminal types retire only at a major version |
+> | `R8.10` | A client-visible JWT's revocation plan states its effect on in-flight streams |
+> | `R13.6` | A terminal frame ending delivery while work continues carries `stream_end_reason` |
+>
+> The decisive test is adopter impact: an API that renamed an open-enum value
+> inside a GA major was conformant at v1.1.3 and is not at this release. That
+> is the condition the MAJOR class exists to signal. `R3.9`'s split remains
+> correct and remains a clarification plus a relaxation; it is **not** one of
+> the five.
+>
+> Two of the five were not in the drafted text at all when this was written.
+> **`R8.10`'s clause was ratified here and never enacted** — `ST-025`'s
+> "consequential amendment" reached no drafted surface. **`R4.9`'s terminal-frame
+> exception did not exist**: Phase 8 classified *renaming* a terminal frame as
+> breaking and missed *adding* one, though the informative companion had
+> stated the failure plainly. Both are now enacted.
+>
+> **One new reserved name, not four.** Only `stream_end_reason` was ratified
+> and only `stream_end_reason` exists. The figure "four" is an unexplained
+> error in the sentence above; no candidate for the other three is recorded
+> anywhere in this record, the proposal set, or the leaves, and the integrated
+> proposal says "a reserved member" singular.
+
 ## The ratified set
 
 | ID | Obligation | Surfaces |

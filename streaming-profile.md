@@ -470,15 +470,16 @@ name which document it means. This one means the WHATWG HTML Living Standard.
 
 ## 13. What §13 does not yet answer
 
-§13.4 records **five** interactions between streaming and the rest of the
+§13.4 records **six** interactions between streaming and the rest of the
 standard that are **recognized and not yet ruled**: cancellation across the
 two channels, an unsupported `stream_position`, a no-`Accept` request to an
-always-streaming resource, CSRF under ambient browser credentials, and where a
-§13.4 resolution is actually recorded. They are listed there so that silence
+always-streaming resource, CSRF under ambient browser credentials, where a
+§13.4 resolution is actually recorded, and what revalidation means for a
+representation still arriving. They are listed there so that silence
 reads as a decision rather than an oversight.
 
 The register held eleven in version 1.1.3. **Phase 8 ruled six of them** in
-version 1.2.0, and two pieces of advice this section used to carry are now
+version 2.0.0, and two pieces of advice this section used to carry are now
 rules rather than guidance.
 
 **Frame-type names and terminality are now frozen — `R9.4` says so.** This
@@ -490,8 +491,11 @@ types are terminal. The reason is unchanged and still worth understanding —
 is what makes a growing vocabulary safe and is also the trap. Rename a
 terminal frame, or add a new one, and every deployed client ignores it, sees
 no terminal frame, and reports **truncation on every successful stream**.
-`R13.5` routes retirement accordingly: non-terminal types may go through a
-documented dual-emit overlap, terminal types only at a major version.
+The standard now classifies both: `R9.4` makes renaming breaking, and `R4.9`
+makes *adding* a terminal type breaking — the one enum addition `R12.4`'s
+tolerance cannot absorb. `R13.5` routes retirement accordingly: non-terminal
+types may go through a documented dual-emit overlap, terminal types only at a
+major version.
 
 **Stream lifetime and revocation are now `R13.14`.** A stream is one request,
 so a 45-minute stream opened with a 5-minute token is authorized once, at
@@ -502,6 +506,11 @@ mandatory is disclosure: publish your revocation posture as an **upper
 bound**, never as a claim of immediacy, and if your stream is unbounded, state
 its exposure window even when that statement is "indefinite".
 
-For the five that remain, the practical advice still holds: resolve each as
+One entry is a **residue** rather than an untouched question: `R13.12` ruled
+the caching posture and settled which streaming responses owe a strong `ETag`,
+but not what revalidation means for a representation still arriving. That
+remainder stays registered.
+
+For the six that remain, the practical advice still holds: resolve each as
 your deployment requires, and record the choice in your conformance note under
-`R1.7` — noting that *where* to record it is itself one of the five.
+`R1.7` — noting that *where* to record it is itself one of the six.
