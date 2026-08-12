@@ -381,7 +381,55 @@ mid-stream reporting obligation in the indicative, so binds nothing under
 R1.1; and §1.8's "two such rules exist" hardcodes a guard-rule count the skill
 reads live at run time. Each is an owner ruling for a later amendment.
 
-### Phase 8: Streaming's unresolved interactions (post-1.1.0)
+### Phase 8: Streaming's unresolved interactions — **complete 2026-08-12 (v2.0.0)**
+
+**Outcome.** Six of the register's eleven interactions ruled. **§13.4 now
+carries six rows**, not five: five untouched questions plus one *residue* —
+`R13.12` ruled the caching posture but not what revalidation means for a
+representation still arriving, so what is left of that entry stays registered.
+
+Ten principles `ST-021`–`ST-030` ratified en bloc into
+`research/decisions/baseline-04-streaming.decision.md`, producing six new
+rules (`R13.12`–`R13.17`) and **nine** amendments: `R9.4`, `R13.5`, `R12.10`,
+`R13.9`, `R3.9`, `R6.5`, plus `R4.9`, `R8.10`, and `R13.6`, which were added
+at drafting after a second-lens review of the drafted text.
+
+**Released as v2.0.0, not v1.2.0.** Five of the nine amendments — `R9.4`,
+`R4.9`, `R13.5`, `R8.10`, `R13.6` — strengthen an existing rule, and the Part
+II amendment rule classes a strengthening as MAJOR. Two of those five were
+ratified or implied but never drafted until that review: `R8.10`'s clause
+under `ST-025`, and `R4.9`'s terminal-frame exception. The version class is
+corrected as a dated annotation in the decision record.
+
+The standard stands at **145 rules**, checklist
+145/145, fixtures 14/14.
+
+**Method, and what it cost.** Six research leaves (~6,700 lines, ~230
+sources), one same-family adversarial review, one Codex second lens, sixteen
+owner rulings walked one at a time, then en-bloc ratification. Three
+intermediate patches shipped along the way — v1.1.1 renumbering, v1.1.2 and
+v1.1.3 correcting released text the research exposed.
+
+**Two findings changed answers rather than confirming them.** The claim that
+no published API both accepts an idempotency key and streams was false;
+Replicate's Cog does both and *attaches* a repeat to the running stream, the
+opposite of the `409` the first run had mandated. And the obvious fix for
+delivery-ended signalling — a new terminal frame type — is a design A2A
+shipped as `final: true` and then removed as redundant, so `R12.10` and
+`R13.9` were scoped instead.
+
+**Three weaknesses ratified knowingly**, each stated in the standard's own
+provenance lines: `R13.14`'s expiry clause is SHOULD on no incident evidence;
+`R13.17`'s premise depends on a distributive reading of `R8.10`; and
+`R12.10`/`R13.9`'s strongest precedents are RPC and protocol-spec rather than
+HTTP.
+
+**Not researched, by ruling:** cancellation across the two channels. It blocks
+nothing in the ratified set.
+
+The original scope statement follows.
+
+#### Original scope (2026-08-10)
 
 Opened 2026-08-10 by the Phase 6 review walk. **Numbered 7 at creation and
 renumbered to 8 in version 1.1.1**: the skill-apparatus phase had claimed

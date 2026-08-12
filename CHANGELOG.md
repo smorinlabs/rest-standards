@@ -7,6 +7,134 @@ removed, or re-meant rules bump major. Every rule change is atomic across
 the rule text, its decision record, its Part II row, its checklist row,
 and the worked example.
 
+## 2.0.0 — 2026-08-12
+
+Completes **Phase 8**, the streaming interactions §13.4 recorded as recognized
+and not yet ruled. Six rules added, nine amended, one reserved member added.
+The standard now carries **145 rules** (from 139); checklist 145/145.
+
+### A MAJOR bump, and why
+
+**Five amendments strengthen an existing rule.** The Part II amendment rule
+classes a strengthening as MAJOR whatever its size, and the test that decides
+it is adopter impact: **an API that renamed a documented open-enum value
+inside a GA major was conformant at 1.1.3 and is not conformant here.**
+
+| Rule | Obligation absent at 1.1.3 |
+| --- | --- |
+| `R9.4` | Documented open-enum values and their meanings are frozen; renaming one becomes breaking |
+| `R4.9` | Adding a new **terminal** stream frame type is breaking, not a compatible enum addition |
+| `R13.5` | Terminality marked; retired names not reused; terminal types retire only at a major version |
+| `R8.10` | A client-visible JWT's revocation plan states its effect on in-flight streams |
+| `R13.6` | A terminal frame ending delivery while the work continues carries `stream_end_reason` |
+
+This was drafted as 1.2.0 claiming "nothing strengthened" and reclassified
+before release, after a second-lens review of the drafted rule text. That
+review also found that two of the five were **not in the draft at all**:
+`R8.10`'s clause had been ratified and never enacted, and `R4.9`'s exception
+had never been written — Phase 8 classified *renaming* a terminal frame as
+breaking and missed *adding* one, the same defect one row over, which the
+informative companion had been stating plainly since 1.1.0. Both are enacted
+here. The reasoning is recorded as a dated correction in
+`research/decisions/baseline-04-streaming.decision.md`.
+
+**What an adopter must re-check:** whether any documented open enum has had a
+value renamed, removed, or re-meant within the current major; whether any
+stream frame vocabulary marks terminality; whether a new terminal frame type
+was ever added within a major; whether a client-visible JWT's revocation plan
+addresses in-flight streams; and whether terminal frames that end delivery
+early carry a reason.
+
+### Added
+
+- **`R13.12`** — a streaming response carries explicit `Cache-Control` and
+  defaults to tier 1. Tier 3 requires an immutable retained artifact, `Vary`
+  coverage of every resumption input, and no authenticated data.
+- **`R13.13`** — document a maximum stream duration, or declare the stream
+  unbounded, which is available only where it genuinely has no normal end. A
+  documented maximum is enforced and ends with a terminal frame, not a
+  connection close.
+- **`R13.14`** — a stream should not outlive its credential, should end on
+  revocation, must publish its revocation posture as an upper bound, and when
+  unbounded must state its exposure window.
+- **`R13.15`** — a keyed repeat never re-executes; the server documents
+  whether it attaches or rejects with `409`; omitted frames are made visible;
+  an expired representation is stated as unavailable.
+- **`R13.16`** — irreversible non-idempotent mutations should not stream;
+  split execution from delivery, or name the work in the request target.
+- **`R13.17`** — a held-open stream occupies a concurrency slot for its
+  lifetime, and the counting rule is documented.
+- **`stream_end_reason`** reserved in §1.10, with no standardized value set.
+
+### Changed
+
+- **`R9.4`** — documented open-enum values, their meanings, and frame-type
+  terminality join the frozen surface. Removing, renaming, or re-meaning one
+  is breaking. This fixes a class, not an instance: `operation_state` and
+  `R6.7`'s sortable-field set had the same hole.
+- **`R13.5`** — the vocabulary marks which types are terminal. Non-terminal
+  types may retire through a documented dual-emit overlap; **terminal types
+  only at a major version**, because a stream has exactly one ending.
+- **`R12.10`** and **`R13.9`** — an `error` frame now ends the **delivery**,
+  not the work, and a terminal frame may carry a non-terminal
+  `operation_state` paired with `stream_end_reason`. Three rules end delivery
+  while work continues, and the previous vocabulary could not express it.
+- **`R3.9`** — split deliberately. The exception's premise is *clarified*, so
+  that "naturally idempotent" covers a `PUT` storing a representation and not
+  one starting work; and a *header exemption* is added where the request
+  target names the work. Clarification plus relaxation — **not** one of the
+  five strengthenings; it would have been MINOR standing alone.
+- **`R4.9`** — adding a new **terminal** stream frame type is breaking. Every
+  other enum addition is safe because R12.4 makes clients ignore what they do
+  not recognize; a terminal type is the one addition that tolerance cannot
+  absorb, because R12.10 then requires the client to report truncation on
+  every success.
+- **`R8.10`** — the token-format axis's revocation-propagation plan must state
+  its effect on in-flight streams. Ratified with `ST-025` and, until this
+  release, never enacted.
+- **`R13.6`** — a terminal frame that ends delivery while the underlying work
+  continues carries `stream_end_reason`. This binds **every** stream; the
+  draft had scoped it to streams paired with an operation resource, which left
+  a duration- or credential-ended stream with no reason signal at all.
+- **`R6.5`** — states that it binds streamed collections, which it always did.
+
+### Evidence
+
+Six research leaves under `baseline-04` — frame versioning, authorization
+lifetime, caching, idempotency replay (two runs), resource ceilings, and
+delivery-ended signalling — roughly 6,700 lines and 230 sources. Reviewed by
+one adversarial pass and one different-model-family pass, then walked through
+sixteen owner rulings before en-bloc ratification. A second different-family
+pass over the **drafted rule text** produced the version reclassification
+above and eleven text corrections.
+
+Two findings changed the answer rather than confirming it. The claim that no
+published API both accepts an idempotency key and streams was **false** —
+Replicate's Cog does both on one endpoint and *attaches* a repeat to the
+running stream, which is the opposite of the `409` the first run had mandated.
+And the obvious fix for delivery-ended signalling, a new terminal frame type,
+is a design **A2A shipped and then removed** as redundant, so `R12.10` and
+`R13.9` were scoped instead.
+
+### Known weaknesses, ratified knowingly
+
+`R13.14`'s expiry clause is `SHOULD` because no published incident exists and
+a `MUST` would overrule Kubernetes' shipped design; a dated re-check trigger
+is registered. `R13.17`'s premise depends on a distributive reading of
+`R8.10`'s compressed wording. `R12.10`/`R13.9`'s strongest precedents —
+Temporal and A2A — are not HTTP streaming APIs.
+
+### Still unruled
+
+§13.4 keeps six interactions, down from eleven: cancellation across the two
+channels, an unsupported `stream_position`, a no-`Accept` request to an
+always-streaming resource, CSRF under ambient browser credentials, where a
+§13.4 resolution is recorded — and one **residue**. `R13.12` ruled the caching
+posture and settled which streaming responses owe a strong `ETag`, but not
+what revalidation *means* for a representation still arriving: whether a `304`
+is coherent against a body that does not yet exist. The register keeps what is
+left of that entry rather than closing it whole.
+
 ## 1.1.3 — 2026-08-10
 
 Editorial. No rule text, strength, or obligation changes; 139 rules, checklist
