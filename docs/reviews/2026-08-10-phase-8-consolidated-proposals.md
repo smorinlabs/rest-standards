@@ -401,17 +401,42 @@ it received every frame of the original stream.**
 whatever representation of the result the API documents as replayable — not
 the original frame sequence.
 
-`R3.9`'s exception is clarified: "naturally idempotent operations (PUT with a
-client-supplied ID)" covers a `PUT` that **stores a representation**, not one
-that **starts work**. A `PUT` that starts work was never naturally idempotent,
-because a second one runs the work again.
+`R3.9`'s exception is amended in **two parts**, deliberately separated so each
+carries its own version class.
 
-> **Open — version classification.** Whether that clarification is editorial
-> or re-means `R3.9` is a genuine judgment call under the amendment rule, and
-> a different-family review argues it cannot be editorial because the chosen
-> form removes work-starting `PUT`s from the exception entirely, imposing the
-> header obligation as well as the guarantees. Run b's narrower form exempts
-> **only the header** while keeping the guarantees. See "Known open items."
+**Part one — clarification, editorial.** "Naturally idempotent operations (PUT
+with a client-supplied ID)" covers a `PUT` that **stores a representation**,
+not one that **starts work**. A `PUT` that starts work was never naturally
+idempotent, because a second one runs the work again. Such an operation was
+therefore never inside the exception, so stating it strengthens nothing — the
+drafting misled, the rule did not change.
+
+**Part two — a narrow header exemption, a relaxation, MINOR.** Where the
+**request target itself names the work**, the `Idempotency-Key` header is not
+required, because the URI supplies the deduplication key. Every guarantee still
+applies: the operation MUST NOT re-execute, and MUST reject a repeat whose
+payload differs.
+
+### Why the change is split
+
+Applying part one alone would bind a work-starting `PUT` to all of `R3.9`,
+including "MUST accept an idempotency key… carried in the `Idempotency-Key`
+request header." For the one shipped implementation — Cog's
+`PUT /predictions/<prediction_id>` — that means **two deduplication keys for
+one purpose**, the same-concept-different-name divergence §1.10 exists to
+prevent. Cog carries no such header and needs none.
+
+The split also resolves the version question rather than arguing it. A
+different-family review contended that the unsplit form cannot be editorial,
+because adding the header obligation to previously-exempt operations is a
+strengthening and the amendment rule puts strengthening at MAJOR. Part one is
+editorial because nothing was ever exempt; part two is a relaxation, which the
+amendment rule puts at MINOR. Editorial plus relaxation resolves to MINOR
+overall.
+
+The design argument governs independently of the version one: requiring a
+second key from an API that already has one in its URI is a defect whatever it
+costs to ship.
 
 ### Why the mandated `409` did not survive
 
@@ -649,8 +674,6 @@ rule is a fair objection and was weighed at the ruling.
 
 | Item | What is unresolved |
 | --- | --- |
-| **`R3.9` exception form** | Whether to remove work-starting `PUT`s from the exception entirely, or exempt **only the header** while keeping the guarantees, as run b proposed. The second is narrower and may avoid a major bump |
-| **`R3.9` version classification** | Whether the clarification is editorial or re-means the rule |
 | **`ST-025` exposure statement scope** | After expiry became `SHOULD`, an unbounded stream may outlive an *expiring* credential with neither a required termination nor a required statement |
 | **`ST-026` expired-representation shape** | "Terminal state suffices" needs an exact response shape; a terminal state is not necessarily the application result |
 | **Cancellation** | Registered for §13.4 by owner ruling; not researched. Nothing says what happens to an open stream when its operation is cancelled through the other channel, nor whether disconnecting cancels the operation |
@@ -701,7 +724,7 @@ inherits settled ground.
 | 3 | Can dual-emit retire a terminal frame type? | No — major version only |
 | 4 | `ST-026`'s shape after its evidence was falsified | Non-re-execution `MUST`; response shape a documented choice |
 | 5 | Must an attached stream reveal missed frames? | Yes — server obligation, with the client clause restored |
-| 6 | `R3.9`'s "naturally idempotent" exception | Clarify the premise; the exact form remains open |
+| 6 | `R3.9`'s "naturally idempotent" exception | Clarify the premise — form settled by ruling 14 |
 | 7 | A stream cut at its cap has no terminal state | Exempt and signal — **superseded by ruling 13** |
 | 8 | The unbounded-plus-non-expiring escape hatch | Gate the claim, require the statement |
 | 9 | A request carrying both a key and a position | They compose |
@@ -709,6 +732,7 @@ inherits settled ground.
 | 11 | A different-family review before the walk? | Run it |
 | 12 | The retention mismatch | Terminal state suffices; exact shape remains open |
 | 13 | The delivery-ended gap | Scope `R12.10` and `R13.9`; the terminal frame carries the operation's current state plus `stream_end_reason` (`ST-030`). Supersedes ruling 7 |
+| 14 | `R3.9` exception form and version class | Split it — clarification is editorial, the header exemption for URI-named work is a relaxation. Resolves to MINOR |
 
 Two further rulings stand: `ST-025`'s expiry clause at `SHOULD` with a
 research trigger, and cancellation registered now and researched later.
