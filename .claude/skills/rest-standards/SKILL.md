@@ -1,6 +1,6 @@
 ---
 name: rest-standards
-description: Apply the org's REST API Design Standard to HTTP API work in plan, check, review, and audit modes, scaled by conformance tier. Use when an HTTP API is being created, extended, reviewed, or audited, such as "design this endpoint", "review this OpenAPI spec", or "is this API conformant". Not for CLIs (cli-standards) or generic architecture review (factor-architect).
+description: Apply the org's REST API Design Standard to HTTP API work in plan, check, review, and audit modes, scaled by conformance tier. Use when an HTTP API is being created, extended, reviewed, or audited, such as "design this endpoint", "review this OpenAPI spec", or "is this API conformant", or when looking up required status codes, headers, parameter names, or pagination rules. Not for CLIs (cli-standards) or generic architecture review (factor-architect).
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, AskUserQuestion
 ---
 
