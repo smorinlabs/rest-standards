@@ -1,6 +1,6 @@
 ---
 name: rest-standards
-description: Apply the org's REST API Design Standard (rest-api-standard.md in this repo) to any HTTP API work, scaled by conformance tier (internal / partner / public), applicability switches, and available evidence. Four modes — plan (greenfield interview → OpenAPI skeleton + seeded conformance note), check (mid-build lookups — "what status code / header / query parameter does the standard say"), review (design review of an API spec, OpenAPI document, or unshipped diff; findings cite rule IDs), audit (conformance sweep of an existing API across three evidence planes — contract document via Spectral or direct reading, source, and gated live probes against a non-production deployment). Fires whenever an HTTP API is being created, designed, extended, reviewed, or audited — "new API", "design this endpoint", "review this OpenAPI spec", "is this API conformant", "audit this API", "REST standards". Not for CLIs (cli-standards), generic non-API architecture review (factor-architect), generic quality sweeps (factor-scan), or external REST-practice research (guided-research).
+description: Apply the org's REST API Design Standard to HTTP API work in plan, check, review, and audit modes, scaled by conformance tier. Use when an HTTP API is being created, extended, reviewed, or audited, such as "design this endpoint", "review this OpenAPI spec", or "is this API conformant". Not for CLIs (cli-standards) or generic architecture review (factor-architect).
 allowed-tools: Read, Grep, Glob, Bash, Write, Edit, AskUserQuestion
 ---
 
